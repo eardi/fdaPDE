@@ -1,0 +1,139 @@
+* using log directory ‘/home/eardi/workspace/RPDE/Release/...Rcheck’
+* using R version 3.0.2 (2013-09-25)
+* using platform: x86_64-pc-linux-gnu (64-bit)
+* using session charset: UTF-8
+* checking for file ‘../DESCRIPTION’ ... OK
+* this is package ‘RPDE’ version ‘0.9-1’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... NOTE
+Found the following apparent object files/libraries:
+  Debug/src/Eigen/scripts/eigen_gen_credits.o Debug/src/main.o
+Object files/libraries should not be included in a source package.
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... NOTE
+Found the following hidden files and directories:
+  .cproject
+  .project
+  Debug/.gdbinit
+  Debug/.gdbinit~
+  RScripts/.Rhistory
+  src/Eigen/.hg_archival.txt
+  src/Eigen/.hgeol
+  src/Eigen/.hgignore
+  src/Eigen/.hgtags
+  src/Eigen/bench/btl/libs/mtl4/.kdbgrc.main
+  src/Eigen/doc/examples/.krazy
+  src/Eigen/doc/snippets/.krazy
+  .settings
+  Release/...Rcheck
+These were most likely included in error. See section ‘Package
+structure’ in the ‘Writing R Extensions’ manual.
+* checking for portable file names ... WARNING
+Found the following files with non-portable file names:
+  Debug/~.gdbinit
+  Release/~.gdbinit
+These are not fully portable file names.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘RPDE’ can be installed ... OK
+* checking installed package size ... NOTE
+  installed size is 23.3Mb
+  sub-directories of 1Mb or more:
+    libs  23.1Mb
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... WARNING
+Found the following directory with the name of a check directory:
+  ./Release/...Rcheck
+Most likely, these were included erroneously.
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking dependencies in R code ... NOTE
+Package in Depends field not imported from: ‘RTriangle’
+  These packages needs to imported from for the case when
+  this namespace is loaded but not attached.
+See the information on DESCRIPTION files in the chapter ‘Creating R
+packages’ of the ‘Writing R Extensions’ manual.
+* checking S3 generic/method consistency ... WARNING
+plot:
+  function(x, ...)
+plot.FOBJ:
+  function(fobj, num_refinements)
+
+plot:
+  function(x, ...)
+plot.TRIMESH2D:
+  function(mesh, ...)
+
+plot:
+  function(x, ...)
+plot.FOBJ:
+  function(fobj, num_refinements)
+
+plot:
+  function(x, ...)
+plot.TRIMESH2D:
+  function(mesh, ...)
+
+See section ‘Generic functions and methods’ of the ‘Writing R
+Extensions’ manual.
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... OK
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... WARNING
+Undocumented code objects:
+  ‘fobj’ ‘plot.FOBJ’ ‘plot.TRIMESH2D’
+All user-level objects in a package should have documentation entries.
+See the chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking line endings in C/C++/Fortran sources/headers ... WARNING
+Found the following sources/headers with CR or CRLF line endings:
+  src/Eigen/unsupported/test/mpreal/mpreal.h
+Some Unix compilers require LF line endings.
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... WARNING
+Non-portable flags in variable ‘PKG_CPPFLAGS’:
+  -std=c++11
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking compiled code ... NOTE
+File ‘/home/eardi/workspace/RPDE/Release/...Rcheck/RPDE/libs/RPDE.so’:
+  Found ‘_ZSt4cerr’, possibly from ‘std::cerr’ (C++)
+    Object: ‘RPDE.o’
+  Found ‘_ZSt4cout’, possibly from ‘std::cout’ (C++)
+    Object: ‘RPDE.o’
+
+Compiled code should not call entry points which might terminate R nor
+write to stdout/stderr instead of to the console.
+
+See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
+* checking examples ... OK
+* checking for unstated dependencies in tests ... OK
+* checking tests ... OK
+  Running ‘testsmoothingPDE.R’
+  Running ‘testsmoothingPDESV.R’
+  Running ‘testsmoothingbaseCPPcode.R’
+  Running ‘testsmoothingbaseRcode.R’
+* checking PDF version of manual ... OK
+WARNING: There were 6 warnings.
+NOTE: There were 5 notes.

@@ -1,0 +1,13 @@
+* installing *source* package ‘RPDE’ ...
+** libs
+g++ -I/usr/share/R/include -DNDEBUG -std=c++11 -lstdc++     -fpic  -O3 -pipe  -g  -c RPDE.cpp -o RPDE.o
+g++ -shared -o RPDE.so RPDE.o -L/usr/lib/R/lib -lR
+installing to /home/eardi/workspace/RPDE/Release/...Rcheck/RPDE/libs
+** R
+** data
+** preparing package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+* DONE (RPDE)

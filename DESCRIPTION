@@ -1,0 +1,19 @@
+Package: rFEM
+Version: 0.9-1
+Date: 2015-06-18
+Title: Regression with Partial Differential Equations penalization
+Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
+		     email = "eardi.lila@mail.polimi.it"),
+	      person("Laura", "Sangalli", role = "aut",
+		     email = "laura.sangalli@polimi.it"),
+	      person("Jim", "Ramsay", role = "aut",
+		     email = " ramsay@psych.mcgill.ca"))
+Author: Eardi Lila [aut, cre],
+  Laura Sangalli [aut],
+  Jim Ransay [aut]
+Maintainer: Eardi Lila <eardi.lila@mail.polimi.it>
+Depends: R (>= 3.0.0), RTriangle, rgl
+Suggests: MASS
+Description: The package implements a model for the analysis of data distributed over irregularly shaped spatial domains with complex boundaries, strong concavities and interior holes. Moreover the estimation of surfaces and spatial fields can take into account a prior knowledge on the phenomenon under study. The prior knowledge included in the model derives from physics, physiology or mechanics of the problem at hand, and is formalized in terms of a partial differential equation governing the phenomenon behavior. An accurate surface estimation is achieved by means of piecewise linear and quadratic finite elements.
+License: CC BY-NC-SA 3.0
+NeedsCompilation: yes

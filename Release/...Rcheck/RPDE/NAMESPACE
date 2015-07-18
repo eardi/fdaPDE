@@ -1,0 +1,8 @@
+useDynLib(RPDE)
+
+import(rgl)
+export(create.MESH.2D,refine.MESH.2D)
+export(create.FEM.basis, smooth.FEM.basis, smooth.FEM.PDE.basis, smooth.FEM.PDE.SV.basis, fobj)
+export(plot.TRIMESH2D,plot.FOBJ)
+S3method(plot,FOBJ)
+S3method(plot,TRIMESH2D)

@@ -1,0 +1,78 @@
+#ifndef __REGRESSION_PDE__
+#define __REGRESSION_PDE__
+
+#include "SSR.hpp"
+//#include "IO_handler.hpp"
+#include "regressionData.hpp"
+#include "mesh.hpp"
+#include "finite_element.hpp"
+#include "matrix_assembler.hpp"
+#include "mixedFERegression.hpp"
+#include "solver.hpp"
+
+
+//!  The class that implements the penalized regression
+/*!
+ * This class uses all objects implemented to compute the final result of a PDE penalized regression, in particular constructs all the
+ * sub-matrices and sub-vectors necessary to build the final Linear System.
+ * Thanks to Expression Templates, it's straightforward to construct it with the two different approaches specified in Sangalli et al. and Azzimonti et al.
+*/
+
+template <typename Integrator, UInt ORDER>
+class RegressionPDE
+{
+	public:
+	
+		//! A constructor, permitting the initialization of the objects
+		/*!
+		* \param mesh the mesh to use for computing the solution
+		* \param iohandler the IOHandler object that contains the other necessary data passed from R
+		*/
+		RegressionPDE(const MeshHandler<ORDER>& mesh, const RegressionData& regressionData):
+								mesh_(mesh), regressionData_(regressionData){};
+		
+		//! This member compute the solution penalized by the Laplace operator, so implementing a spatial smoothed regression
+		/*!
+		 * This method admits covariates, but the final mesh should contain as first nodes the observations location.
+		 * The Linear system is built as specified in Spatial spline regression models, Laura M. Sangalli, James O. Ramsay and Timothy O. Ramsay
+		 * \return Return an Eigen vector with the the coefficients of the solution.
+		*/ 
+		VectorXr smoothLaplace();
+		
+		//! This member compute the solution penalized by a Reaction–Advection-Diffusion PDE.
+		/*!
+		 * This method doesn't implement covariates. But the mesh is completely scorporated by the observations location, in fact speciefied
+		 * as arguments.
+		 * The Linear system is built as specified in Blood Flow velocity field estimation via spatial regression with PDE penalization, Azzimonti et al.
+		 * \return Return an Eigen vector with the the coefficients of the solution.
+		*/ 
+		VectorXr smoothReaction(const std::vector<Point>& locations, const VectorXr& forcing_term, Real c, const vector<Real>& beta, Eigen::Matrix<Real,2,2> K);
+		
+	private:
+		const MeshHandler<ORDER> &mesh_;
+		const RegressionData& regressionData_;
+		std::vector<coeff> tripletsData_;
+
+		SpMat NWblock_;
+		SpMat psi_;
+		MatrixXr Q_;
+		//! This member compute the NO block of the final Linear System as specified in Sangalli et al.
+		/*!
+			The block is internally stored.
+		*/ 
+
+		void setPsi();
+		void setQ();
+		void setNWBlockSimple();
+		
+		
+		//! This member compute the NO block of the final Linear System as specified in Azzimonti et al.
+		/*!
+			The block is internally stored.
+		*/ 
+		void setNWBlock();
+};
+
+#include "regression_PDE_imp_hpp_obsolete"
+
+#endif
