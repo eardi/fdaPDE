@@ -1,9 +1,9 @@
 #ifndef __REGRESSIONDATA_HPP__
 #define __REGRESSIONDATA_HPP__
 
+#include "FEMr.hpp"
 #include "mesh_objects.hpp"
 #include "param_functors.hpp"
-#include "rFEM.hpp"
 
 //!  An IO handler class for objects passed from R
 /*!

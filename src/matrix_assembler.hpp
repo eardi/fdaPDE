@@ -4,8 +4,8 @@
 
 #include "mesh_objects.hpp"
 #include "finite_element.hpp"
+#include "FEMr.hpp"
 #include "param_functors.hpp"
-#include "rFEM.hpp"
 //! A Stiff class: a class for the stiffness operator.
 
 class Stiff{

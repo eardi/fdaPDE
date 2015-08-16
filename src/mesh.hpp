@@ -1,8 +1,8 @@
 #ifndef MESH_HPP_
 #define MESH_HPP_
 
+#include "FEMr.hpp"
 #include "mesh_objects.hpp"
-#include "rFEM.hpp"
 
 
 using std::vector;

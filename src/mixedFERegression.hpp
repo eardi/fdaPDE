@@ -4,11 +4,11 @@
 #include "regressionData.hpp"
 #include "mesh.hpp"
 #include "finite_element.hpp"
+#include "FEMr.hpp"
 #include "matrix_assembler.hpp"
 #include "solver.hpp"
 
 #include "param_functors.hpp"
-#include "rFEM.hpp"
 
 //! A LinearSystem class: A class for the linear system construction and resolution.
 

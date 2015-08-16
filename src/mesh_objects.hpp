@@ -2,7 +2,7 @@
 #define __MESH_OBJECTS_HPP__
 
 
-#include "rFEM.hpp"
+#include "FEMr.hpp"
 
 //Accord the NotValid meaning value
 //const UInt NVAL=std::numeric_limits<UInt>::max();

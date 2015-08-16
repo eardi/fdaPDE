@@ -1,4 +1,4 @@
-Package: rFEM
+Package: FEMr
 Version: 0.9-1
 Date: 2015-06-18
 Title: Regression with Partial Differential Equations penalization
@@ -10,7 +10,7 @@ Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
 		     email = " ramsay@psych.mcgill.ca"))
 Author: Eardi Lila [aut, cre],
   Laura Sangalli [aut],
-  Jim Ransay [aut]
+  Jim Ramsay [aut]
 Maintainer: Eardi Lila <eardi.lila@mail.polimi.it>
 Depends: R (>= 3.0.0), RTriangle, rgl
 Suggests: MASS

@@ -1,9 +1,9 @@
 #ifndef __FINITE_ELEMENT_HPP__
 #define __FINITE_ELEMENT_HPP__
 
+#include "FEMr.hpp"
 #include "integration.hpp"
 #include "mesh_objects.hpp"
-#include "rFEM.hpp"
 
 //!  This class implements all properties of a Triangular Finite Element
 /*!

@@ -3,9 +3,9 @@
 
 #include "mesh.hpp"
 #include "finite_element.hpp"
+#include "FEMr.hpp"
 //#include "IO_handler_old.hpp"
 #include "matrix_assembler.hpp"
-#include "rFEM.hpp"
 
 //!  A class for the evaluation of the solution, given the coefficients of the global bases
 /*!

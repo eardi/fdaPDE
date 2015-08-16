@@ -1,8 +1,8 @@
-rFEM: ../src/rFEM.cpp
+FEMr: ../src/FEMr.cpp
 	R CMD build ../
 
-all: clean rFEM
-	R CMD INSTALL --no-lock rFEM_0.9-1.tar.gz
+all: clean FEMr
+	R CMD INSTALL --no-lock FEMr_0.9-1.tar.gz
 	
 clean:
 	rm -f *.tar.gz *.o

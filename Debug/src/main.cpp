@@ -1,4 +1,4 @@
-#include "../../src/rFEM.hpp"
+#include "../../src/FEMr.hpp"
 //#include "IO_handler.hpp"
 #include "../../src/mesh_objects.hpp"
 #include "../../src/mesh.hpp"

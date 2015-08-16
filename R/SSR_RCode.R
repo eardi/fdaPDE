@@ -64,7 +64,7 @@ R_elementProperties=function(mesh, order)
       diff2x = mesh$nodes[mesh$triangles[i,3],1] - mesh$nodes[mesh$triangles[i,1],1]
       diff2y = mesh$nodes[mesh$triangles[i,3],2] - mesh$nodes[mesh$triangles[i,1],2]
       
-      transf[i,,] = rbind(c(diff1x,diff2x),c(diff1y,diff2y))
+      transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
       #  Jacobian or area of triangle
       J[i] = diff1x*diff2y - diff2x*diff1y
       

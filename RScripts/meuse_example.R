@@ -1,4 +1,4 @@
-library(rFEM)
+library(FEMr)
 #setwd("~/workspace/RPDE/RScripts")
 
 data(MeuseData)
@@ -67,3 +67,4 @@ output = smooth.FEM.PDE.basis(observations = data,
                           GCV = FALSE
                           )
 plot(output$felsplobj, num_refinements = 10)
+
