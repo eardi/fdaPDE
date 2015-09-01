@@ -1,24 +1,16 @@
-library(RPDE)
-setwd("~/workspace/RPDE/RScripts")
+library(FEMr)
 
-order = 1
-mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
-                     segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order = order)
+load("mesh.example.2D")
+plot(mesh)
+observations = sin(pi*mesh$nodes[,1]) + rnorm(n = nrow(mesh$nodes), sd = 0.1)
 
-basisobj = create.FEM.basis(mesh, order)
+basisobj = create.FEM.basis(mesh, 2)
 
-#  smooth the data without covariates
-lambda = c(1,2,3)
+# Smoothing coefficients
+lambda = c(10^-2, 10^-1, 0.5, 5, 10)
 
-## data diviso in due
-locations = rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0))
-observations = c(1,2,1,2,1)
-data = c(1,2,1,2,1)
-covariates = cbind(c(1, 2, 3, 4, 5))
-BC = NULL
-
-PDE_parameters = list(K = matrix(c(1,0,0,1), nrow = 2), beta = c(0,0), c = 0)
-output_CPP_PDE = smooth.FEM.PDE.basis(locations  = as.matrix(locations), observations = data, 
-                              basisobj = basisobj, lambda = lambda, PDE_parameters, covariates = covariates)
-
-print(output_CPP_PDE$felsplobj$coefmat)
+# Anysotropic smoothing
+PDE_parameters_anys = list(K = matrix(c(0.01,0,0,1), nrow = 2), b = c(0,0), c = 0)
+FEM_CPP_PDE = smooth.FEM.PDE.basis(observations = observations, 
+                              basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters_anys)
+FEM_CPP_PDE$fit.FEM

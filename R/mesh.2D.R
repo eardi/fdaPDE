@@ -1,3 +1,39 @@
+triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
+  ## It is necessary to check for NAs and NaNs, as the triangulate C
+  ## code crashes if fed with them
+  
+  P  <- as.matrix(P)
+  PB <- as.integer(PB)
+  PA <- as.matrix(PA)
+  S  <- as.matrix(S)
+  SB <- as.integer(SB)
+  H  <- as.matrix(H)
+  TR  <- as.matrix(TR)
+  
+  storage.mode(P)  <- "double"
+  storage.mode(PA) <- "double"
+  storage.mode(PB) <- "integer"
+  storage.mode(S)  <- "integer"
+  storage.mode(SB) <- "integer"
+  storage.mode(H)  <- "double"
+  storage.mode(TR) <- "integer"
+  storage.mode(flags) <- 'character'
+  ## Call the main routine
+  out <- .Call("R_triangulate_native",
+               t(P),
+               PB,
+               PA,
+               t(S),
+               SB,
+               H,
+               t(TR),
+               flags,
+               PACKAGE="FEMr")
+  names(out) <- c("P", "PB", "PA", "T", "S", "SB", "E", "EB","TN", "VP", "VE", "VN", "VA")
+  class(out) <- "triangulation"
+  return(out)
+}
+
 create.MESH.2D <- function(nodes, nodesmarkers = NA, nodesattributes = NA, segments = NA, segmentsmarkers = NA, holes = NA, triangles = NA, order = 1, verbosity = 0)
 { 
   ##########################

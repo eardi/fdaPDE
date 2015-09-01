@@ -1,3 +1,5 @@
+
+#include <iostream>
 #include "../../src/FEMr.hpp"
 //#include "IO_handler.hpp"
 #include "../../src/mesh_objects.hpp"
@@ -10,13 +12,12 @@
 
 #include "../../src/regressionData.hpp"
 #include "../../src/mixedFERegression.hpp"
-#include <iostream>
+
 //#include <iomanip>
 
 //#include "regression_PDE.hpp"
 //#include "evaluator.hpp"
-
-
+//
 int main()
 {
 	//Simple Mesh
@@ -73,6 +74,7 @@ int main()
 
 	return 0;
 }
+
 
 //int main()
 //{
@@ -267,14 +269,6 @@ int main()
 //}
 
 
-
-
-
-
-
-
-
-
 //int main()
 //{
 //	VectorXr observations(5);
@@ -297,10 +291,10 @@ int main()
 //	UInt num_triangles = 3;
 //
 //	MeshHandler<2> mesh(points, edges, triangles, neighbors, num_nodes, num_edges, num_triangles);
-//	IOHandler iohandler(observations, design_matrix, order, lambda, dirichlet_indexes, dirichlet_values);
+//	//IOHandler iohandler(observations, design_matrix, order, lambda, dirichlet_indexes, dirichlet_values);
 //
-//	Triangle<3> t3 = Triangle<3>(Id(1), std::array<Point, 3> { {Point(0,0,0,1), Point(1,0,0,0),Point(2,0,0.5,0.5)} });
-//	Triangle<6> t6 = Triangle<6>(Id(2), std::array<Point, 6> { {Point(0,0,0,1), Point(1,0,0,0),Point(2,0,0.5,0.5), Point(3,0,0.25,0.25), Point(4,0,0.25,0.75),Point(5,0,0,0.5)} });
+//	Triangle<3> t3 = Triangle<3>(Id(1), std::vector<Point> { {Point(0,0,0,1), Point(1,0,0,0),Point(2,0,0.5,0.5)} });
+//	Triangle<6> t6 = Triangle<6>(Id(2), std::vector<Point> { {Point(0,0,0,1), Point(1,0,0,0),Point(2,0,0.5,0.5), Point(3,0,0.25,0.25), Point(4,0,0.25,0.75),Point(5,0,0,0.5)} });
 //
 //
 //
@@ -330,6 +324,8 @@ int main()
 //	coefficientsb3<< 0, 0, 0, 1, 0, 0;
 //	coefficientsb4<< 0, 0, 0, 0, 1, 0;
 //	coefficientsb5<< 0, 0, 0, 0, 0, 1;
+//
+//	Real res = evaluate_point<1>(t3,Point(0.25,0.25),coefficientsa0);
 //
 //	std::cout<<"Eval 1: "<<evaluate_point<1>(t3,Point(0.25,0.25),coefficientsa0)<<std::endl;
 //
@@ -382,16 +378,15 @@ int main()
 //		std::cout<<std::endl;
 //	}
 //
-//	Diffusivity diff;
+//	//Diffusivity diff;
 //
-//	typedef EOExpr<Real, Mass<IntegratorTriangleP4, 2> > ETMass;
-//	typedef EOExpr<Real, Stiff<IntegratorTriangleP4, 2> > ETStiff;
-//	typedef EOExpr<Real, Grad<IntegratorTriangleP4, 2> > ETGrad;
+//	typedef EOExpr<Mass> ETMass;
+//	typedef EOExpr<Stiff> ETStiff;
+//	typedef EOExpr<Grad> ETGrad;
 //
-//
-//	Mass<IntegratorTriangleP4, 2> EMass;
-//	Stiff<IntegratorTriangleP4, 2> EStiff;
-//	Grad<IntegratorTriangleP4, 2> EGrad;
+//	Mass EMass;
+//	Stiff EStiff;
+//	Grad EGrad;
 //
 //	ETMass mass(EMass);
 //	ETStiff stiff(EStiff);
@@ -403,12 +398,13 @@ int main()
 //	K << 2,0,0,2;
 //	Real mu = 1;
 //	Eigen::Matrix<Real,2,1> d;
-//	d << 1,1;+
+//	d << 1,1;
 //
-//	assembleMass.operKernel(dot(d,grad) + mu*mass + stiff(K),mesh,fe);
+//	SpMat Mass;
+//	assembleMass.operKernel(mu*mass + stiff[K] + dot(d,grad),mesh,fe, Mass);
 //
 //	std::cout<<"MASS"<<std::endl;
-//	std::cout<< assembleMass.getSpOperKernel();
+//	std::cout<< Mass;
 //
 //	//RegressionPDE<ExactFirstOrder,1> regression(mesh,iohandler);
 //	//const VectorXr& result_eigen = regression.smoothBase();

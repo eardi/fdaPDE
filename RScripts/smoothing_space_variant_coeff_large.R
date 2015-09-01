@@ -65,7 +65,7 @@ u_func<-function(points)
 {
   rep(c(1), nrow(points))
 }
-PDE_parameters = list(K = K_func, beta = beta_func, c = c_func, u = u_func)
+PDE_parameters = list(K = K_func, b = beta_func, c = c_func, u = u_func)
 
 
 output = smooth.PDE_space_varying.basis(observations = data, 
