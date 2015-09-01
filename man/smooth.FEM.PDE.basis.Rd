@@ -5,7 +5,7 @@
 \title{Compute a solution for a Spatial Spline problem with PDE penalization}
 \usage{
 smooth.FEM.PDE.basis(locations = NULL, observations, basisobj,
-       lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = TRUE,
+       lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE,
        CPP_CODE = TRUE)
 }
 \arguments{

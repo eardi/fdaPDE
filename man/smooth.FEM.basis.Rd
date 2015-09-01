@@ -4,7 +4,7 @@
 \alias{smooth.FEM.basis}
 \title{Compute a solution for a Spatial Spline problem}
 \usage{
-smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = TRUE, CPP_CODE = TRUE)
+smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 }
 \arguments{
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}

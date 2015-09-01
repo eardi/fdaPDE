@@ -4,7 +4,7 @@
 \alias{smooth.FEM.PDE.SV.basis}
 \title{Compute a solution for a Spatial Spline problem with PDE penalization}
 \usage{
-smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = TRUE, CPP_CODE = TRUE)
+smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 }
 \arguments{
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
