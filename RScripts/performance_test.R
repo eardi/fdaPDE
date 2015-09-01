@@ -1,4 +1,4 @@
-library(rFEM)
+library(FEMr)
 #setwd("~/workspace/RPDE/RScripts")
 
 order = 1

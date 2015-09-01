@@ -1,7 +1,7 @@
 #ifndef __MIXEDFEREGRESSION_IMP_HPP__
 #define __MIXEDFEREGRESSION_IMP_HPP__
 
-
+#include <iostream>
 ////build system matrix in sparse format SWest non serve??
 //void MixedFE::build(SpMat & L, SpMat& opMat, SpMat& opMat2, SpMat& mass, const VectorXr& righthand, const VectorXr& forcing_term )
 //{
@@ -648,6 +648,8 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
     		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
 
     	//prova.solveSystem<SpConjGrad>();
+
+    	//std::cout<< _coeffmatrix;
     	this-> template solve<SpLU>(i);
     	if(regressionData_.computeDOF())
     		computeDegreesOfFreedom(i);

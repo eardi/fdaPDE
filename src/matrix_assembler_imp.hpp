@@ -1,6 +1,7 @@
 #ifndef MATRIX_ASSEMBLER_IMP_HPP_
 #define MATRIX_ASSEMBLER_IMP_HPP_
 
+
 //template<UInt ORDER, typename Integrator, typename P, typename A>
 //void Assembler::operKernel(EOExpr<P, A> oper,const MeshHandler<ORDER>& mesh,
 //	                     FiniteElement<Integrator, ORDER>& fe)
@@ -73,6 +74,7 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 				for(int l = 0;l < Integrator::NNODES; l++)
 				{
 					s += oper(fe,i,j,l) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[l];//(*)
+					//std::cout<<"("<<i<<","<<j<<","<<l<<"): "<<oper(fe,i,j,l)<< " " <<fe.getDet() << " " << fe.getAreaReference()<< " " << Integrator::WEIGHTS[l]<<"\n";
 				}
 			  triplets.push_back(coeff(identifiers[i],identifiers[j],s));
 			}
