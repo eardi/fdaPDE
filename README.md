@@ -4,6 +4,11 @@ FEMr implements a class of spatial regression models in between statistics and n
 
 ## Installation
 
-For installation from Github repository use the followinf function of the 
-R package 'devtools':
-'install_github("eardi/FEMr")'
+To install the package from the Github repository, use the command `install_github` from the 
+R package `devtools` as follows:
+`install_github("eardi/FEMr")`
+
+## Examples
+
+Some example can be found visualizing the help of the three main smoothing functions i.e.
+`?smooth.FEM.basis` or `?smooth.FEM.PDE.basis` or `?smooth.FEM.PDE.SV.basis`
