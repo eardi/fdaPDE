@@ -1,5 +1,9 @@
-library(RPDE)
-setwd("~/workspace/RPDE/RScripts")
+## This script tests 
+## - isotropic smoothing 
+## - 1st order FEs 
+## - R code
+
+library(FEMr)
 
 order = 1
 mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
@@ -7,10 +11,8 @@ mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)
 
 basisobj = create.FEM.basis(mesh, order)
 
-#  smooth the data without covariates
 lambda = c(1,2,3)
 
-## data diviso in due
 locations = rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0))
 observations = c(1,2,1,2,1)
 data = c(1,2,1,2,1)
@@ -25,4 +27,4 @@ output_R = smooth.FEM.basis(
                           GCV = TRUE,
                           CPP_CODE = FALSE)
 
-print(output_R$felsplobj$coefmat)
+print(output_R$fit.FEM$coefmat)

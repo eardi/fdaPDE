@@ -22,7 +22,7 @@
 #'          \item{\code{sigma}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each lambda.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each lambda.}
 #' @description Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013).
-#' @usage smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = TRUE, CPP_CODE = TRUE)
+#' @usage smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 #' @references Sangalli, Ramsay, Ramsay (2013)
 #' @examples library(FEMr)
 #' data(MeuseData)
@@ -34,7 +34,7 @@
 #' basisobj = create.FEM.basis(mesh, order)
 #' lambda = 10^3.5
 #' ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda)
-#' plot(ZincMeuse$felsplobj)
+#' plot(ZincMeuse$fit.FEM)
 
 smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
@@ -105,7 +105,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each lambda.}
 #' @description Compute a solution for a for a Spatial Regression with PDE Penalization model.
 #' @usage smooth.FEM.PDE.basis(locations = NULL, observations, basisobj, 
-#'        lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = TRUE, 
+#'        lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
 #'        CPP_CODE = TRUE)
 #' @examples 
 #' library(FEMr)
@@ -178,7 +178,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda,
 #'          \item{\code{sigma}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each lambda.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each lambda.}
 #' @description Compute a solution for a for a Spatial Regression with PDE Penalization model. The PDE's parameter are space-variant functions.
-#' @usage smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = TRUE, CPP_CODE = TRUE)
+#' @usage smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 #' @examples 
 #' library(FEMr)
 #' data(mesh.2D.rectangular)

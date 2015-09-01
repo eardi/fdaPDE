@@ -1,28 +1,38 @@
-library(RPDE)
-setwd("~/workspace/RPDE/RScripts")
+## This script tests 
+## - PDE smoothing with SV coefficients 
+## - 1st order FEs
+## - C++ code
 
-order = 1
-mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
-                     segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order = order)
+library(FEMr)
 
-basisobj = create.FEM.basis(mesh, order)
+data(mesh.2D.rectangular)
+observations = sin(0.2*pi*mesh$nodes[,1]) + rnorm(n = nrow(mesh$nodes), sd = 0.1)
 
-#  smooth the data without covariates
-lambda = c(1,2,3)
+basisobj = create.FEM.basis(mesh, 2)
 
-## data diviso in due
-locations = rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0))
-observations = c(1,2,1,2,1)
-data = c(1,2,1,2,1)
-covariates = cbind(c(1, 2, 3, 4, 5))
-BC = NULL
+lambda = c(10^-2)
 
-K_func<-function(points) {rep(c(1,0,0,1), nrow(points))}
-beta_func<-function(points){rep(c(0,0), nrow(points))}
-c_func<-function(points){rep(c(0), nrow(points))}
-u_func<-function(points){rep(c(0), nrow(points))}
-PDE_parameters = list(K = K_func, beta = beta_func, c = c_func, u = u_func)
-output_CPP_PDE_SV = smooth.FEM.PDE.SV.basis(locations  = as.matrix(locations), observations = data, 
-                                        basisobj = basisobj, lambda = lambda, PDE_parameters, covariates = covariates)
+K_func<-function(points)
+{
+  mat<-c(0.01,0,0,1)
+  as.vector(0.5*mat %*% t(points[,1]^2))
+}
 
-print(output_CPP_PDE_SV$felsplobj$coefmat)
+b_func<-function(points)
+{
+  rep(c(0,0), nrow(points))
+}
+
+c_func<-function(points)
+{
+  rep(c(0), nrow(points))
+}
+u_func<-function(points)
+{
+  rep(c(0), nrow(points))
+}
+# Space-varying smoothing
+PDE_parameters = list(K = K_func, b = b_func, c = c_func, u = u_func)
+FEM_CPP_PDE_SV = smooth.FEM.PDE.SV.basis(observations = observations, 
+                                      basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters)
+print(FEM_CPP_PDE_SV$fit.FEM$coefmat)

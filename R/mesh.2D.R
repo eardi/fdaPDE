@@ -231,11 +231,11 @@ refine.MESH.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
   return(out)
 }
 
-plot.TRIMESH2D<-function(mesh, ...)
+plot.TRIMESH2D<-function(x, ...)
 {
-  plot(mesh$nodes, xlab="", ylab="", xaxt="n", yaxt="n", bty="n", ...)
-  segments(mesh$nodes[mesh$edges[,1],1], mesh$nodes[mesh$edges[,1],2],
-           mesh$nodes[mesh$edges[,2],1], mesh$nodes[mesh$edges[,2],2], ...)
-  segments(mesh$nodes[mesh$segments[,1],1], mesh$nodes[mesh$segments[,1],2],
-           mesh$nodes[mesh$segments[,2],1], mesh$nodes[mesh$segments[,2],2], col="red", ...)
+  plot(x$nodes, xlab="", ylab="", xaxt="n", yaxt="n", bty="n", ...)
+  segments(x$nodes[x$edges[,1],1], x$nodes[x$edges[,1],2],
+           x$nodes[x$edges[,2],1], x$nodes[x$edges[,2],2], ...)
+  segments(x$nodes[x$segments[,1],1], x$nodes[x$segments[,1],2],
+           x$nodes[x$segments[,2],1], x$nodes[x$segments[,2],2], col="red", ...)
 }

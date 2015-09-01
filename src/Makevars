@@ -1,1 +1,1 @@
-PKG_CPPFLAGS = -std=c++0x -lstdc++
+PKG_CPPFLAGS = -std=CXX11 -lstdc++

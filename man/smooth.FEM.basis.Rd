@@ -52,7 +52,7 @@ data = log(MeuseData[,7])
 basisobj = create.FEM.basis(mesh, order)
 lambda = 10^3.5
 ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda)
-plot(ZincMeuse$felsplobj)
+plot(ZincMeuse$fit.FEM)
 }
 \references{
 Sangalli, Ramsay, Ramsay (2013)

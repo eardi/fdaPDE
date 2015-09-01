@@ -953,13 +953,13 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   }
 }
 
-plot.FEM = function(FEM, num_refinements = NULL, ...)  
+plot.FEM = function(x, num_refinements = NULL, ...)  
 {
-  if(FEM$basisobj$order == 1)
+  if(x$basisobj$order == 1)
   {
-    R_plot.ORD1.FEM(FEM, ...)
+    R_plot.ORD1.FEM(x, ...)
   }else{
-    R_plot.ORDN.FEM(FEM, num_refinements, ...)
+    R_plot.ORDN.FEM(x, num_refinements, ...)
   }
 }
 
