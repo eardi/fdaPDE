@@ -1,2 +1,4 @@
-^.so
-^.o
+.git
+Rscripts
+Release
+Debug

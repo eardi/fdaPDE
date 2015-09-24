@@ -1,15 +1,15 @@
 
 #define R_VERSION_
 
-#include "FEMr.hpp"
+#include "FEMr.h"
 //#include "IO_handler.hpp"
-#include "regressionData.hpp"
-#include "mesh_objects.hpp"
-#include "mesh.hpp"
-#include "finite_element.hpp"
-#include "matrix_assembler.hpp"
+#include "regressionData.h"
+#include "mesh_objects.h"
+#include "mesh.h"
+#include "finite_element.h"
+#include "matrix_assembler.h"
 
-#include "mixedFERegression.hpp"
+#include "mixedFERegression.h"
 
 extern "C" {
 //! This function manages the various options for Spatial Regression, Sangalli et al version

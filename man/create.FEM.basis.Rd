@@ -2,41 +2,47 @@
 % Please edit documentation in R/FEMr.objects.R
 \name{create.FEM.basis}
 \alias{create.FEM.basis}
-\title{Creates a Finite Element Method basis}
+\title{Define a Piecewise Polinomial basis}
 \usage{
 create.FEM.basis(mesh, order, CPP_CODE = FALSE)
 }
 \arguments{
-\item{mesh}{A \code{TRIMESH2D} object}
+\item{mesh}{An object of class \code{TRIMESH2D} representing a triangulation. See \link{create.MESH.2D}.}
 
-\item{order}{Order of elements, which may be either 1 or 2.
-The order of the element must be less or equal respect to the order of the mesh.}
+\item{order}{Order of the polynomial restricted to each element of the triangulaton,
+which may be either 1 or 2. When ORDER = 1 the basis system is piecewise linear. When
+ORDER = 2 the basis system is piecewise quadratic. This parameter must be less or equal respect to the order
+specified in the mesh creation through \link{create.MESH.2D}.}
 
 \item{CPP_CODE}{if \code{TRUE} avoids the computation of some additional elements,
-not necessary if the functions working with the FEM basis are called with the flag
+not necessary if the functions depending on the created basis are called with the same flag
 \code{CPP_CODE=TRUE}}
 }
 \value{
-A object of class \code{FEM}. This contains the mesh along with the following variables:
-        \item{\code{order}}{Order of elements.}
-        \item{\code{nbasis}}{The number of basis.}
-        \item{\code{J}}{The area of each triangle of the basis.}
-        \item{\code{transf}}{A matrix such that J[i,,] is the 2-by-2 tranformation matrix such that transforms the nodes of the reference triangle in the node of the i-th triangle.}
-        \item{\code{metric}}{A matrix such that metric[i,,] is the 2-by-2 tranformation matrix equal to \code{J[i,,]^{-1}*J[i,,]^{-T}}}
+An object of class \code{FEM}. This contains the \code{mesh} along with the following variables:
+\item{\code{order}}{Order of elements.}
+\item{\code{nbasis}}{The number of basis.}
+\item{\code{J}}{The area of each triangle of the basis.}
+\item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
+\item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
+of the integrals over the elements of the mesh. This is necessary for the computation of the discretized problem.}
 }
 \description{
-Sets up a finite element basis for the analysis of spatial data. It requires a TRIMESH2D object as input.
-             The finite elements used for functional data analysis are first or second order Lagrangian elements. These are triangles covering a region and the basis system is piecewise polinomials (linear or quadratic). There is a basis  function associated with each node in the system.
-             When ORDER = 1 the basis system is piecewise linear and the nodes are the vertices of the triangles.
-             When ORDER = 2 the basis system is piecewise quadratic and the nodes are points that are etiher the vertices of the triangles or midpoints of edges of triangles.
+Sets up a Finite Element basis for the analysis of functional bivariate data. This
+defines the discetized functional space where the infinite-dimensional formulations are solved.
+The basis' function are globally continuos, and linear or quadratic polynomial if restricted
+to each element of the triangulation. See e.g. Sangalli, Ramsay, Ramsay (2013).
 }
 \examples{
 ## Creates an object TRIMESH2D with a concavity and second order nodes
-         mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
-         segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
-         ## Plot it
-         plot(mesh)
-         # Creates the basis object
-         basisobj = create.FEM.basis(mesh, order=1)
+mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
+segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
+## Plot it
+plot(mesh)
+## Creates the basis object
+basisobj = create.FEM.basis(mesh, order = 1)
+}
+\references{
+Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681-703.
 }
 

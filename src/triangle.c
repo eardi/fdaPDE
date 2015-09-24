@@ -329,8 +329,8 @@
 #define SAMPLERATE 10
 
 /* A number that speaks for itself, every kissable digit.                    */
-
-#define PI 3.141592653589793238462643383279502884197169399375105820974944592308
+//MODIFY TO SOURCE: PI definition moved to line 349
+//#define PI 3.141592653589793238462643383279502884197169399375105820974944592308
 
 /* Another fave.                                                             */
 
@@ -344,7 +344,8 @@
 #include <Rdefines.h>
 #include <Rinternals.h>
 #include <stdint.h>
-//#undef PI
+#undef PI
+
 #define PI 3.141592653589793238462643383279502884197169399375105820974944592308
 #define printf Rprintf
 #define TRILIBRARY

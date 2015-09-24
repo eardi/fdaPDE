@@ -6,9 +6,9 @@
 library(FEMr)
 
 data(mesh.2D.rectangular)
-observations = sin(0.2*pi*mesh$nodes[,1]) + rnorm(n = nrow(mesh$nodes), sd = 0.1)
+observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)
 
-basisobj = create.FEM.basis(mesh, 2)
+basisobj = create.FEM.basis(mesh.2D.rectangular, 2)
 
 lambda = c(10^-2)
 

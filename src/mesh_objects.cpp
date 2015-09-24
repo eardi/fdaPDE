@@ -5,7 +5,7 @@
  *      Author: eardi
  */
 
-#include "mesh_objects.hpp"
+#include "mesh_objects.h"
 
 
 const UInt Identifier::NVAL=std::numeric_limits<UInt>::max();

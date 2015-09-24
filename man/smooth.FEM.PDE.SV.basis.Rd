@@ -4,7 +4,9 @@
 \alias{smooth.FEM.PDE.SV.basis}
 \title{Compute a solution for a Spatial Spline problem with PDE penalization}
 \usage{
-smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
+smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj,
+ lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE,
+ CPP_CODE = TRUE)
 }
 \arguments{
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
@@ -14,7 +16,7 @@ The locations of the observations can be specified with the \code{locations}
 argument, otherwise the locations are intented to be the corresponding nodes of the mesh.
 \code{NA} values are admissible to indicate the missing value on the corresponding node.}
 
-\item{basisobj}{An an object of type FEM; See \code{\link{create.FEM.basis}}.}
+\item{basisobj}{An object of class FEM; See \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar smoothing parameter.}
 
@@ -34,11 +36,12 @@ functions working with the FEM basis are called with the flag \code{CPP_CODE=TRU
 }
 \value{
 A list with the following variables:
-         \item{\code{fit.FEM}}{A FEM object of the FEM type defined by the coefficients vector resulting from smoothing.}
-         \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM type for the value of the Laplace operator}
-         \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each lambda.}
-         \item{\code{sigma}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each lambda.}
-         \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each lambda.}
+         \item{\code{fit.FEM}}{A FEM object of the FEM class defined by the coefficients vector resulting from smoothing.}
+         \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM class for the value of the Laplace operator}
+         \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
+         \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
+         \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
+         \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
 }
 \description{
 Compute a solution for a for a Spatial Regression with PDE Penalization model. The PDE's parameter are space-variant functions.
@@ -46,8 +49,9 @@ Compute a solution for a for a Spatial Regression with PDE Penalization model. T
 \examples{
 library(FEMr)
 data(mesh.2D.rectangular)
-observations = sin(0.2*pi*mesh$nodes[,1]) + rnorm(n = nrow(mesh$nodes), sd = 0.1)
-basisobj = create.FEM.basis(mesh, 2)
+observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) +
+rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)
+basisobj = create.FEM.basis(mesh.2D.rectangular, 2)
 # Smoothing coefficient
 lambda = c(10^-2)
 K_func<-function(points)
@@ -74,5 +78,9 @@ PDE_parameters = list(K = K_func, b = b_func, c = c_func, u = u_func)
 FEM_CPP_PDE = smooth.FEM.PDE.SV.basis(observations = observations,
              basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters)
 plot(FEM_CPP_PDE$fit.FEM)
+}
+\references{
+Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37-41.
+ Azzimonti, L. et al., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335. Available at: http://epubs.siam.org/doi/abs/10.1137/130925426.
 }
 

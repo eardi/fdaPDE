@@ -1,109 +1,63 @@
-R_elementProperties=function(mesh, order)
+#' Compute some properties for each triangular element of the mesh
+#' 
+#' @param mesh A mesh object of the class TRIMESH2D. This can be created with  \code{\link{create.MESH.2D}}.
+#' @return A list with the following variables:
+#' \item{\code{J}}{The area of each triangle of the basis.} 
+#' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
+#' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
+#' of the integrals over the elements of the mesh.} 
+#' @description For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
+#' These are used for the computation of the integrals necessary to compute the mass and stiffness matrix.
+#' This version of the function is implemented using only R code. It is called by \code{create.FEM.basis} when \code{CPP_CODE} is \code{FALSE},
+#' in fact this quantities are used only when the folloing computations are executed with the flag \code{CPP_CODE = TRUE}.
+#' @usage R_elementProperties(mesh)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+
+R_elementProperties=function(mesh)
 {
-  #MAKENODES produces:
-  #  a matrix NODES containing coordinates for all of the nodes to be used, 
-  #  a matrix NODEINDEX defining which nodes correspond to each element.  
-  #  If NORDER is 2, the midpoint of each edge is computed and added to 
-  #  POINTS to obtain matrix NODES. 
-  #  The row index of that midpoint is then added to the rows of TRIANGLES 
-  #  containing that edge to define NODEINDEX.
-  #  If NORDER is 1, nodes corresponds to vertices and NODEINDEX is 
-  #  identical to TRIANGLES.
-  #
-  #  nvert:  number of vertices
-  #  nele:   number of triangles or elements
-  #
-  #Input: POINTS is an nvert by 2 matrix containing the x and y
-  #   coordinates of each of the nvert points in the right-hand rule mesh.
-  #   POINTS = P' where P is the points matrix for pde
-  #   The call can use P directly (see below).
-  #   TRIANGLES is T(1:3,:)' where T is the triangle index matrix from pde.
-  #   Vertices must be numbered in the counterclockwise direction.
-  #   NORDER is the order of elements, and may be either 1 or 2 (default)
-  #
-  #Output: 
-  #     NODES:  a numnodes*2 matrix whose i'th row contains
-  #       the coordinates of the i'th nodal variable.
-  #       Nodes for the second order element consist of vertices and 
-  #       midpoints of edges, that is, 6 per triangle.
-  #       The first NVER rows of NODES is POINTS, and the remainder are
-  #       the edge midpoints.
-  #       Nodes for the first order element consist of only vertices.
-  #
-  #     NODEINDEX:  for NORDER == 2, an nele*6 matrix whose i'th row
-  #       contains the row numbers (in NODES) of the
-  #       nodal variables defining the i'th finite 
-  #       element.  If the i'th row of FMESH is [V1 V2 V3]
-  #       then the i'th row of nodeindex is
-  #       [V1 V(12) V2 V(23) V3 V(31)], where Vi is the
-  #       row number of the i'th point and V(ij) is the 
-  #       row number of the midpoint of the edge defined
-  #       by the i'th and j'th points.
-  #       If NORDER == 1, NODEINDEX is TRIANGLES.
-  #
-  #  Last modified 4 February 2011 by Laura Sangalli.
-  
-  #  Eardi deleted the 'add second order nodes feature as the mesh generation can generate them' 
-  #  adapted code to RTriangle nodes ordering (see Triangle on the web)
-  #
-  #  The first rows of nodes are the vertices
-  
-  
   nele = dim(mesh$triangles)[[1]]
   
   J   = matrix(0,nele,1)      #  vector of jacobian values
   metric = array(0,c(nele,2,2))  #  3-d array of metric matrices
   transf = array(0,c(nele,2,2))
   
-  if (order ==1 || order == 2)
-  {  
-    for (i in 1:nele)
-    {
-      diff1x = mesh$nodes[mesh$triangles[i,2],1] - mesh$nodes[mesh$triangles[i,1],1]
-      diff1y = mesh$nodes[mesh$triangles[i,2],2] - mesh$nodes[mesh$triangles[i,1],2]
-      diff2x = mesh$nodes[mesh$triangles[i,3],1] - mesh$nodes[mesh$triangles[i,1],1]
-      diff2y = mesh$nodes[mesh$triangles[i,3],2] - mesh$nodes[mesh$triangles[i,1],2]
-      
-      transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
-      #  Jacobian or area of triangle
-      J[i] = diff1x*diff2y - diff2x*diff1y
-      
-      #  Compute controvariant transformation matrix OSS: This is J^(-T)
-      Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/J[i]
-      
-      #  Compute metric matrix
-      metric[i,,] = t(Ael)%*%Ael
-    } 
-  }else{
-    stop("ORDER not 1 or 2")
-  }
+  for (i in 1:nele)
+  {
+    diff1x = mesh$nodes[mesh$triangles[i,2],1] - mesh$nodes[mesh$triangles[i,1],1]
+    diff1y = mesh$nodes[mesh$triangles[i,2],2] - mesh$nodes[mesh$triangles[i,1],2]
+    diff2x = mesh$nodes[mesh$triangles[i,3],1] - mesh$nodes[mesh$triangles[i,1],1]
+    diff2y = mesh$nodes[mesh$triangles[i,3],2] - mesh$nodes[mesh$triangles[i,1],2]
+    
+    transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
+    #  Jacobian or area of triangle
+    J[i] = diff1x*diff2y - diff2x*diff1y
+    
+    #  Compute controvariant transformation matrix OSS: This is (tranf)^(-T)
+    Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/J[i]
+    
+    #  Compute metric matrix
+    metric[i,,] = t(Ael)%*%Ael
+  } 
   
   FEStruct <- list(J=J, metric=metric, transf=transf)
   return(FEStruct)
 }
 
+#' Compute the mass matrix containing integrals of products of basis' functions
+#' 
+#' @param basisobj An object of class FEM; See \code{\link{create.FEM.basis}}.
+#' @return A square matrix with the integrals of all the basis' functions pairwise products.
+#' The dimension of the matrix is equal to the number of the nodes of the mesh.
+#' @description The element (i,j) of the matrix contains the intergal over the domain of the product between the ith and kth element 
+#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
+#' This version of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
+#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
+#' The constructed matrix coincides with the R_0 matrix in Sangalli, Ramsay, Ramsay (2013).
+#' @usage R_mass(basisobj)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+
 R_mass=function(basisobj)
 {
-  #MASS produces the mass matrix containing integrals of products of
-  #  nodal functions.  
-  #
-  #Input: NODESTRUCT is a struct object produced by function makenodes.
-  #    It contains:
-  #        ORDER     ... The order of the element (1 or 2)
-  #        NODES     ... Coordinates of node points
-  #        NODEINDEX ... indices of node points for each element
-  #        J      ... Jacobian of the affine transformation of each
-  #                      element to the master element
-  #
-  #Output: K0: the NNOD by NNOD matrix of sums of products of nodal basis
-  #        functions.
-  #        For each element i, the integral of the product 
-  #        of the j'th and k'th shape functions over the i'th element is
-  #        computed.  Then that value is the 
-  #        (NODEINDEX(i,j),NODEINDEX(i,k))'th entry of the i'th elemental 
-  #        mass matrix.
-  
-  
   nodes = basisobj$mesh$nodes
   triangles = basisobj$mesh$triangles
   J = basisobj$J
@@ -149,39 +103,21 @@ R_mass=function(basisobj)
   K0
 }
 
+#' Compute the stiffness matrix containing integrals of products of gradients of the basis' functions
+#' 
+#' @param basisobj An an object of class FEM; See \code{\link{create.FEM.basis}}.
+#' @return A square matrix with the integrals of all the basis functions' gradients pairwise dot products.
+#' The dimension of the matrix is equal to the number of the nodes of the mesh.
+#' @description The element (i,j) of the matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
+#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
+#' This version of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
+#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
+#' The constructed matrix coincides with the R_1 matrix in Sangalli, Ramsay, Ramsay (2013).
+#' @usage R_stiff(basisobj)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+
 R_stiff= function(basisobj)
 {
-  #STIFF1 produces the nnod*nnod stiffness matrix K1
-  #defined (K1)jk = int(dpsik/da*dpsij/da + dpsik/db*dpsij/db).
-  #
-  #Input: NODESTRUCT is a struct object produced by function makenodes.
-  #    It contains:
-  #        ORDER     ... The order of the element (1 or 2)
-  #        NODES     ... Coordinates of node points
-  #        NODEINDEX ... indices of node points for each element
-  #        J      ... Jacobian of the affine transformation of each
-  #                      element to the master element
-  #        METRIC    ... The crossproduct of the inverse of the linear
-  #                      part of the transformation
-  #
-  #Output: K1 is an nnod*nnod matrix out which is
-  #        the sum of the nele element stiffness matrices
-  #        and the penalty stiffness matrix.
-  #        These i'th element matrix has (ij)'th element defined
-  #        as follows:  
-  #        Let psita and psitb be the partial derivatives of the
-  #        t'th shape function with respect to a and b (1<=t<=6).
-  #        Then the integral of the sum of products
-  #        (psija*psika+psijb+psikb) over the i'th element is
-  #        computed.  Then that value is assigned to the
-  #        (nodeindex(i,j),nodeindex(i,k))'th entry of the i'th elemental 
-  #        stiffness matrix and the other elements are given the value zero.
-  #
-  #
-  #  Last modified 4 February 2011 by Laura Sangalli.
-  
-  #  retrieve arrays from nodeStruct
-  
   nodes = basisobj$mesh$nodes
   triangles = basisobj$mesh$triangles
   
@@ -252,36 +188,48 @@ R_stiff= function(basisobj)
   K1
 }
 
+#' Compute a solution for a Spatial Spline problem
+#' 
+#' @param observations A vector specifying the observed values on the domain. 
+#' The locations of the observations can be specified with the \code{locations} 
+#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
+#' \code{NA} values are admissible to indicate the missing value on the corresponding node.
+#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
+#' @param basisobj An an object of type FEM; See \code{\link{create.FEM.basis}}.
+#' @param lambda A scalar smoothing parameter.
+#' @param covariates A design matrix where each row represents the covariates associated to each row.
+#' @param GCV If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
+#'        the Generalized Cross Validation parameter, for value of \code{lambda}.
+#' @return A list with the following variables:
+#'          \item{\code{fit.FEM}}{A FEM object of the FEM type defined by the coefficients vector resulting from smoothing.}
+#'          \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM type for the value of the Laplace operator}
+#'          \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
+#'          \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
+#'          \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
+#'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
+#' @description Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013). This version
+#' of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
+#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
+#' It can also be excecuted in debug mode.
+#' @usage R_smooth.FEM.basis(locations, observations, basisobj, lambda, covariates, GCV)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+#' @examples library(FEMr)
+#' data(MeuseData)
+#' data(MeuseBorder)
+#' order=1
+#' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
+#' plot(mesh)
+#' data = log(MeuseData[,7])
+#' basisobj = create.FEM.basis(mesh, order)
+#' lambda = 10^3.5
+#' ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda, CPP_CODE = FALSE)
+#' plot(ZincMeuse$fit.FEM)
+
 R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covariates = NULL, GCV)
 {
-  # SMOOTH.FEM.FD Compute a solution for a Spatial Spline problem 
-  #
-  #     Arguments:
-  # fit.FEM a FELspline object.
-  # LAMBDA    a scalar smoothing parameter.
-  # DATA      a n-by-2 set of noisy observations of the surface values.  
-  #           DATA(:,1) indexes the points at which the 
-  #           values in DATA(:,2) were observed.
-  #
-  #     Output:
-  # fit.FEM  ...  A FD object of the FEM type defined by the coefficient
-  #                 vector resulting from smoothing
-  # PDEmisfit.FEM  ...  A FD object of the FEM type for the value of the 
-  #                 Laplace operator if order == 2, or empty if order == 1
-  #
-  #
-  #  Last modified on 8 February 2011 by Laura Sangalli
   
-  
-  
-  #  check arguments
-  
-  
-  #  check data argument  
-  
+  # Stores the number of nodes of the mesh. This corresponds to the number of elements of the FE basis.
   numnodes = nrow(basisobj$mesh$nodes)
-  
-  #  Construct penalty matrix and 'b' vector for Ax=b.
   
   #  ---------------------------------------------------------------
   # construct mass matrix K0 
@@ -346,9 +294,6 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
     Lmat[loc_nodes,loc_nodes] = Q
   }
   
-  #print(Lmat[1:20,1:20])
-  
-  
   #  ---------------------------------------------------------------
   # construct vector b for system Ax=b
   #  ---------------------------------------------------------------
@@ -411,6 +356,23 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
   }
   return(bigsol)
 }
+
+#' Compute Values of Finite Element Basis Functions or their Derivatives
+#' 
+#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
+#' @param basisobj An an object of type FEM; See \link{create.FEM.basis}.
+#' @param nderivs A 2-elements vector specifying the partial derivatives order of the basis functions to evaluate. The vectors' element must
+#' be 0,1 or 2, where 0 indicates that the original basis function should be evaluated.
+#' @return 
+#' A matrix of basis function values. Each row indicates the location where the evaluation has been taken, the column indicates the 
+#' basis function evaluated 
+#' @description The evaluation on a set of locations is performed for all the basis functions representing the Finite Element finite-dimensional space. Also their derivatives up to order 2 can be evaluated. 
+#' This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
+#' This function is usuful for the construction of the discretized problem when the mesh nodes are indipendent from the observations' locations. This case is not treated
+#' in Sangalli, Ramsay, Ramsay (2013), see e.g. Azzimonti et al. (2014).
+#' @usage R_eval.FEM.basis(basisobj, locations, nderivs = matrix(0,1,2))
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+#'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
 R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
 { 
@@ -571,6 +533,19 @@ R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
   return(evalmat)
 }
 
+#' Compute Values of a FEM object on a set of arbitrary point locations
+#' 
+#' @param locations A #locations-by-2 matrix where each row specifies the x and y coordinate of the corresponding location.
+#' @param FEM the Functional Object of class FEM to be evaluated
+#' @return 
+#' A matrix of numeric evaluations of the FEM object. Each row indicates the location where the evaluation has been taken, the column indicates the 
+#' function evaluated.
+#' @description A Functional Object, represented respect to a Finite Element basis, is evaluated in a set of locations. 
+#' This version of the function is implemented using only R code. Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
+#' @usage R_eval.FEM(FEM, locations)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+#'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
+
 R_eval.FEM <- function(FEM, locations)
 { 
   if (is.vector(locations))
@@ -669,12 +644,7 @@ R_eval.FEM <- function(FEM, locations)
   return(evalmat)
 }
 
-R_tricoefCal <- function(mesh)
-{
-  UseMethod("R_tricoefCal",mesh)
-}
-
-R_tricoefCal.TRIMESH2D = function(mesh)
+R_tricoefCal = function(mesh)
 {
   #  TRICOEFCAL compute the coefficient matrix TRICOEF
   #  required to test of a point is indside a triangle
@@ -700,17 +670,7 @@ R_tricoefCal.TRIMESH2D = function(mesh)
   return(tricoef)
 }
 
-R_tricoefCal.default = function(mesh)
-{
-  print("Mesh not supported in R")
-}
-
-R_insideIndex <- function(mesh, location)
-{
-  UseMethod("R_insideIndex",mesh)
-}
-
-R_insideIndex.TRIMESH2D = function (mesh, location)
+R_insideIndex = function (mesh, location)
 {
   #  insideIndex returns the index of the triangle containing the point
   # (X,Y) if such a triangle exists, and NaN otherwise.
@@ -757,11 +717,6 @@ R_insideIndex.TRIMESH2D = function (mesh, location)
   }
   
   ind
-}
-
-R_insideIndex.default = function(mesh, location)
-{
-  print("Mesh not supported in R")
 }
 
 R_eval_local.FEM = function(FEM, locations, element_index)
@@ -953,16 +908,6 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   }
 }
 
-plot.FEM = function(x, num_refinements = NULL, ...)  
-{
-  if(x$basisobj$order == 1)
-  {
-    R_plot.ORD1.FEM(x, ...)
-  }else{
-    R_plot.ORDN.FEM(x, num_refinements, ...)
-  }
-}
-
 R_image.ORD1.FEM = function(FEM)  
 {
   # PLOT  Plots a FEM object FDOBJ over a rectangular grid defined by 
@@ -1066,12 +1011,3 @@ R_image.ORDN.FEM = function(FEM, num_refinements)
   }
 }
 
-image.FEM = function(FEM, num_refinements = NULL)  
-{
-  if(FEM$basisobj$order == 1)
-  {
-    R_image.ORD1.FEM(FEM)
-  }else{
-    R_image.ORDN.FEM(FEM, num_refinements)
-  }
-}

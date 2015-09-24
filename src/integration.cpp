@@ -5,7 +5,7 @@
  *      Author: eardi
  */
 
-#include "integration.hpp"
+#include "integration.h"
 
 //#ifndef __INTEGRATION_IMP_HPP__
 //#define __INTEGRATION_IMP_HPP__
