@@ -1,28 +1,27 @@
-#' Define a Piecewise Polinomial basis
+#' Create a FEM basis
 #' 
-#' @param mesh An object of class \code{TRIMESH2D} representing a triangulation. See \link{create.MESH.2D}.
-#' @param order Order of the polynomial restricted to each element of the triangulaton, 
-#' which may be either 1 or 2. When ORDER = 1 the basis system is piecewise linear. When 
-#' ORDER = 2 the basis system is piecewise quadratic. This parameter must be less or equal respect to the order 
-#' specified in the mesh creation through \link{create.MESH.2D}.
-#' @param CPP_CODE if \code{TRUE} avoids the computation of some additional elements, 
-#' not necessary if the functions depending on the created basis are called with the same flag 
-#' \code{CPP_CODE=TRUE}
-#' @return An object of class \code{FEM}. This contains the \code{mesh} along with the following variables:
-#' \item{\code{order}}{Order of elements.} 
-#' \item{\code{nbasis}}{The number of basis.} 
+#' @param mesh A \code{TRIMESH2D}  object representing the domain triangulation. See \link{create.MESH.2D}.
+#' @param order Either "1" or "2". Order of the Finite Element basis. When \code{order = 1} the basis system is piecewise linear. When 
+#' \code{order = 2} the basis system is piecewise quadratic. This parameter must be less or equal to the \code{order} 
+#' specified in the \code{TRIMESH2D}  object. See \link{create.MESH.2D}.
+#' @param CPP_CODE Boolean. If \code{TRUE} it avoids the computation of some quantities that are
+#' not necessary if the functions requiring the basis are called with the same flag 
+#' \code{CPP_CODE=TRUE}.
+#' @return A  \code{FEM} object. This contains the \code{mesh}, along with some additional quantities:
+#' \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
+#' \item{\code{nbasis}}{Scalar. The number of basis.} 
 #' \item{\code{J}}{The area of each triangle of the basis.} 
-#' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-#' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
-#' of the integrals over the elements of the mesh. This is necessary for the computation of the discretized problem.}
-#' @description Sets up a Finite Element basis for the analysis of functional bivariate data. This
-#' defines the discetized functional space where the infinite-dimensional formulations are solved.
-#' The basis' function are globally continuos, and linear or quadratic polynomial if restricted 
-#' to each element of the triangulation. See e.g. Sangalli, Ramsay, Ramsay (2013).
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681-703.
+#' \item{\code{transf}}{A three-dimensional array such that  \code{transf[i,,]} is the 2-by-2 matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
+#' \item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
+#' of the integrals over the elements of the mesh.}
+#' @description Sets up a Finite Element basis. It requires a triangular mesh, a \code{TRIMESH2D} object, as imput. 
+#' The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh. 
+#' Linear (\code{order = 1}) and quadratic (\code{order = 2}) 
+#' Finite Element are currently implmented.
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 #' @usage create.FEM.basis(mesh, order, CPP_CODE = FALSE)
 #' @examples 
-#' ## Creates an object TRIMESH2D with a concavity and second order nodes
+#' ## Creates a simple traingulated domain with a concavity; this is a TRIMESH2D object  
 #' mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
 #' segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
 #' ## Plot it
@@ -55,21 +54,21 @@ create.FEM.basis = function(mesh, order, CPP_CODE = FALSE)
 }
 
 
-#' Define a Functional Data through a Finite Element basis
+#' Define a function by a Finite Element basis expansion
 #' 
-#' @param coefmat A vector or a matrix containg the coefficients of a Finite Element representation. The number of rows (or the vector's length) corresponds to the number of functions defining the basis, i.e.
-#' the number of elements in the mesh. The number of columns corresponds to the number of functional replicates. 
-#' @param basisobj An object defining the Finite Element basis. It can be created with \link{create.FEM.basis}.
-#' @description This is the constructur function for objects of the class FEM. Each function of FEMr that needs to create a 
-#' new Functional Object defined respect to the Finite Element (FE) basis, must call this function. Usually users do not need to call this function directly.
+#' @param coefmat A vector or a matrix containg the coefficients for the Finite Element basis expansion. The number of rows (or the vector's length) corresponds to the number of basis in code{basisobj}. 
+#' The number of columns corresponds to the number of functional replicates. 
+#' @param basisobj An object defining the Finite Element basis, created by \link{create.FEM.basis}.
+#' @description This function defines a FEM object. It is not called directly by users.
 #' @usage FEM(coefmat,basisobj)
-#' @return An object of the class \code{FEM}. This contains a list with components \code{coefmat} and \code{basis}.
+#' @return An object of the class \code{FEM}. This contains a list with components \code{coefmat} and \code{basisobj}.
 #' @examples 
-#' library(FEMr)
+#' ## Upload a triangular mesh and plot it
 #' data("mesh.2D.rectangular")
 #' plot(mesh.2D.rectangular)
-#' ## FEM object with 1st order Finite Element basis
+#' ## Create a linear Finite Element basis
 #' basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
+#' ## Define a sinusoidal function as expansion of these basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, basisobj)
 #' plot(FEM_object)
@@ -86,28 +85,25 @@ FEM<-function(coefmat,basisobj)
   return(fclass)
 }
 
-#' Plot a Functional Object of the class FEM
+#' Plot a FEM object
 #' 
-#' @param x A functional object of the class FEM.
+#' @param x A FEM object.
 #' @param num_refinements An natural number specifying how many bisections should by applied to each triangular element for
-#' plotting purpose. This functionality is useful where a discretization with 2nd order Finite Element has been applied.
-#' @param ... Arguments representing the graphical parameters to be passed to methods, see \link[rgl]{plot3d}.
-#' @description Functional objects created with the function \code{FEM} or returned by \code{smooth.FEM.basis}, \code{smooth.FEM.PDE.basis} or
-#' \code{smooth.FEM.PDE.SV.basis} can be plotted in 3D.
+#' plotting purposes. This functionality is useful where a discretization with 2nd order Finite Element is applied.
+#' @param ... Arguments representing graphical options to be passed to \link[rgl]{plot3d}.
+#' @description Three-dimensional plot of a FEM object, generated by \code{FEM} or returned by \code{smooth.FEM.basis}, \code{smooth.FEM.PDE.basis} or
+#' \code{smooth.FEM.PDE.SV.basis}.
 #' @usage \method{plot}{FEM}(x, num_refinements, ...)  
 #' @examples 
-#' data(MeuseData)
-#' data(MeuseBorder)
-#' order=1
-#' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
-#' data = log(MeuseData[,7])
-#' basisobj = create.FEM.basis(mesh, order)
-#' lambda = 10^3.5
-#' ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda)
-#' ## plot of the FEM object representing the fitted function
-#' plot(ZincMeuse$fit.FEM)
-#' ## plot the FEM object representing the misfit
-#' plot(ZincMeuse$PDEmisfit.FEM)
+#' ## Upload a triangular mesh and plot it
+#' data("mesh.2D.rectangular")
+#' plot(mesh.2D.rectangular)
+#' ## Create a linear Finite Element basis
+#' basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
+#' ## Define a sinusoidal function as expansion of these basis and plot it
+#' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
+#' FEM_object<- FEM(coeff, basisobj)
+#' plot(FEM_object)
 
 plot.FEM = function(x, num_refinements = NULL, ...)  
 {
