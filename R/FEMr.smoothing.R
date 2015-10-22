@@ -1,20 +1,20 @@
-#' Compute a solution for a Spatial Spline problem
+#' Spatial regression with differential regularization (stationary and isotropic case)
 #' 
 #' @param observations A vector specifying the observed values on the domain. 
 #' The locations of the observations can be specified with the \code{locations} 
-#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
-#' \code{NA} values are admissible to indicate the missing value on the corresponding node.
-#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param basisobj An object of class FEM; See \code{\link{create.FEM.basis}}.
+#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
+#' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
+#' @param locations A 2 column matrix where each row specifies the spatial coordinates of the corresponding observation. ***
+#' @param basisobj An object of class FEM, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar smoothing parameter.
-#' @param covariates A design matrix where each row represents the covariates associated to each row.
+#' @param covariates A design matrix where each row represents the covariates associated with each oserved data value.
 #' @param BC A list with two vectors: 
-#'  \code{Indices}, a vector with the indices for the border points to apply a Dirichlet Border Condition;
-#'  \code{Values} a vector with the values that the the nodes specified in \code{Indices} must assume.
-#' @param GCV If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
-#'        the Generalized Cross Validation parameter, for value of \code{lambda}.
-#' @param CPP_CODE if \code{TRUE} avoids the computation of some additional elements, not necessary if the 
-#'        functions working with the FEM basis are called with the flag \code{CPP_CODE=TRUE}
+#'  \code{Indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
+#'  \code{Values}, a vector with the values the spatial field must take at the nodes indicated in \code{Indices}.
+#' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
+#'        the Generalized Cross Validation criterion, for values of the smoothing parameter specified in \code{lambda}.
+#' @param CPP_CODE Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the 
+#'        functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}
 #' @return A list with the following variables:
 #' \item{\code{fit.FEM}}{A FEM object of the FEM class defined by the coefficients vector resulting from smoothing.}
 #' \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM class for the value of the Laplace operator}
@@ -22,13 +22,15 @@
 #' \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
 #' \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
 #' \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
-#' @description Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013).
+#' @description Implement a spatial regression model with differential regularization. The regularizing terms involve the laplacian of the spatial field. This implies a stationary and isotropic smoothing effect. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 #' @usage smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, 
 #'        covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681-703.
-#' @examples library(FEMr)
+#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
+#' @examples
+#' Upload Meuse data and a domain boundary for these data
 #' data(MeuseData)
 #' data(MeuseBorder)
+#' Create a triangular mesh
 #' order=1
 #' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 #' plot(mesh)
