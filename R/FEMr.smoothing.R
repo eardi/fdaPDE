@@ -1,15 +1,15 @@
-#' Spatial regression with differential regularization (stationary and isotropic case)
+#' Compute a spatial regression model with differential regularization (stationary and isotropic case)
 #' 
-#' @param observations A vector specifying the observed values on the domain. 
+#' @param observations A #observations vector with the observed values on the domain. 
 #' The locations of the observations can be specified with the \code{locations} 
 #' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
-#' @param locations A 2 column matrix where each row specifies the spatial coordinates of the corresponding observation. ***
-#' @param basisobj An object of class FEM, as created by \code{\link{create.FEM.basis}}.
-#' @param lambda A scalar smoothing parameter.
-#' @param covariates A design matrix where each row represents the covariates associated with each oserved data value.
+#' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
+#' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param lambda A scalar or vector of smoothing parameters.
+#' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
-#'  \code{Indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
+#'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
 #'  \code{Values}, a vector with the values the spatial field must take at the nodes indicated in \code{Indices}.
 #' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
 #'        the Generalized Cross Validation criterion, for values of the smoothing parameter specified in \code{lambda}.
