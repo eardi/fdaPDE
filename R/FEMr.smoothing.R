@@ -92,7 +92,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
 #' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
-#' @param PDE_parameters A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, the 2-by-2 matrix of the diffusion tensor; \code{beta}, a 2entries vector of length 2 with the coefficients of the advection coefficients and \code{c} a numeric indicating the reaction coefficient.
+#' @param PDE_parameters A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, the 2-by-2 matrix of the diffusion tensor; \code{beta}, a vector of length 2 with the coefficients of the advection coefficients and \code{c} a numeric indicating the reaction coefficient.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
