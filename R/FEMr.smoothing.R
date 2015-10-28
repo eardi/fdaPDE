@@ -10,16 +10,16 @@
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-#'  \code{Values}, a vector with the values the spatial field must take at the nodes indicated in \code{Indices}.
+#'  \code{BC_values}, a vector with the values the spatial field must take at the nodes indicated in \code{BC_Indices}.
 #' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
-#'        the Generalized Cross Validation criterion, for values of the smoothing parameter specified in \code{lambda}.
+#'        the Generalized Cross Validation criterion, corresponding the values of the smoothing parameter specified in \code{lambda}.
 #' @param CPP_CODE Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the 
 #'        functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}
 #' @return A list with the following variables:
-#' \item{\code{fit.FEM}}{A FEM object of the FEM class defined by the coefficients vector resulting from smoothing.}
-#' \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM class for the value of the Laplace operator}
-#' \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
-#' \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
+#' \item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
+#' \item{\code{PDEmisfit.FEM}}{A FEM object that represents the Laplacian of the estimated spatial field.}
+#' \item{\code{beta}}{If covariates is not \code{NULL}, a #covariates vector with the regression coefficients associated with each covariate.}
+#' \item{\code{edf}}{If GCV is \code{TRUE}, a *******vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
 #' \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
 #' \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
 #' @description Implement a spatial regression model with differential regularization. The regularizing terms involve the laplacian of the spatial field. This implies a stationary and isotropic smoothing effect. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
