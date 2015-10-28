@@ -1,4 +1,4 @@
-#' Compute a spatial regression model with differential regularization (stationary and isotropic case)
+#' Compute a spatial regression model with differential regularization: stationary and isotropic case
 #' 
 #' @param observations A #observations vector with the observed values on the domain. 
 #' The locations of the observations can be specified with the \code{locations} 
@@ -19,18 +19,18 @@
 #' \item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
 #' \item{\code{PDEmisfit.FEM}}{A FEM object that represents the Laplacian of the estimated spatial field.}
 #' \item{\code{beta}}{If covariates is not \code{NULL}, a #covariates vector with the regression coefficients associated with each covariate.}
-#' \item{\code{edf}}{If GCV is \code{TRUE}, a *******vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
-#' \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
-#' \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
-#' @description Implement a spatial regression model with differential regularization. The regularizing terms involve the laplacian of the spatial field. This implies a stationary and isotropic smoothing effect. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
+#' \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
+#' \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
+#' \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each for each value of the smoothing parameter specified in \code{lambda}.}
+#' @description This function implements a spatial regression model with differential regularization; isotropic and stationary case. In particular, the regularizing term involves the Laplacian of the spatial field. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 #' @usage smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, 
 #'        covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 #' @examples
-#' Upload Meuse data and a domain boundary for these data
+#' ## Upload the Meuse data and a domain boundary for these data
 #' data(MeuseData)
 #' data(MeuseBorder)
-#' Create a triangular mesh
+#' ## Create a triangular mesh for these data with the provided boundary
 #' order=1
 #' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 #' plot(mesh)
@@ -83,40 +83,38 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
   return(reslist)
 }
 
-#' Compute a solution for a Spatial Spline problem with PDE penalization
+#' Compute a spatial regression model with differential regularization: anysotropic case (elliptic PDE)
 #' 
-#' @param observations A vector specifying the observed values on the domain. 
+#' @param observations A #observations vector with the observed values on the domain. 
 #' The locations of the observations can be specified with the \code{locations} 
-#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
-#' \code{NA} values are admissible to indicate the missing value on the corresponding node.
-#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param basisobj An object of class FEM; See \code{\link{create.FEM.basis}}.
-#' @param lambda A scalar smoothing parameter.
-#' @param PDE_parameters A list containing the parameters of the penalizing PDE, with: \code{K} a 2-by-2 matrix indicating the diffusion coefficient matrix, \code{beta} a vector of length 2 with the coefficients of the advection coefficients and \code{c} a numeric indicating the reaction coefficient.
-#' @param covariates A design matrix where each row represents the covariates associated to each row.
+#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
+#' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
+#' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
+#' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param lambda A scalar or vector of smoothing parameters.
+#' @param PDE_parameters A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, the 2-by-2 matrix of the diffusion tensor; \code{beta}, a 2entries vector of length 2 with the coefficients of the advection coefficients and \code{c} a numeric indicating the reaction coefficient.
+#' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
-#'        \code{Indices}, a vector with the indices for the border points to apply a Dirichlet Border Condition;
-#'        \code{Values} a vector with the values that the the nodes specified in \code{Indices} must assume.
-#' @param GCV If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
-#'        the Generalized Cross Validation parameter, for value of \code{lambda}.
-#' @param CPP_CODE if \code{TRUE} avoids the computation of some additional elements, not necessary if the 
-#'        functions working with the FEM basis are called with the flag \code{CPP_CODE=TRUE}
+#'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
+#'  \code{BC_values}, a vector with the values the spatial field must take at the nodes indicated in \code{BC_Indices}.
+#' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
+#'        the Generalized Cross Validation criterion, corresponding the values of the smoothing parameter specified in \code{lambda}.
+#' @param CPP_CODE Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the 
+#'        functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}
 #' @return A list with the following variables:
-#'          \item{\code{fit.FEM}}{A FEM object of the FEM class defined by the coefficients vector resulting from smoothing.}
-#'          \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM class for the value of the Laplace operator}
-#'          \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
-#'          \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
-#'          \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
-#'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
-#' @description Compute a solution for a for a Spatial Regression with PDE Penalization model.
+#'          \item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
+#'          \item{\code{PDEmisfit.FEM}}{A FEM object that represents the PDE misfit for the estimated spatial field.}
+#'          \item{\code{beta}}{If covariates is not \code{NULL}, a #covariates vector with the regression coefficients associated with each covariate.}
+#'          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
+#'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
+#'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each for each value of the smoothing parameter specified in \code{lambda}.}
+#' @description This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE, that governs the phenomenon behavior. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 #' @usage smooth.FEM.PDE.basis(locations = NULL, observations, basisobj, 
 #'        lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
 #'        CPP_CODE = TRUE)
-#' @references Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37-41.
-#'  Azzimonti, L. et al., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335. Available at: http://epubs.siam.org/doi/abs/10.1137/130925426.
+#' @references Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036. Available at: http://dx.doi.org/10.1080/01621459.2014.946036
+#'  Azzimonti, L., Nobile, F., Sangalli, L.M., and Secchi, P., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335. Available at: http://epubs.siam.org/doi/abs/10.1137/130925426.
 #' @examples 
-#' library(FEMr)
-#'
 #' data(mesh.2D.simple)
 #' plot(mesh.2D.simple)
 #' observations = sin(pi*mesh.2D.simple$nodes[,1]) + rnorm(n = nrow(mesh.2D.simple$nodes), sd = 0.1)
