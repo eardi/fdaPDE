@@ -11,13 +11,25 @@ Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
 		    person("Luca", "Formaggia", role = "aut",
 		     email = " luca.formaggia@polimi.it"))
 Author: Eardi Lila [aut, cre],
-  Laura Sangalli [aut],
-  Jim Ramsay [aut],
-  Luca Formaggia [aut]
+    Laura Sangalli [aut],
+    Jim Ramsay [aut],
+    Luca Formaggia [aut]
 Maintainer: Eardi Lila <eardi.lila@mail.polimi.it>
-Depends: R (>= 3.0.0), rgl
-Suggests: MASS
-Description: The package implements a model for the analysis of data distributed over irregularly shaped spatial domains with complex boundaries, strong concavities and interior holes. Moreover the estimation of surfaces and spatial fields can take into account a prior knowledge on the phenomenon under study. The prior knowledge included in the model derives from physics, physiology or mechanics of the problem at hand, and is formalized in terms of a partial differential equation governing the phenomenon behavior. An accurate surface estimation is achieved by means of piecewise linear and quadratic finite elements.
+Depends:
+    R (>= 3.0.0),
+    rgl
+Suggests:
+    MASS
+Description: The package implements a model for the analysis of data distributed
+    over irregularly shaped spatial domains with complex boundaries, strong
+    concavities and interior holes. Moreover the estimation of surfaces and spatial
+    fields can take into account a prior knowledge on the phenomenon under study.
+    The prior knowledge included in the model derives from physics, physiology
+    or mechanics of the problem at hand, and is formalized in terms of a partial
+    differential equation governing the phenomenon behavior. An accurate surface
+    estimation is achieved by means of piecewise linear and quadratic finite
+    elements.
 License: CC BY-NC-SA 4.0 + file LICENSE
-Copyright: See the individual source files for copyrights information 
+Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes
+RoxygenNote: 5.0.0
