@@ -1,17 +1,14 @@
 #' Compute some properties for each triangular element of the mesh
 #' 
-#' @param mesh A mesh object of the class TRIMESH2D. This can be created with  \code{\link{create.MESH.2D}}.
+#' @param mesh A  TRIMESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
 #' @return A list with the following variables:
 #' \item{\code{J}}{The area of each triangle of the basis.} 
 #' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 #' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 #' of the integrals over the elements of the mesh.} 
-#' @description For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
-#' These are used for the computation of the integrals necessary to compute the mass and stiffness matrix.
-#' This version of the function is implemented using only R code. It is called by \code{create.FEM.basis} when \code{CPP_CODE} is \code{FALSE},
-#' in fact this quantities are used only when the folloing computations are executed with the flag \code{CPP_CODE = TRUE}.
+#' @description Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
+#' These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
 #' @usage R_elementProperties(mesh)
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 
 R_elementProperties=function(mesh)
 {
@@ -43,18 +40,14 @@ R_elementProperties=function(mesh)
   return(FEStruct)
 }
 
-#' Compute the mass matrix containing integrals of products of basis' functions
+#' Compute the mass matrix
 #' 
-#' @param basisobj An object of class FEM; See \code{\link{create.FEM.basis}}.
+#' @param basisobj A FEM object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis' functions pairwise products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
-#' @description The element (i,j) of the matrix contains the intergal over the domain of the product between the ith and kth element 
+#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the product between the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
-#' This version of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
-#' The constructed matrix coincides with the R_0 matrix in Sangalli, Ramsay, Ramsay (2013).
 #' @usage R_mass(basisobj)
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 
 R_mass=function(basisobj)
 {
@@ -103,18 +96,14 @@ R_mass=function(basisobj)
   K0
 }
 
-#' Compute the stiffness matrix containing integrals of products of gradients of the basis' functions
+#' Compute the stiffness matrix
 #' 
-#' @param basisobj An an object of class FEM; See \code{\link{create.FEM.basis}}.
+#' @param basisobj A FEM object representing the basis; See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis functions' gradients pairwise dot products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
-#' @description The element (i,j) of the matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
+#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
-#' This version of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
-#' The constructed matrix coincides with the R_1 matrix in Sangalli, Ramsay, Ramsay (2013).
 #' @usage R_stiff(basisobj)
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 
 R_stiff= function(basisobj)
 {
