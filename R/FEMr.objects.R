@@ -17,7 +17,7 @@
 #' @description Sets up a Finite Element basis. It requires a triangular mesh, a \code{TRIMESH2D} object, as imput. 
 #' The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh. 
 #' Linear (\code{order = 1}) and quadratic (\code{order = 2}) 
-#' Finite Element are currently implmented.
+#' Finite Element are currently implemented.
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 #' @usage create.FEM.basis(mesh, order, CPP_CODE = FALSE)
 #' @examples 
@@ -26,7 +26,7 @@
 #' segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
 #' ## Plot it
 #' plot(mesh)                   
-#' ## Creates the basis object
+#' ## Creates the basis
 #' basisobj = create.FEM.basis(mesh, order = 1)
 
 create.FEM.basis = function(mesh, order, CPP_CODE = FALSE)
@@ -54,12 +54,12 @@ create.FEM.basis = function(mesh, order, CPP_CODE = FALSE)
 }
 
 
-#' Define a function by a Finite Element basis expansion
+#' Define a surface or spatial field by a Finite Element basis expansion
 #' 
 #' @param coefmat A vector or a matrix containg the coefficients for the Finite Element basis expansion. The number of rows (or the vector's length) corresponds to the number of basis in code{basisobj}. 
 #' The number of columns corresponds to the number of functional replicates. 
-#' @param basisobj An object defining the Finite Element basis, created by \link{create.FEM.basis}.
-#' @description This function defines a FEM object. It is not called directly by users.
+#' @param basisobj A FEM object defining the Finite Element basis, created by \link{create.FEM.basis}.
+#' @description This function defines a FEM object. This is not uscalled directly by users.
 #' @usage FEM(coefmat,basisobj)
 #' @return An object of the class \code{FEM}. This contains a list with components \code{coefmat} and \code{basisobj}.
 #' @examples 
@@ -68,7 +68,7 @@ create.FEM.basis = function(mesh, order, CPP_CODE = FALSE)
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
 #' basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
-#' ## Define a sinusoidal function as expansion of these basis and plot it
+#' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, basisobj)
 #' plot(FEM_object)
@@ -100,7 +100,7 @@ FEM<-function(coefmat,basisobj)
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
 #' basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
-#' ## Define a sinusoidal function as expansion of these basis and plot it
+#' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, basisobj)
 #' plot(FEM_object)
@@ -130,7 +130,7 @@ plot.FEM = function(x, num_refinements = NULL, ...)
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
 #' basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
-#' ## Define a sinusoidal function as expansion of these basis and plot it
+#' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, basisobj)
 #' image(FEM_object)
