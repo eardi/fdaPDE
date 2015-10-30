@@ -346,7 +346,7 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
   return(bigsol)
 }
 
-#' Compute Values of Finite Element Basis Functions or their Derivatives
+#' Evaluate Finite Element bases and their Derivatives
 #' 
 #' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
 #' @param basisobj An an object of type FEM; See \link{create.FEM.basis}.
@@ -522,7 +522,7 @@ R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
   return(evalmat)
 }
 
-#' Compute Values of a FEM object on a set of arbitrary point locations
+#' Evaluate a FEM object on a set of point locations
 #' 
 #' @param locations A #locations-by-2 matrix where each row specifies the x and y coordinate of the corresponding location.
 #' @param FEM the Functional Object of class FEM to be evaluated
@@ -638,8 +638,6 @@ R_tricoefCal = function(mesh)
   #  TRICOEFCAL compute the coefficient matrix TRICOEF
   #  required to test of a point is indside a triangle
   
-  #  Last modified 24 June 2010 by Laura Sangalli
-  
   nodes = mesh$nodes
   triangles = mesh$triangles
   
@@ -666,8 +664,6 @@ R_insideIndex = function (mesh, location)
   #  TRICOEF may have already been calculated for efficiency,
   #  but if the function is called with four arguments, it is calculated.
   
-  
-  #  Last modified 24 June 2010 by Laura Sangalli
   
   eps=2.2204e-016
   small = 10000*eps
@@ -792,7 +788,6 @@ R_plot.ORD1.FEM = function(FEM, ...)
   # vectors X and Y;
   #
   
-  #  Last modified 4 February 2011 by Laura Sangalli.
   
   
   #   if (!is.fd(fdobj))
@@ -902,9 +897,6 @@ R_image.ORD1.FEM = function(FEM)
   # PLOT  Plots a FEM object FDOBJ over a rectangular grid defined by 
   # vectors X and Y;
   #
-  
-  #  Last modified 4 February 2011 by Laura Sangalli.
-  
   
   #   if (!is.fd(fdobj))
   #   {
