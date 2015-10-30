@@ -17,7 +17,7 @@ NULL
 
 #' Boundary of the Meuse River data set
 #'
-#' This file provides the boundary of the domain of the Meuse dataset.
+#' This file provides the boundary of the domain of the Meuse dataset  {\link{MeuseData}}.
 #'
 #' \itemize{
 #'   \item V1. A vector having as entries the indices of the locations in {\link{MeuseData}} where a boundary segment starts from.
@@ -30,14 +30,14 @@ NULL
 
 #' Simple mesh
 #'
-#' This contains a simple mesh, namely a TRIMESH2D object created with \code{create.MESH.2D}.
+#' A simple mesh. This is a TRIMESH2D object created with \code{create.MESH.2D}.
 #'
 #' @name mesh.2D.simple
 NULL
 
 #' Simple Rectangular mesh
 #'
-#' This contains a rectangular mesh, namely a TRIMESH2D object created with \code{create.MESH.2D}.
+#' A simple rectangular mesh. This is a TRIMESH2D object created with \code{create.MESH.2D}.
 #'
 #' @name mesh.2D.rectangular
 NULL
