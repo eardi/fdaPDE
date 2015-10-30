@@ -1,7 +1,7 @@
 Package: FEMr
 Version: 0.9-1
 Date: 2015-06-18
-Title: Regression with Partial Differential Equations penalization
+Title: Regression with partial differential regularizations, using the Finite Element Method
 Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
 		     email = "eardi.lila@mail.polimi.it"),
 	      person("Laura", "Sangalli", role = "aut",
@@ -20,15 +20,10 @@ Depends:
     rgl
 Suggests:
     MASS
-Description: The package implements a model for the analysis of data distributed
-    over irregularly shaped spatial domains with complex boundaries, strong
-    concavities and interior holes. Moreover the estimation of surfaces and spatial
-    fields can take into account a prior knowledge on the phenomenon under study.
-    The prior knowledge included in the model derives from physics, physiology
-    or mechanics of the problem at hand, and is formalized in terms of a partial
-    differential equation governing the phenomenon behavior. An accurate surface
-    estimation is achieved by means of piecewise linear and quadratic finite
-    elements.
+Description: FEMr: Finite Element Methods regression. 
+             The package implements regression models with partial differential regularizations, making use of the Finite Element Method. 
+             The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. 
+             A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0 + file LICENSE
 Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes
