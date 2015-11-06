@@ -4,6 +4,6 @@
 \alias{mesh.2D.simple}
 \title{Simple mesh}
 \description{
-This contains a simple mesh, namely an object of the class TRIMESH2D, created with \code{create.MESH.2D}.
+A simple mesh. This is a MESH2D object created with \code{create.MESH.2D}.
 }
 

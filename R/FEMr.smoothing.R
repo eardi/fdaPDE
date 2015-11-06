@@ -5,7 +5,7 @@
 #' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
-#' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
@@ -23,7 +23,7 @@
 #' \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #' \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 #' @description This function implements a spatial regression model with differential regularization; isotropic and stationary case. In particular, the regularizing term involves the Laplacian of the spatial field. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
-#' @usage smooth.FEM.basis(locations = NULL, observations, basisobj, lambda, 
+#' @usage smooth.FEM.basis(locations = NULL, observations, FEMbasis, lambda, 
 #'        covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 #' @examples
@@ -35,15 +35,15 @@
 #' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 #' plot(mesh)
 #' ## Create the Finite Element basis 
-#' basisobj = create.FEM.basis(mesh, order)
-#' Estimate ***** using as covariates ****, setting the smoothing parameter to **** 10^3.5
-#' data = log(MeuseData[,7]
+#' FEMbasis = create.FEM.basis(mesh, order)
+#' ## Estimate ***** using as covariates ****, setting the smoothing parameter to **** 10^3.5
+#' data = log(MeuseData[,7])
 #' lambda = 10^3.5
-#' ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda)
-#' Plot the estimated spatial field (aggiungi qualcosa su covariata?)
+#' ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda)
+#' ## Plot the estimated spatial field (aggiungi qualcosa su covariata?)
 #' plot(ZincMeuse$fit.FEM)
 
-smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
+smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
   bigsol = NULL  
   lambda = as.vector(lambda)
@@ -57,21 +57,21 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
             If you want to use Dirichlet boundary conditions, please set CPP_CODE = TRUE')
     }
     
-    bigsol = R_smooth.FEM.basis(locations, observations, basisobj, lambda, covariates, GCV)   
+    bigsol = R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)   
   }else
   {
     print('C++ Code Execution')
-    bigsol = CPP_smooth.FEM.basis(locations, observations, basisobj, lambda, covariates, BC, GCV)
+    bigsol = CPP_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, BC, GCV)
   }
   
-  numnodes = nrow(basisobj$mesh$nodes)
+  numnodes = nrow(FEMbasis$mesh$nodes)
   
   f = bigsol[[1]][1:numnodes,]
   g = bigsol[[1]][(numnodes+1):(2*numnodes),]
   
   # Make Functional objects object
-  fit.FEM  = FEM(f, basisobj)
-  PDEmisfit.FEM = FEM(g, basisobj)  
+  fit.FEM  = FEM(f, FEMbasis)
+  PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
   beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
@@ -93,7 +93,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
-#' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param PDE_parameters A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients; \code{beta}, a vector of length 2 of advection coefficients;  \code{c}, a scalar reaction coefficient.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
@@ -112,7 +112,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 #' @description This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
-#' @usage smooth.FEM.PDE.basis(locations = NULL, observations, basisobj, 
+#' @usage smooth.FEM.PDE.basis(locations = NULL, observations, FEMbasis, 
 #'        lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
 #'        CPP_CODE = TRUE)
 #' @references Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036. 
@@ -122,7 +122,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #' plot(mesh.2D.simple)
 #' observations = sin(pi*mesh.2D.simple$nodes[,1]) + rnorm(n = nrow(mesh.2D.simple$nodes), sd = 0.1)
 #' 
-#' basisobj = create.FEM.basis(mesh.2D.simple, 2)
+#' FEMbasis = create.FEM.basis(mesh.2D.simple, 2)
 #' 
 #' # Smoothing coefficients
 #' lambda = c(10^-2, 10^-1, 0.5, 5, 10)
@@ -130,9 +130,9 @@ smooth.FEM.basis<-function(locations = NULL, observations, basisobj, lambda, cov
 #' # Anysotropic smoothing
 #' PDE_parameters_anys = list(K = matrix(c(0.01,0,0,1), nrow = 2), b = c(0,0), c = 0)
 #' FEM_CPP_PDE = smooth.FEM.PDE.basis(observations = observations, 
-#'                                    basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters_anys)
+#'                                    FEMbasis = FEMbasis, lambda = lambda, PDE_parameters = PDE_parameters_anys)
 #' plot(FEM_CPP_PDE$fit.FEM)
-smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
+smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
   bigsol = NULL  
   lambda = as.vector(lambda)
@@ -143,17 +143,17 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda,
   }else
   {
     print('C++ Code Execution')
-    bigsol = CPP_smooth.FEM.PDE.basis(locations, observations, basisobj, lambda, PDE_parameters, covariates, BC, GCV)
+    bigsol = CPP_smooth.FEM.PDE.basis(locations, observations, FEMbasis, lambda, PDE_parameters, covariates, BC, GCV)
   }
   
-  numnodes = nrow(basisobj$mesh$nodes)
+  numnodes = nrow(FEMbasis$mesh$nodes)
   
   f = bigsol[[1]][1:numnodes,]
   g = bigsol[[1]][(numnodes+1):(2*numnodes),]
   
   # Make Functional objects object
-  fit.FEM  = FEM(f, basisobj)
-  PDEmisfit.FEM = FEM(g, basisobj)  
+  fit.FEM  = FEM(f, FEMbasis)
+  PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
   beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
@@ -176,7 +176,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda,
 #' argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***
-#' @param basisobj A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param PDE_parameters A list specifying the space-varying parameters of the elliptic PDE in the regularizing term: \code{K}, a function that for each spatial location in the spatial domain 
 #' (indicated by the vector of the 2 spatial coordinates) returns a 2-by-2 matrix of diffusion coefficients; \code{beta}, a function that for each spatial location in the spatial domain returns a vector of length 2 of transport coefficients;  \code{c}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.
@@ -196,14 +196,14 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda,
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 #' @description This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
-#' @usage smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, 
+#' @usage smooth.FEM.PDE.SV.basis(locations = NULL, observations, FEMbasis, 
 #'  lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
 #'  CPP_CODE = TRUE)
 #' @references Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036. 
 #'  Azzimonti, L., Nobile, F., Sangalli, L.M., and Secchi, P., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335. 
 #' @examples 
 #' data(mesh.2D.rectangular)
-#' basisobj = create.FEM.basis(mesh.2D.rectangular, 2)
+#' FEMbasis = create.FEM.basis(mesh.2D.rectangular, 2)
 #' observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + 
 #' rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)
 #' # Smoothing coefficient
@@ -230,9 +230,9 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, basisobj, lambda,
 #' # Space-varying smoothing
 #' PDE_parameters = list(K = K_func, b = b_func, c = c_func, u = u_func)
 #' FEM_CPP_PDE = smooth.FEM.PDE.SV.basis(observations = observations, 
-#'              basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters)
+#'              FEMbasis = FEMbasis, lambda = lambda, PDE_parameters = PDE_parameters)
 #' plot(FEM_CPP_PDE$fit.FEM)
-smooth.FEM.PDE.SV.basis<-function(locations = NULL, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
+smooth.FEM.PDE.SV.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
   bigsol = NULL  
   lambda = as.vector(lambda)
@@ -243,17 +243,17 @@ smooth.FEM.PDE.SV.basis<-function(locations = NULL, observations, basisobj, lamb
   }else
   {
     print('C++ Code Execution')
-    bigsol = CPP_smooth.FEM.PDE.SV.basis(locations, observations, basisobj, lambda, PDE_parameters, covariates, BC, GCV)
+    bigsol = CPP_smooth.FEM.PDE.SV.basis(locations, observations, FEMbasis, lambda, PDE_parameters, covariates, BC, GCV)
   }
   
-  numnodes = nrow(basisobj$mesh$nodes)
+  numnodes = nrow(FEMbasis$mesh$nodes)
   
   f = bigsol[[1]][1:numnodes,]
   g = bigsol[[1]][(numnodes+1):(2*numnodes),]
   
   # Make Functional objects object
-  fit.FEM  = FEM(f, basisobj)
-  PDEmisfit.FEM = FEM(g, basisobj)  
+  fit.FEM  = FEM(f, FEMbasis)
+  PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
   beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
@@ -280,7 +280,7 @@ getBetaCoefficients<-function(locations, observations, fit.FEM, covariates)
     if(is.null(locations))
     {
       loc_nodes = (1:length(observations))[!is.na(observations)]
-      fnhat = fit.FEM$coefmat[loc_nodes,]
+      fnhat = fit.FEM$coeff[loc_nodes,]
     }else{
       loc_nodes = 1:length(observations)
       fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE = FALSE)
@@ -303,7 +303,7 @@ getGCV<-function(locations, observations, fit.FEM, covariates = NULL, edf)
   if(is.null(locations))
   {
     loc_nodes = (1:length(observations))[!is.na(observations)]
-    fnhat = fit.FEM$coefmat[loc_nodes,]
+    fnhat = fit.FEM$coeff[loc_nodes,]
   }else{
     loc_nodes = 1:length(observations)
     fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE = FALSE)

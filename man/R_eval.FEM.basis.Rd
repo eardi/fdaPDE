@@ -2,12 +2,12 @@
 % Please edit documentation in R/FEMr.smoothing_R.R
 \name{R_eval.FEM.basis}
 \alias{R_eval.FEM.basis}
-\title{Compute Values of Finite Element Basis Functions or their Derivatives}
+\title{Evaluate Finite Element bases and their Derivatives}
 \usage{
-R_eval.FEM.basis(basisobj, locations, nderivs = matrix(0,1,2))
+R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 }
 \arguments{
-\item{basisobj}{An an object of type FEM; See \link{create.FEM.basis}.}
+\item{FEMbasis}{An an object of type FEM; See \link{create.FEM.basis}.}
 
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
 

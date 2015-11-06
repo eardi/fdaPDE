@@ -2,31 +2,31 @@
 % Please edit documentation in R/FEMr.objects.R
 \name{FEM}
 \alias{FEM}
-\title{Define a function by a Finite Element basis expansion}
+\title{Define a surface or spatial field by a Finite Element basis expansion}
 \usage{
-FEM(coefmat,basisobj)
+FEM(coeff,FEMbasis)
 }
 \arguments{
-\item{coefmat}{A vector or a matrix containg the coefficients for the Finite Element basis expansion. The number of rows (or the vector's length) corresponds to the number of basis in code{basisobj}. 
+\item{coeff}{A vector or a matrix containg the coefficients for the Finite Element basis expansion. The number of rows (or the vector's length) corresponds to the number of basis in code{FEMbasis}. 
 The number of columns corresponds to the number of functional replicates.}
 
-\item{basisobj}{An object defining the Finite Element basis, created by \link{create.FEM.basis}.}
+\item{FEMbasis}{A FEM object defining the Finite Element basis, created by \link{create.FEM.basis}.}
 }
 \value{
-An object of the class \code{FEM}. This contains a list with components \code{coefmat} and \code{basisobj}.
+An object of the class \code{FEM}. This contains a list with components \code{coeff} and \code{FEMbasis}.
 }
 \description{
-This function defines a FEM object. It is not called directly by users.
+This function defines a FEM object. This is not uscalled directly by users.
 }
 \examples{
 ## Upload a triangular mesh and plot it
 data("mesh.2D.rectangular")
 plot(mesh.2D.rectangular)
 ## Create a linear Finite Element basis
-basisobj = create.FEM.basis(mesh.2D.rectangular, 1)
-## Define a sinusoidal function as expansion of these basis and plot it
+FEMbasis = create.FEM.basis(mesh.2D.rectangular, 1)
+## Define a sinusoidal function as expansion of this basis and plot it
 coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
-FEM_object<- FEM(coeff, basisobj)
+FEM_object<- FEM(coeff, FEMbasis)
 plot(FEM_object)
 }
 

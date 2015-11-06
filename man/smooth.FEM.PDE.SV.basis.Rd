@@ -2,55 +2,56 @@
 % Please edit documentation in R/FEMr.smoothing.R
 \name{smooth.FEM.PDE.SV.basis}
 \alias{smooth.FEM.PDE.SV.basis}
-\title{Compute a spatial regression model with differential regularization: anysotropic and non-stationary case (elliptic PDE with space-varying coefficients)}
+\title{Spatial regression with differential regularization: anysotropic and non-stationary case (elliptic PDE with space-varying coefficients)}
 \usage{
-smooth.FEM.PDE.SV.basis(locations = NULL, observations, basisobj, 
+smooth.FEM.PDE.SV.basis(locations = NULL, observations, FEMbasis, 
  lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
  CPP_CODE = TRUE)
 }
 \arguments{
 \item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***}
 
-\item{observations}{A #observations vector with the observed values on the domain. 
+\item{observations}{A #observations vector with the observed data values over the domain. 
 The locations of the observations can be specified with the \code{locations} 
 argument, otherwise the locations are intented to be the corresponding nodes of the mesh****. 
 \code{NA} values are admissible to indicate that the node is not associated with any observed data value.}
 
-\item{basisobj}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 
-\item{PDE_parameters}{A list specifying the space-varying parameters of the elliptic PDE in the regularizing term: \code{K}, a function that for each spatial location in the spatial domain (indicated by the vector of the 2 spatial coordinates) returns a 2-by-2 matrix of diffusion coefficients; \code{beta}, a function that for each spatial location in the spatial domain returns a vector of length 2 of transport coefficients;  \code{c}, a function that for each spatial location in the spatial domain  returns a reaction coefficient.}
+\item{PDE_parameters}{A list specifying the space-varying parameters of the elliptic PDE in the regularizing term: \code{K}, a function that for each spatial location in the spatial domain 
+(indicated by the vector of the 2 spatial coordinates) returns a 2-by-2 matrix of diffusion coefficients; \code{beta}, a function that for each spatial location in the spatial domain returns a vector of length 2 of transport coefficients;  \code{c}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.}
 
 \item{covariates}{A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.}
 
 \item{BC}{A list with two vectors: 
 \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-\code{BC_values}, a vector with the values the spatial field must take at the nodes indicated in \code{BC_Indices}.}
+\code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_Indices}.}
 
 \item{GCV}{Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
-the Generalized Cross Validation criterion, corresponding the values of the smoothing parameter specified in \code{lambda}.}
+the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.}
 
 \item{CPP_CODE}{Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the 
-functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}}
+functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}.}
 }
 \value{
 A list with the following variables:
          \item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
          \item{\code{PDEmisfit.FEM}}{A FEM object that represents the PDE misfit for the estimated spatial field.}
-         \item{\code{beta}}{If covariates is not \code{NULL}, a #covariates vector with the regression coefficients associated with each covariate.}
+         \item{\code{beta}}{If covariates is not \code{NULL}, a vector of lenght #covariates with the regression coefficients associated with each covariate.}
          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
-         \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each for each value of the smoothing parameter specified in \code{lambda}.}
+         \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 }
 \description{
-This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE, that governs the phenomenon behavior. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
+This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 }
 \examples{
 data(mesh.2D.rectangular)
+FEMbasis = create.FEM.basis(mesh.2D.rectangular, 2)
 observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + 
 rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)
-basisobj = create.FEM.basis(mesh.2D.rectangular, 2)
 # Smoothing coefficient
 lambda = c(10^-2)
 K_func<-function(points)
@@ -75,7 +76,7 @@ rep(c(0), nrow(points))
 # Space-varying smoothing
 PDE_parameters = list(K = K_func, b = b_func, c = c_func, u = u_func)
 FEM_CPP_PDE = smooth.FEM.PDE.SV.basis(observations = observations, 
-             basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters)
+             FEMbasis = FEMbasis, lambda = lambda, PDE_parameters = PDE_parameters)
 plot(FEM_CPP_PDE$fit.FEM)
 }
 \references{

@@ -30,14 +30,14 @@ NULL
 
 #' Simple mesh
 #'
-#' A simple mesh. This is a TRIMESH2D object created with \code{create.MESH.2D}.
+#' A simple mesh. This is a MESH2D object created with \code{create.MESH.2D}.
 #'
 #' @name mesh.2D.simple
 NULL
 
 #' Simple Rectangular mesh
 #'
-#' A simple rectangular mesh. This is a TRIMESH2D object created with \code{create.MESH.2D}.
+#' A simple rectangular mesh. This is a MESH2D object created with \code{create.MESH.2D}.
 #'
 #' @name mesh.2D.rectangular
 NULL

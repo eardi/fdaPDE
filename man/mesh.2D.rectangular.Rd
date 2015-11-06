@@ -4,6 +4,6 @@
 \alias{mesh.2D.rectangular}
 \title{Simple Rectangular mesh}
 \description{
-This contains a rectangular mesh, namely an object of the class TRIMESH2D, created with \code{create.MESH.2D}.
+A simple rectangular mesh. This is a MESH2D object created with \code{create.MESH.2D}.
 }
 

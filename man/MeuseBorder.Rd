@@ -2,15 +2,15 @@
 % Please edit documentation in R/datasets.R
 \name{MeuseBorder}
 \alias{MeuseBorder}
-\title{Meuse Border description data set}
-\format{A data frame with 52 rows and 2 variables}
+\title{Boundary of the Meuse River data set}
+\format{A data frame with 52 rows and 2 variables.}
 \description{
-This file describes the boundaries of the domain of the Meuse dataset.
+This file provides the boundary of the domain of the Meuse dataset  {\link{MeuseData}}.
 }
 \details{
 \itemize{
-  \item V1. An integer vector with the indices of the locations where the segments defining the border start from.
-  \item V2. An integer vector with the indices of the locations where the segments defining the border end to
+  \item V1. A vector having as entries the indices of the locations in {\link{MeuseData}} where a boundary segment starts from.
+  \item V2. A vector having as entries the indices of the locations in {\link{MeuseData}} where a boundary segment ends to
 }
 }
 

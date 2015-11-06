@@ -2,25 +2,19 @@
 % Please edit documentation in R/FEMr.smoothing_R.R
 \name{R_mass}
 \alias{R_mass}
-\title{Compute the mass matrix containing integrals of products of basis' functions}
+\title{Compute the mass matrix}
 \usage{
-R_mass(basisobj)
+R_mass(FEMbasis)
 }
 \arguments{
-\item{basisobj}{An object of class FEM; See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A FEM object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.}
 }
 \value{
 A square matrix with the integrals of all the basis' functions pairwise products.
 The dimension of the matrix is equal to the number of the nodes of the mesh.
 }
 \description{
-The element (i,j) of the matrix contains the intergal over the domain of the product between the ith and kth element 
-of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
-This version of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
-The constructed matrix coincides with the R_0 matrix in Sangalli, Ramsay, Ramsay (2013).
-}
-\references{
-Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the product between the ith and kth element 
+of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles.
 }
 

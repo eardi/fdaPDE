@@ -1,6 +1,6 @@
 #' Compute some properties for each triangular element of the mesh
 #' 
-#' @param mesh A  TRIMESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
+#' @param mesh A  MESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
 #' @return A list with the following variables:
 #' \item{\code{J}}{The area of each triangle of the basis.} 
 #' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
@@ -42,19 +42,19 @@ R_elementProperties=function(mesh)
 
 #' Compute the mass matrix
 #' 
-#' @param basisobj A FEM object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEM object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis' functions pairwise products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
 #' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the product between the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
-#' @usage R_mass(basisobj)
+#' @usage R_mass(FEMbasis)
 
-R_mass=function(basisobj)
+R_mass=function(FEMbasis)
 {
-  nodes = basisobj$mesh$nodes
-  triangles = basisobj$mesh$triangles
-  J = basisobj$J
-  order = basisobj$order
+  nodes = FEMbasis$mesh$nodes
+  triangles = FEMbasis$mesh$triangles
+  J = FEMbasis$J
+  order = FEMbasis$order
   
   nele  = dim(triangles)[1]
   nnod  = dim(nodes)[1]
@@ -98,23 +98,23 @@ R_mass=function(basisobj)
 
 #' Compute the stiffness matrix
 #' 
-#' @param basisobj A FEM object representing the basis; See \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEM object representing the basis; See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis functions' gradients pairwise dot products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
 #' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
-#' @usage R_stiff(basisobj)
+#' @usage R_stiff(FEMbasis)
 
-R_stiff= function(basisobj)
+R_stiff= function(FEMbasis)
 {
-  nodes = basisobj$mesh$nodes
-  triangles = basisobj$mesh$triangles
+  nodes = FEMbasis$mesh$nodes
+  triangles = FEMbasis$mesh$triangles
   
   nele  = dim(triangles)[[1]]
   nnod  = dim(nodes)[[1]]
-  J     = basisobj$J
-  order = basisobj$order
-  metric = basisobj$metric
+  J     = FEMbasis$J
+  order = FEMbasis$order
+  metric = FEMbasis$metric
   
   
   
@@ -184,7 +184,7 @@ R_stiff= function(basisobj)
 #' argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
 #' \code{NA} values are admissible to indicate the missing value on the corresponding node.
 #' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param basisobj An an object of type FEM; See \code{\link{create.FEM.basis}}.
+#' @param FEMbasis An an object of type FEM; See \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar smoothing parameter.
 #' @param covariates A design matrix where each row represents the covariates associated to each row.
 #' @param GCV If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
@@ -200,7 +200,7 @@ R_stiff= function(basisobj)
 #' of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
 #' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
 #' It can also be excecuted in debug mode.
-#' @usage R_smooth.FEM.basis(locations, observations, basisobj, lambda, covariates, GCV)
+#' @usage R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 #' @examples library(FEMr)
 #' data(MeuseData)
@@ -209,28 +209,28 @@ R_stiff= function(basisobj)
 #' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 #' plot(mesh)
 #' data = log(MeuseData[,7])
-#' basisobj = create.FEM.basis(mesh, order)
+#' FEMbasis = create.FEM.basis(mesh, order)
 #' lambda = 10^3.5
-#' ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda, CPP_CODE = FALSE)
+#' ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda, CPP_CODE = FALSE)
 #' plot(ZincMeuse$fit.FEM)
 
-R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covariates = NULL, GCV)
+R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covariates = NULL, GCV)
 {
   
   # Stores the number of nodes of the mesh. This corresponds to the number of elements of the FE basis.
-  numnodes = nrow(basisobj$mesh$nodes)
+  numnodes = nrow(FEMbasis$mesh$nodes)
   
   #  ---------------------------------------------------------------
   # construct mass matrix K0 
   #  ---------------------------------------------------------------
   
-  K0 = R_mass(basisobj)
+  K0 = R_mass(FEMbasis)
   
   #  ---------------------------------------------------------------
   # construct stiffness matrix K1
   #  ---------------------------------------------------------------
   
-  K1 = R_stiff(basisobj)
+  K1 = R_stiff(FEMbasis)
   
   
   #  ---------------------------------------------------------------
@@ -248,7 +248,7 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
   
   if(!is.null(locations))
   {
-    basismat = R_eval.FEM.basis(basisobj, locations)
+    basismat = R_eval.FEM.basis(FEMbasis, locations)
   } 
   
   if(!is.null(covariates))
@@ -349,7 +349,7 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
 #' Evaluate Finite Element bases and their Derivatives
 #' 
 #' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param basisobj An an object of type FEM; See \link{create.FEM.basis}.
+#' @param FEMbasis An an object of type FEM; See \link{create.FEM.basis}.
 #' @param nderivs A 2-elements vector specifying the partial derivatives order of the basis functions to evaluate. The vectors' element must
 #' be 0,1 or 2, where 0 indicates that the original basis function should be evaluated.
 #' @return 
@@ -359,11 +359,11 @@ R_smooth.FEM.basis = function(locations, observations, basisobj, lambda, covaria
 #' This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
 #' This function is usuful for the construction of the discretized problem when the mesh nodes are indipendent from the observations' locations. This case is not treated
 #' in Sangalli, Ramsay, Ramsay (2013), see e.g. Azzimonti et al. (2014).
-#' @usage R_eval.FEM.basis(basisobj, locations, nderivs = matrix(0,1,2))
+#' @usage R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 #'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
-R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
+R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 { 
   if(length(nderivs) != 2)
   {
@@ -376,21 +376,21 @@ R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
   }
   
   N = nrow(locations)
-  nbasis = basisobj$nbasis
+  nbasis = FEMbasis$nbasis
   
   # Augment Xvec and Yvec by ones for computing barycentric coordinates
   Pgpts = cbind(matrix(1,N,1),locations[,1],locations[,2])
   
   # Get nodes and index
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   nodes = mesh$nodes
   triangles = mesh$triangles
   
-  order = basisobj$order
+  order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = basisobj$J
+  J = FEMbasis$J
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -405,7 +405,7 @@ R_eval.FEM.basis <- function(basisobj, locations, nderivs = matrix(0,1,2))
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = basisobj$J
+  modJ = FEMbasis$J
   ones3 = matrix(1,3,1)
   modJMat = modJ %*% t(ones3)
   
@@ -549,17 +549,17 @@ R_eval.FEM <- function(FEM, locations)
   
   # Get nodes and index
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   nodes = mesh$nodes
   triangles = mesh$triangles
-  coefmat = FEM$coefmat
-  nsurf = dim(coefmat)[2]
+  coeff = FEM$coeff
+  nsurf = dim(coeff)[2]
   
-  basisobj = FEM$basisobj
-  order = basisobj$order
+  FEMbasis = FEM$FEMbasis
+  order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = basisobj$J
+  J = FEMbasis$J
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -574,7 +574,7 @@ R_eval.FEM <- function(FEM, locations)
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = basisobj$J
+  modJ = FEMbasis$J
   ones3 = matrix(1,3,1)
   modJMat = modJ %*% t(ones3)
   
@@ -604,12 +604,12 @@ R_eval.FEM <- function(FEM, locations)
         
         if(order == 2)
         {
-          c1 = coefmat[triangles[indi,1],isurf]
-          c2 = coefmat[triangles[indi,2],isurf]
-          c3 = coefmat[triangles[indi,3],isurf]
-          c4 = coefmat[triangles[indi,6],isurf]
-          c5 = coefmat[triangles[indi,4],isurf]
-          c6 = coefmat[triangles[indi,5],isurf]
+          c1 = coeff[triangles[indi,1],isurf]
+          c2 = coeff[triangles[indi,2],isurf]
+          c3 = coeff[triangles[indi,3],isurf]
+          c4 = coeff[triangles[indi,6],isurf]
+          c5 = coeff[triangles[indi,4],isurf]
+          c6 = coeff[triangles[indi,5],isurf]
           
           fval =  c1*(2* baryc1^2 - baryc1) +
             c2*(2* baryc2^2 - baryc2) +
@@ -621,9 +621,9 @@ R_eval.FEM <- function(FEM, locations)
         }
         else
         {
-          c1 = coefmat[triangles[indi,1],isurf]
-          c2 = coefmat[triangles[indi,2],isurf]
-          c3 = coefmat[triangles[indi,3],isurf]
+          c1 = coeff[triangles[indi,1],isurf]
+          c2 = coeff[triangles[indi,2],isurf]
+          c3 = coeff[triangles[indi,3],isurf]
           fval = c1*baryc1 + c2*baryc2 + c3*baryc3
           evalmat[i,isurf] = fval
         }
@@ -712,16 +712,16 @@ R_eval_local.FEM = function(FEM, locations, element_index)
   
   # Get nodes and index
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   nodes = mesh$nodes
   triangles = mesh$triangles
-  coefmat = FEM$coefmat
-  nsurf = dim(coefmat)[2]
+  coeff = FEM$coeff
+  nsurf = dim(coeff)[2]
   
-  basisobj = FEM$basisobj
-  order = basisobj$order
+  FEMbasis = FEM$FEMbasis
+  order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = basisobj$J
+  J = FEMbasis$J
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -736,7 +736,7 @@ R_eval_local.FEM = function(FEM, locations, element_index)
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = basisobj$J[element_index]
+  modJ = FEMbasis$J[element_index]
   ones3 = matrix(1,3,1)
   #modJMat = modJ %*% t(ones3)
   
@@ -756,12 +756,12 @@ R_eval_local.FEM = function(FEM, locations, element_index)
       
       if(order == 2)
       {
-        c1 = coefmat[triangles[element_index,1],isurf]
-        c2 = coefmat[triangles[element_index,2],isurf]
-        c3 = coefmat[triangles[element_index,3],isurf]
-        c4 = coefmat[triangles[element_index,6],isurf]
-        c5 = coefmat[triangles[element_index,4],isurf]
-        c6 = coefmat[triangles[element_index,5],isurf]
+        c1 = coeff[triangles[element_index,1],isurf]
+        c2 = coeff[triangles[element_index,2],isurf]
+        c3 = coeff[triangles[element_index,3],isurf]
+        c4 = coeff[triangles[element_index,6],isurf]
+        c5 = coeff[triangles[element_index,4],isurf]
+        c6 = coeff[triangles[element_index,5],isurf]
         
         fval =  c1*(2* baryc1^2 - baryc1) +
           c2*(2* baryc2^2 - baryc2) +
@@ -771,9 +771,9 @@ R_eval_local.FEM = function(FEM, locations, element_index)
           c6*(4* baryc3 * baryc1)
         evalmat[i,isurf] = fval
       }else{
-        c1 = coefmat[triangles[element_index,1],isurf]
-        c2 = coefmat[triangles[element_index,2],isurf]
-        c3 = coefmat[triangles[element_index,3],isurf]
+        c1 = coeff[triangles[element_index,1],isurf]
+        c2 = coeff[triangles[element_index,2],isurf]
+        c3 = coeff[triangles[element_index,3],isurf]
         fval = c1*baryc1 + c2*baryc2 + c3*baryc3
         evalmat[i,isurf] = fval
       }
@@ -795,26 +795,26 @@ R_plot.ORD1.FEM = function(FEM, ...)
   #     stop('FDOBJ is not an FD object')
   #   }
   
-  nodes = FEM$basisobj$mesh$nodes
-  triangles = FEM$basisobj$mesh$triangles
+  nodes = FEM$FEMbasis$mesh$nodes
+  triangles = FEM$FEMbasis$mesh$triangles
   
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
-  basisobj = FEM$basis
+  FEMbasis = FEM$basis
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   heat = heat.colors(100)
   
-  nsurf = dim(coefmat)[[2]]
+  nsurf = dim(coeff)[[2]]
   for (isurf in 1:nsurf)
   {
     open3d()
     axes3d()
     
-    z = coefmat[as.vector(t(triangles)),isurf]
+    z = coeff[as.vector(t(triangles)),isurf]
     rgl.triangles(x = nodes[as.vector(t(triangles)) ,1], y = nodes[as.vector(t(triangles)) ,2], 
-                  z=coefmat[as.vector(t(triangles)),isurf], 
+                  z=coeff[as.vector(t(triangles)),isurf], 
                   color = heat[round(99*(z- min(z))/(max(z)-min(z)))+1],...)
     aspect3d(2,2,1)
     rgl.viewpoint(0,-45)
@@ -825,15 +825,15 @@ R_plot.ORD1.FEM = function(FEM, ...)
 
 R_plot.ORDN.FEM = function(FEM, num_refinements, ...)  
 {
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
-  basisobj = FEM$basis
+  FEMbasis = FEM$FEMbasis
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   heat = heat.colors(100)
   
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
   # num_refinements sets the number od division on each triangle edge to be applied for rifenment
   if(is.null(num_refinements))
@@ -854,7 +854,7 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   # locations is the matrix with that will contain the coordinate of the points where the function is 
   # evaluated (1st and 2nd column) and the columns with the evaluation of the ith fucntion on that point
   
-  locations = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$nodes), ncol = 2+ncol(coefmat))
+  locations = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$nodes), ncol = 2+ncol(coeff))
   triangles = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$triangles), ncol = 3)
   tot = 0
   
@@ -862,7 +862,7 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   for (i in 1:nrow(mesh$triangles))
   {
     # For each traingle we define a fine mesh as the transofrmation of the one constructed for the reference
-    pointsi = t(basisobj$transf[i,,]%*%t(meshi$nodes) + mesh$nodes[mesh$triangles[i,1],])
+    pointsi = t(FEMbasis$transf[i,,]%*%t(meshi$nodes) + mesh$nodes[mesh$triangles[i,1],])
     #We evaluate the fine mesh OBS: we know the triangle we are working on no need for point location
     z = R_eval_local.FEM(FEM, locations = pointsi, element_index = i)
     
@@ -874,7 +874,7 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   
   heat = heat.colors(100)
   
-  nsurf = dim(coefmat)[[2]]
+  nsurf = dim(coeff)[[2]]
   for (isurf in 1:nsurf)
   {
     open3d()
@@ -903,25 +903,25 @@ R_image.ORD1.FEM = function(FEM)
   #     stop('FDOBJ is not an FD object')
   #   }
   
-  nodes = FEM$basisobj$mesh$nodes
-  triangles = FEM$basisobj$mesh$triangles
+  nodes = FEM$FEMbasis$mesh$nodes
+  triangles = FEM$FEMbasis$mesh$triangles
   
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
-  basisobj = FEM$basis
+  FEMbasis = FEM$FEMbasis
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   heat = heat.colors(100)
   
-  nsurf = dim(coefmat)[[2]]
+  nsurf = dim(coeff)[[2]]
   for (isurf in 1:nsurf)
   {
     #rgl.open()
     axes3d()
     rgl.pop("lights") 
     light3d(specular="black") 
-    z = coefmat[as.vector(t(triangles)),isurf]
+    z = coeff[as.vector(t(triangles)),isurf]
     rgl.triangles(x = nodes[as.vector(t(triangles)) ,1], y = nodes[as.vector(t(triangles)) ,2], 
                   z=0, 
                   color = heat[round(99*(z- min(z))/(max(z)-min(z)))+1])
@@ -934,15 +934,15 @@ R_image.ORD1.FEM = function(FEM)
 
 R_image.ORDN.FEM = function(FEM, num_refinements)  
 {
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
-  basisobj = FEM$basis
+  FEMbasis = FEM$FEMbasis
   
-  mesh = basisobj$mesh
+  mesh = FEMbasis$mesh
   
   heat = heat.colors(100)
   
-  coefmat = FEM$coefmat
+  coeff = FEM$coeff
   
   if(is.null(num_refinements))
   {
@@ -957,13 +957,13 @@ R_image.ORDN.FEM = function(FEM, num_refinements)
   meshi = create.MESH.2D(nodes = points_ref, order = 1)   
   #plot(meshi)
   
-  locations = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$nodes), ncol = 3*ncol(coefmat))
-  triangles = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$triangles), ncol = 3*ncol(coefmat))
+  locations = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$nodes), ncol = 3*ncol(coeff))
+  triangles = matrix(nrow = nrow(mesh$triangles)*nrow(meshi$triangles), ncol = 3*ncol(coeff))
   tot = 0
   
   for (i in 1:nrow(mesh$triangles))
   {
-    pointsi = t(basisobj$transf[i,,]%*%t(meshi$nodes) + mesh$nodes[mesh$triangles[i,1],])
+    pointsi = t(FEMbasis$transf[i,,]%*%t(meshi$nodes) + mesh$nodes[mesh$triangles[i,1],])
     z = R_eval_local.FEM(FEM, locations = pointsi, element_index = i)
     
     #mesh3 <- addNormals(subdivision3d(tmesh3d(vertices = t(locations), indices = t(triangles), homogeneous = FALSE)),deform = TRUE)
@@ -975,7 +975,7 @@ R_image.ORDN.FEM = function(FEM, num_refinements)
   
   heat = heat.colors(100)
   
-  nsurf = dim(coefmat)[[2]]
+  nsurf = dim(coeff)[[2]]
   for (isurf in 1:nsurf)
   {
     axes3d()

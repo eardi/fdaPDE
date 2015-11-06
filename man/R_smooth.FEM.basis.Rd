@@ -4,7 +4,7 @@
 \alias{R_smooth.FEM.basis}
 \title{Compute a solution for a Spatial Spline problem}
 \usage{
-R_smooth.FEM.basis(locations, observations, basisobj, lambda, covariates, GCV)
+R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
 }
 \arguments{
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
@@ -14,7 +14,7 @@ The locations of the observations can be specified with the \code{locations}
 argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
 \code{NA} values are admissible to indicate the missing value on the corresponding node.}
 
-\item{basisobj}{An an object of type FEM; See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{An an object of type FEM; See \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar smoothing parameter.}
 
@@ -46,9 +46,9 @@ order=1
 mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 plot(mesh)
 data = log(MeuseData[,7])
-basisobj = create.FEM.basis(mesh, order)
+FEMbasis = create.FEM.basis(mesh, order)
 lambda = 10^3.5
-ZincMeuse = smooth.FEM.basis(observations = data, basisobj = basisobj, lambda = lambda, CPP_CODE = FALSE)
+ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda, CPP_CODE = FALSE)
 plot(ZincMeuse$fit.FEM)
 }
 \references{

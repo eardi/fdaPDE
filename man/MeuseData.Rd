@@ -3,13 +3,13 @@
 \name{MeuseData}
 \alias{MeuseData}
 \title{Meuse river data set}
-\format{A data frame with 155 rows and 12 variables}
+\format{A data frame with 155 rows and 12 variables.}
 \source{
 \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}
 }
 \description{
-This data set gives locations and top soil heavy metal concentrations (ppm). It is used in many examples to illustrate FEMr features. 
-For further details on this dataset, see \code{meuse.all} in \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}
+This data set gives locations and top soil heavy metal concentrations (ppm) of *****. 
+For details on this dataset, see \code{meuse.all} in \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}. This data set is here provide, together with a definition of the domain boundary in {\link{MeuseBorder}}, as it is used in many examples to illustrate FEMr features.
 }
 \details{
 \itemize{

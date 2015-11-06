@@ -4,18 +4,14 @@
 \alias{create.FEM.basis}
 \title{Create a FEM basis}
 \usage{
-create.FEM.basis(mesh, order, CPP_CODE = FALSE)
+create.FEM.basis(mesh, order)
 }
 \arguments{
-\item{mesh}{A \code{TRIMESH2D}  object representing the domain triangulation. See \link{create.MESH.2D}.}
+\item{mesh}{A \code{MESH2D}  object representing the domain triangulation. See \link{create.MESH.2D}.}
 
 \item{order}{Either "1" or "2". Order of the Finite Element basis. When \code{order = 1} the basis system is piecewise linear. When 
 \code{order = 2} the basis system is piecewise quadratic. This parameter must be less or equal to the \code{order} 
-specified in the \code{TRIMESH2D}  object. See \link{create.MESH.2D}.}
-
-\item{CPP_CODE}{Boolean. If \code{TRUE} it avoids the computation of some quantities that are
-not necessary if the functions requiring the basis are called with the same flag 
-\code{CPP_CODE=TRUE}.}
+specified in the \code{MESH2D}  object. See \link{create.MESH.2D}.}
 }
 \value{
 A  \code{FEM} object. This contains the \code{mesh}, along with some additional quantities:
@@ -27,19 +23,19 @@ A  \code{FEM} object. This contains the \code{mesh}, along with some additional 
 of the integrals over the elements of the mesh.}
 }
 \description{
-Sets up a Finite Element basis. It requires a triangular mesh, a \code{TRIMESH2D} object, as imput. 
+Sets up a Finite Element basis. It requires a triangular mesh, a \code{MESH2D} object, as imput. 
 The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh. 
 Linear (\code{order = 1}) and quadratic (\code{order = 2}) 
-Finite Element are currently implmented.
+Finite Element are currently implemented.
 }
 \examples{
-## Creates a simple traingulated domain with a concavity; this is a TRIMESH2D object  
+## Creates a simple traingulated domain with a concavity; this is a MESH2D object  
 mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
 segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
 ## Plot it
 plot(mesh)                   
-## Creates the basis object
-basisobj = create.FEM.basis(mesh, order = 1)
+## Creates the basis
+FEMbasis = create.FEM.basis(mesh, order = 1)
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.

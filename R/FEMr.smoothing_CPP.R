@@ -1,6 +1,6 @@
 #dyn.load("../Release/FEMr.so")
 
-CPP_smooth.FEM.basis<-function(locations, observations, basisobj, lambda, covariates = NULL, BC = NULL, GCV)
+CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV)
 {
   # SMOOTH.FEM.FD Compute a solution for a Spatial Spline problem 
   #
@@ -24,9 +24,9 @@ CPP_smooth.FEM.basis<-function(locations, observations, basisobj, lambda, covari
   
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
-  basisobj$mesh$triangles = basisobj$mesh$triangles - 1
-  basisobj$mesh$edges = basisobj$mesh$edges - 1
-  basisobj$mesh$neighbors = basisobj$mesh$neighbors - 1
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
   
   if(is.null(covariates))
   {
@@ -56,11 +56,11 @@ CPP_smooth.FEM.basis<-function(locations, observations, basisobj, lambda, covari
   
   ## Set propr type for correct C++ reading
   storage.mode(locations) <- "double"
-  storage.mode(basisobj$mesh$points) <- "double"
-  storage.mode(basisobj$mesh$triangles) <- "integer"
-  storage.mode(basisobj$mesh$edges) <- "integer"
-  storage.mode(basisobj$mesh$neighbors) <- "integer"
-  storage.mode(basisobj$order) <- "integer"
+  storage.mode(FEMbasis$mesh$points) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
   storage.mode(BC$Indices)<- "integer"
@@ -70,8 +70,8 @@ CPP_smooth.FEM.basis<-function(locations, observations, basisobj, lambda, covari
   storage.mode(GCV)<-"integer"
   
   ## Call C++ function
-  bigsol <- .Call("regression_Laplace", locations, observations, basisobj$mesh, 
-                  basisobj$order, lambda, covariates,
+  bigsol <- .Call("regression_Laplace", locations, observations, FEMbasis$mesh, 
+                  FEMbasis$order, lambda, covariates,
                   BC$Indices, BC$Values, GCV,
                   package = "FEMr")
   
@@ -82,14 +82,14 @@ CPP_smooth.FEM.basis<-function(locations, observations, basisobj, lambda, covari
   return(bigsol)
 }
 
-CPP_smooth.FEM.PDE.basis<-function(locations, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
+CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
 {
 
   # Indexes in C++ starts from 0, in R from 1, opportune transformation  
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
-  basisobj$mesh$triangles = basisobj$mesh$triangles - 1
-  basisobj$mesh$edges = basisobj$mesh$edges - 1
-  basisobj$mesh$neighbors = basisobj$mesh$neighbors - 1
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
   
   if(is.null(covariates))
   {
@@ -120,11 +120,11 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, basisobj, lambda, PD
   ## Set propr type for correct C++ reading
   
   storage.mode(locations) <- "double"
-  storage.mode(basisobj$mesh$points) <- "double"
-  storage.mode(basisobj$mesh$triangles) <- "integer"
-  storage.mode(basisobj$mesh$edges) <- "integer"
-  storage.mode(basisobj$mesh$neighbors) <- "integer"
-  storage.mode(basisobj$order) <- "integer"
+  storage.mode(FEMbasis$mesh$points) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
   storage.mode(BC$Indices)<- "integer"
@@ -136,8 +136,8 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, basisobj, lambda, PD
   storage.mode(PDE_parameters$c)<-"double"
   
   ## Call C++ function
-  bigsol <- .Call("regression_PDE", locations, observations, basisobj$mesh, 
-                  basisobj$order, lambda, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates,
+  bigsol <- .Call("regression_PDE", locations, observations, FEMbasis$mesh, 
+                  FEMbasis$order, lambda, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates,
                   BC$Indices, BC$Values, GCV,
                   package = "FEMr")
   
@@ -148,14 +148,14 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, basisobj, lambda, PD
   return(bigsol)
 }
 
-CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, basisobj, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
+CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
 {
   
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
-  basisobj$mesh$triangles = basisobj$mesh$triangles - 1
-  basisobj$mesh$edges = basisobj$mesh$edges - 1
-  basisobj$mesh$neighbors = basisobj$mesh$neighbors - 1
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
   
   if(is.null(covariates))
   {
@@ -185,7 +185,7 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, basisobj, lambda,
   
   
   PDE_param_eval = NULL
-  points_eval = matrix(CPP_get_evaluations_points(mesh = basisobj$mesh, order = basisobj$order),ncol = 2)
+  points_eval = matrix(CPP_get_evaluations_points(mesh = FEMbasis$mesh, order = FEMbasis$order),ncol = 2)
   PDE_param_eval$K = (PDE_parameters$K)(points_eval)
   PDE_param_eval$b = (PDE_parameters$b)(points_eval)
   PDE_param_eval$c = (PDE_parameters$c)(points_eval)
@@ -194,11 +194,11 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, basisobj, lambda,
   #print(PDE_param_eval)
   ## Set propr type for correct C++ reading
   storage.mode(locations) <- "double"
-  storage.mode(basisobj$mesh$points) <- "double"
-  storage.mode(basisobj$mesh$triangles) <- "integer"
-  storage.mode(basisobj$mesh$edges) <- "integer"
-  storage.mode(basisobj$mesh$neighbors) <- "integer"
-  storage.mode(basisobj$order) <- "integer"
+  storage.mode(FEMbasis$mesh$points) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
   storage.mode(BC$Indices)<- "integer"
@@ -211,8 +211,8 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, basisobj, lambda,
   storage.mode(PDE_param_eval$u)<-"double"
   
   ## Call C++ function
-  bigsol <- .Call("regression_PDE_space_varying", locations, observations, basisobj$mesh, 
-                  basisobj$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
+  bigsol <- .Call("regression_PDE_space_varying", locations, observations, FEMbasis$mesh, 
+                  FEMbasis$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
                   BC$Indices, BC$Values, GCV,
                   package = "FEMr")
   

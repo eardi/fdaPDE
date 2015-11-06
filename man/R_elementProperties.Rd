@@ -7,7 +7,7 @@
 R_elementProperties(mesh)
 }
 \arguments{
-\item{mesh}{A mesh object of the class TRIMESH2D. This can be created with  \code{\link{create.MESH.2D}}.}
+\item{mesh}{A  MESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.}
 }
 \value{
 A list with the following variables:
@@ -17,12 +17,7 @@ A list with the following variables:
 of the integrals over the elements of the mesh.}
 }
 \description{
-For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
-These are used for the computation of the integrals necessary to compute the mass and stiffness matrix.
-This version of the function is implemented using only R code. It is called by \code{create.FEM.basis} when \code{CPP_CODE} is \code{FALSE},
-in fact this quantities are used only when the folloing computations are executed with the flag \code{CPP_CODE = TRUE}.
-}
-\references{
-Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
+These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
 }
 

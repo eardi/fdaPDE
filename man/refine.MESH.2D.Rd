@@ -7,7 +7,7 @@
 refine.MESH.2D(mesh, minimum_angle, maximum_area, delaunay, verbosity)
 }
 \arguments{
-\item{mesh}{An object of the class TRIMESH2D created by \link{create.MESH.2D}.}
+\item{mesh}{A MESH2D object representing the triangular mesh, created by \link{create.MESH.2D}.}
 
 \item{minimum_angle}{A condition on the minimum angle that mesh triangles must satisfy.}
 
@@ -18,35 +18,34 @@ refine.MESH.2D(mesh, minimum_angle, maximum_area, delaunay, verbosity)
 \item{verbosity}{This can be '0', '1' or '2'. It indicates the level of verbosity in triangulation process.}
 }
 \value{
-@return An object of the class TRIMESH2D with the following variables:
+A MESH2D object representing the refined triangular mesh,  with the following output:
 \item{\code{nodes}}{A #nodes-by-2 matrix containing the x and y coordinates of the mesh nodes.}
-\item{\code{nodesmarkers}}{A #nodes-vector with entries either '1' or '0'. An entry '1' indicates that the corresponding node is a boundary node; an entry '0' indicates that the corresponding node is not a boundary node.}
-\item{\code{nodesattributes}}{A #nodes-by-n1 matrix containg nodes' attributes. 
+\item{\code{nodesmarkers}}{A vector of length #nodes, with entries either '1' or '0'. An entry '1' indicates that the corresponding node is a boundary node; an entry '0' indicates that the corresponding node is not a boundary node.}
+\item{\code{nodesattributes}}{nodesattributes A matrix with #nodes rows containg nodes' attributes. 
 These are passed unchanged to the output. If a node is added during the triangulation process or mesh refinement, its attributes are computed  
 by linear interpolation using the attributes of neighboring nodes. This functionality is for instance used to compute the value 
-of a Dirichlet boundary conditions at boundary nodes added during the triangulation process.}
-\item{\code{triangles}}{A #triangles-by-3 (when \code{order} = 1) or #triangles-by-6 matrix (when \code{order} = 2).
-It specify the triangles giving the indices in \code{nodes} of the triangles' vertices and  the triangle edges midpoints (when \code{nodes} = 2). The triangles' vertices and middle points are ordered as descrcibed 
+of a Dirichlet boundary condition at boundary nodes added during the triangulation process.}
+\item{\code{triangles}}{A #triangles-by-3 (when \code{order} = 1) or #triangles-by-6 (when \code{order} = 2) matrix.
+This option is used when a triangulation is already available. It specifies the triangles giving the indices in \code{nodes} of the triangles' vertices and (when \code{nodes} = 2) also if the triangles' edges midpoints. The triangles' vertices and midpoints are ordered as descrcibed 
 at  https://www.cs.cmu.edu/~quake/triangle.highorder.html.}
 \item{\code{segments}}{A #segments-by-2 matrix. Each row contains the indices (starting from zero) of the nodes where the segment starts from and ends to.
 Segments are edges that are not splitted during the triangulation process. }
-\item{\code{segmentsmarker}}{A #segments-vector with entries either '1' or '0'. An entry '1' indicates that the corresponding segment is a boundary segment;  
+\item{\code{segmentsmarker}}{A vector of length #segments, with entries either '1' or '0'. An entry '1' indicates that the corresponding segment is a boundary segment;  
 an entry '0' indicates that the corresponding segment is not a boundary segment.}
 \item{\code{edges}}{A #edges-by-2 matrix. . Each row contains the indices (starting from zero) of the nodes where the edge starts from and ends to.}
-\item{\code{edgesmarkers}}{A #edges-vector with entries either '1' or '0'. An entry '1' indicates that the corresponding edge is a boundary edge;  
+\item{\code{edgesmarkers}}{A vector of lenght #edges with entries either '1' or '0'. An entry '1' indicates that the corresponding edge is a boundary edge;  
 an entry '0' indicates that the corresponding edge is not a boundary edge.}
 \item{\code{neighbors}}{A #triangles-by-3 matrix. Each row contains the indices of the three neighbouring triangles. An entry '-1' indicates that 
 one side of the triangle is aboundary edge.}
-\item{\code{holes}}{A #holes-by-2 matrix containg a point internal to each hole of the mesh. These points are used to carve the holes
-after the triangulation procedure.}
-\item{\code{order}}{Either '1' or '2'. It specifies wether each mesh triangle is represented by a 3 nodes (the triangle' vertices) or 6 nodes (the triangle'svertices and midpoints). 
-These are
-respectively used for linear (order = 1) and quadratic (order = 2) Finite Elements.}
+\item{\code{holes}}{A #holes-by-2 matrix containg the x and y coordinates of a point internal to each hole of the mesh. These points are used to carve the holes
+in the triangulation, when the domain has holes.}
+\item{\code{order}}{Either '1' or '2'. It specifies wether each mesh triangle should be represented by 3 nodes (the triangle' vertices) or by 6 nodes (the triangle'svertices and midpoints). 
+These are respectively used for linear (order = 1) and quadratic (order = 2) Finite Elements. Default is \code{order} = 1.}
 }
 \description{
 This function refine a Constrained Delaunay triangulation into a Conforming Delaunay triangulation. This is a wrapper of the Triangle library (http://www.cs.cmu.edu/~quake/triangle.html). It can be used to 
 refine a mesh created previously with \link{create.MESH.2D}. The algorithm can add Steiner points (points through which the \code{segments} are splitted)
-in order to meet the imposed conditions.
+in order to meet the imposed refinement conditions.
 }
 \examples{
 ## Upload the Meuse data and a domain boundary for these data

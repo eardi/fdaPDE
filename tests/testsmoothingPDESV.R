@@ -8,7 +8,7 @@ library(FEMr)
 data(mesh.2D.rectangular)
 observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)
 
-basisobj = create.FEM.basis(mesh.2D.rectangular, 2)
+FEMbasis = create.FEM.basis(mesh.2D.rectangular, 2)
 
 lambda = c(10^-2)
 
@@ -34,5 +34,5 @@ u_func<-function(points)
 # Space-varying smoothing
 PDE_parameters = list(K = K_func, b = b_func, c = c_func, u = u_func)
 FEM_CPP_PDE_SV = smooth.FEM.PDE.SV.basis(observations = observations, 
-                                      basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters)
-print(FEM_CPP_PDE_SV$fit.FEM$coefmat)
+                                      FEMbasis = FEMbasis, lambda = lambda, PDE_parameters = PDE_parameters)
+print(FEM_CPP_PDE_SV$fit.FEM$coeff)
