@@ -7,7 +7,7 @@
 #' @return A  \code{FEM} object. This contains the \code{mesh}, along with some additional quantities:
 #' \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
 #' \item{\code{nbasis}}{Scalar. The number of basis.} 
-#' \item{\code{J}}{The area of each triangle of the basis.} 
+#' \item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.} 
 #' \item{\code{transf}}{A three-dimensional array such that  \code{transf[i,,]} is the 2-by-2 matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 #' \item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
 #' of the integrals over the elements of the mesh.}
@@ -46,7 +46,7 @@ create.FEM.basis = function(mesh, order)
   #  eleProp = R_elementProperties(mesh)
   #}
   
-  FEMbasis = list(type = type, mesh = mesh, order = as.integer(order), nbasis = nbasis, J=eleProp$J, transf = eleProp$transf, metric = eleProp$metric)
+  FEMbasis = list(type = type, mesh = mesh, order = as.integer(order), nbasis = nbasis, detJ=eleProp$detJ, transf = eleProp$transf, metric = eleProp$metric)
   
   FEMbasis
 }

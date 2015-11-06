@@ -355,7 +355,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::computeDegreesOfFreedom(U
 		}
 	}
 	else
-	{
+	{	//Important
 		degrees = regressionData_.getCovariates().cols();
 
 		if(regressionData_.isLocationsByNodes())
@@ -372,6 +372,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::computeDegreesOfFreedom(U
 					degrees+=S(index_i,index_j)*Q_(j,i);
 				}
 			}
+
 		}
 		else
 		{

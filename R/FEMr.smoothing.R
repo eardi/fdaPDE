@@ -27,6 +27,7 @@
 #'        covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 #' @examples
+#' library(FEMr)
 #' ## Upload the Meuse data and a domain boundary for these data
 #' data(MeuseData)
 #' data(MeuseBorder)
@@ -37,11 +38,22 @@
 #' ## Create the Finite Element basis 
 #' FEMbasis = create.FEM.basis(mesh, order)
 #' ## Estimate ***** using as covariates ****, setting the smoothing parameter to **** 10^3.5
-#' data = log(MeuseData[,7])
+#' data = log(MeuseData[,"zinc"])
 #' lambda = 10^3.5
 #' ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda)
-#' ## Plot the estimated spatial field (aggiungi qualcosa su covariata?)
+#' ## Plot the estimated spatial field 
 #' plot(ZincMeuse$fit.FEM)
+#' # Now repeat the analysis using as covariates the square root of the log-distance 
+#' from river \code{sqrt(dist.log(m))} and the altitude \code{elev}
+#' desmat = matrix(1,nrow=nrow(MeuseData),ncol=2)
+#' desmat[,1] = sqrt(MeuseData[,"dist.log(m)"])
+#' desmat[,2] = MeuseData[,"elev"]
+#' ZincMeuseCovar = smooth.FEM.basis(observations = data, covariates = desmat, FEMbasis = FEMbasis, lambda = lambda)
+#' # Plot of the non parametric part (f) of the regression model y_i = beta_1 x_i1 + beta_2 x_i2 + f
+#' plot(ZincMeuseCovar$fit.FEM)
+#' # Print covariates' regression coefficients
+#' print(ZincMeuseCovar$beta)
+
 
 smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {

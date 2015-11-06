@@ -2,7 +2,7 @@
 #' 
 #' @param mesh A  MESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
 #' @return A list with the following variables:
-#' \item{\code{J}}{The area of each triangle of the basis.} 
+#' \item{\code{detJ}}The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 #' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 #' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 #' of the integrals over the elements of the mesh.} 
@@ -14,7 +14,7 @@ R_elementProperties=function(mesh)
 {
   nele = dim(mesh$triangles)[[1]]
   
-  J   = matrix(0,nele,1)      #  vector of jacobian values
+  detJ   = matrix(0,nele,1)      #  vector of determinant of transformations
   metric = array(0,c(nele,2,2))  #  3-d array of metric matrices
   transf = array(0,c(nele,2,2))
   
@@ -26,17 +26,17 @@ R_elementProperties=function(mesh)
     diff2y = mesh$nodes[mesh$triangles[i,3],2] - mesh$nodes[mesh$triangles[i,1],2]
     
     transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
-    #  Jacobian or area of triangle
-    J[i] = diff1x*diff2y - diff2x*diff1y
+    #  Jacobian or double of the area of triangle
+    detJ[i] = diff1x*diff2y - diff2x*diff1y
     
     #  Compute controvariant transformation matrix OSS: This is (tranf)^(-T)
-    Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/J[i]
+    Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/detJ[i]
     
     #  Compute metric matrix
     metric[i,,] = t(Ael)%*%Ael
   } 
   
-  FEStruct <- list(J=J, metric=metric, transf=transf)
+  FEStruct <- list(detJ=detJ, metric=metric, transf=transf)
   return(FEStruct)
 }
 
@@ -53,7 +53,7 @@ R_mass=function(FEMbasis)
 {
   nodes = FEMbasis$mesh$nodes
   triangles = FEMbasis$mesh$triangles
-  J = FEMbasis$J
+  detJ = FEMbasis$detJ
   order = FEMbasis$order
   
   nele  = dim(triangles)[1]
@@ -90,7 +90,7 @@ R_mass=function(FEMbasis)
   for (el in 1:nele)
   {  
     ind = triangles[el,]
-    K0[ind,ind] = K0[ind,ind] + K0M * J[el]
+    K0[ind,ind] = K0[ind,ind] + K0M * detJ[el]
   }
   
   K0
@@ -112,7 +112,7 @@ R_stiff= function(FEMbasis)
   
   nele  = dim(triangles)[[1]]
   nnod  = dim(nodes)[[1]]
-  J     = FEMbasis$J
+  detJ     = FEMbasis$detJ
   order = FEMbasis$order
   metric = FEMbasis$metric
   
@@ -171,7 +171,7 @@ R_stiff= function(FEMbasis)
     ind    = triangles[el,]
     K1M = (metric[el,1,1]*KXX    + metric[el,1,2]*KXY +
              metric[el,2,1]*t(KXY) + metric[el,2,2]*KYY)
-    K1[ind,ind] = K1[ind,ind] + K1M*J[el]
+    K1[ind,ind] = K1[ind,ind] + K1M*detJ[el]
   }
   
   K1
@@ -390,7 +390,7 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
   
   order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = FEMbasis$J
+  detJ = FEMbasis$detJ
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -405,7 +405,7 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = FEMbasis$J
+  modJ = FEMbasis$detJ
   ones3 = matrix(1,3,1)
   modJMat = modJ %*% t(ones3)
   
@@ -559,7 +559,7 @@ R_eval.FEM <- function(FEM, locations)
   FEMbasis = FEM$FEMbasis
   order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = FEMbasis$J
+  detJ = FEMbasis$detJ
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -574,7 +574,7 @@ R_eval.FEM <- function(FEM, locations)
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = FEMbasis$J
+  modJ = FEMbasis$detJ
   ones3 = matrix(1,3,1)
   modJMat = modJ %*% t(ones3)
   
@@ -721,7 +721,7 @@ R_eval_local.FEM = function(FEM, locations, element_index)
   FEMbasis = FEM$FEMbasis
   order = FEMbasis$order
   #nodeindex = params$nodeindex
-  J = FEMbasis$J
+  detJ = FEMbasis$detJ
   
   # 1st, 2nd, 3rd vertices of triangles
   
@@ -736,7 +736,7 @@ R_eval_local.FEM = function(FEM, locations, element_index)
   
   # Denominator of change of coordinates chsange matrix
   
-  modJ = FEMbasis$J[element_index]
+  modJ = FEMbasis$detJ[element_index]
   ones3 = matrix(1,3,1)
   #modJMat = modJ %*% t(ones3)
   
