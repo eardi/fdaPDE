@@ -44,7 +44,7 @@
 #' ## Plot the estimated spatial field 
 #' plot(ZincMeuse$fit.FEM)
 #' # Now repeat the analysis using as covariates the square root of the log-distance 
-#' from river \code{sqrt(dist.log(m))} and the altitude \code{elev}
+#' # from river \code{sqrt(dist.log(m))} and the altitude \code{elev}
 #' desmat = matrix(1,nrow=nrow(MeuseData),ncol=2)
 #' desmat[,1] = sqrt(MeuseData[,"dist.log(m)"])
 #' desmat[,2] = MeuseData[,"elev"]
