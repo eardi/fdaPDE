@@ -8,12 +8,13 @@ smooth.FEM.basis(locations = NULL, observations, FEMbasis, lambda,
        covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 }
 \arguments{
-\item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***}
+\item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.}
 
 \item{observations}{A #observations vector with the observed data values over the domain.
-The locations of the observations can be specified with the \code{locations}
-argument, otherwise the locations are intented to be the corresponding nodes of the mesh****.
-\code{NA} values are admissible to indicate that the node is not associated with any observed data value.}
+The locations of the observations can be specified with the \code{locations} argument.
+Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
+\code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+ node.}
 
 \item{FEMbasis}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
@@ -28,8 +29,7 @@ argument, otherwise the locations are intented to be the corresponding nodes of 
 \item{GCV}{Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and
 the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.}
 
-\item{CPP_CODE}{Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the
-functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}.}
+\item{CPP_CODE}{Boolean. If \code{TRUE} the computation relies on the C++ implementation of the algorithm. This usually ensures a much faster computation.}
 }
 \value{
 A list with the following variables:
@@ -45,7 +45,7 @@ This function implements a spatial regression model with differential regulariza
 }
 \examples{
 library(FEMr)
-## Upload the Meuse data and a domain boundary for these data
+## Load the Meuse data and a domain boundary for these data
 data(MeuseData)
 data(MeuseBorder)
 ## Create a triangular mesh for these data with the provided boundary and plot it
@@ -54,10 +54,11 @@ mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order
 plot(mesh)
 ## Create the Finite Element basis
 FEMbasis = create.FEM.basis(mesh, order)
-## Estimate ***** using as covariates ****, setting the smoothing parameter to **** 10^3.5
+## Estimate zync field without using covariates, setting the smoothing parameter to 10^3.5
 data = log(MeuseData[,"zinc"])
 lambda = 10^3.5
-ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda)
+ZincMeuse = smooth.FEM.basis(observations = data,
+                             FEMbasis = FEMbasis, lambda = lambda)
 ## Plot the estimated spatial field
 plot(ZincMeuse$fit.FEM)
 # Now repeat the analysis using as covariates the square root of the log-distance
@@ -65,7 +66,8 @@ plot(ZincMeuse$fit.FEM)
 desmat = matrix(1,nrow=nrow(MeuseData),ncol=2)
 desmat[,1] = sqrt(MeuseData[,"dist.log(m)"])
 desmat[,2] = MeuseData[,"elev"]
-ZincMeuseCovar = smooth.FEM.basis(observations = data, covariates = desmat, FEMbasis = FEMbasis, lambda = lambda)
+ZincMeuseCovar = smooth.FEM.basis(observations = data, covariates = desmat,
+                                   FEMbasis = FEMbasis, lambda = lambda)
 # Plot of the non parametric part (f) of the regression model y_i = beta_1 x_i1 + beta_2 x_i2 + f
 plot(ZincMeuseCovar$fit.FEM)
 # Print covariates' regression coefficients
@@ -73,5 +75,8 @@ print(ZincMeuseCovar$beta)
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
+}
+\seealso{
+\code{\link{smooth.FEM.PDE.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 }
 

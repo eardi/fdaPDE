@@ -21,11 +21,12 @@ basis function evaluated
 \description{
 The evaluation on a set of locations is performed for all the basis functions representing the Finite Element finite-dimensional space. Also their derivatives up to order 2 can be evaluated.
 This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
-This function is usuful for the construction of the discretized problem when the mesh nodes are indipendent from the observations' locations. This case is not treated
-in Sangalli, Ramsay, Ramsay (2013), see e.g. Azzimonti et al. (2014).
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
+}
+\seealso{
+\code{\link{R_eval.FEM}}
 }
 

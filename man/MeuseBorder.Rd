@@ -9,8 +9,10 @@ This file provides the boundary of the domain of the Meuse dataset  {\link{Meuse
 }
 \details{
 \itemize{
-  \item V1. A vector having as entries the indices of the locations in {\link{MeuseData}} where a boundary segment starts from.
-  \item V2. A vector having as entries the indices of the locations in {\link{MeuseData}} where a boundary segment ends to
+  \item vertex_start. A vector having as entries the row's indices of the samples in {\link{MeuseData}}, indicating
+  the location where a boundary segment starts from.
+  \item vertex_end. A vector having as entries the row's indices of the locations in {\link{MeuseData}}, indicating
+  the location where a boundary segment ends to.
 }
 }
 

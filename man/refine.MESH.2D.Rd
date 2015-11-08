@@ -26,14 +26,10 @@ These are passed unchanged to the output. If a node is added during the triangul
 by linear interpolation using the attributes of neighboring nodes. This functionality is for instance used to compute the value
 of a Dirichlet boundary condition at boundary nodes added during the triangulation process.}
 \item{\code{triangles}}{A #triangles-by-3 (when \code{order} = 1) or #triangles-by-6 (when \code{order} = 2) matrix.
-This option is used when a triangulation is already available. It specifies the triangles giving the indices in \code{nodes} of the triangles' vertices and (when \code{nodes} = 2) also if the triangles' edges midpoints. The triangles' vertices and midpoints are ordered as descrcibed
-at  https://www.cs.cmu.edu/~quake/triangle.highorder.html.}
-\item{\code{segments}}{A #segments-by-2 matrix. Each row contains the indices (starting from zero) of the nodes where the segment starts from and ends to.
-Segments are edges that are not splitted during the triangulation process. }
-\item{\code{segmentsmarker}}{A vector of length #segments, with entries either '1' or '0'. An entry '1' indicates that the corresponding segment is a boundary segment;
-an entry '0' indicates that the corresponding segment is not a boundary segment.}
-\item{\code{edges}}{A #edges-by-2 matrix. . Each row contains the indices (starting from zero) of the nodes where the edge starts from and ends to.}
-\item{\code{edgesmarkers}}{A vector of lenght #edges with entries either '1' or '0'. An entry '1' indicates that the corresponding edge is a boundary edge;
+This option is used when a triangulation is already available. It specifies the triangles giving the row's indices in \code{nodes} of the triangles' vertices and (when \code{nodes} = 2) also if the triangles' edges midpoints. The triangles' vertices and midpoints are ordered as descrcibed
+at \cr  https://www.cs.cmu.edu/~quake/triangle.highorder.html.}
+\item{\code{edges}}{A #edges-by-2 matrix. Each row contains the row's indices of the nodes where the edge starts from and ends to.}
+\item{\code{edgesmarkers}}{A vector of lenght #edges with entries either '1' or '0'. An entry '1' indicates that the corresponding element in \code{edge} is a boundary edge;
 an entry '0' indicates that the corresponding edge is not a boundary edge.}
 \item{\code{neighbors}}{A #triangles-by-3 matrix. Each row contains the indices of the three neighbouring triangles. An entry '-1' indicates that
 one side of the triangle is aboundary edge.}
@@ -58,5 +54,8 @@ plot(mesh)
 ## Refine the triangulation
 mesh_refine <- refine.MESH.2D(mesh, minimum_angle = 30, maximum_area = 10000)
 plot(mesh_refine)
+}
+\seealso{
+\code{\link{create.MESH.2D}}, \code{\link{create.FEM.basis}}
 }
 

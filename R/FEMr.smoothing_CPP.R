@@ -148,7 +148,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   return(bigsol)
 }
 
-CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
+CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
 {
   
   # Indexes in C++ starts from 0, in R from 1, opportune transformation

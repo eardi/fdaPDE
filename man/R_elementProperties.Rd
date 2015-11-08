@@ -13,7 +13,8 @@ R_elementProperties(mesh)
 A list with the following variables:
 \item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-\item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
+\item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \cr
+\code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 of the integrals over the elements of the mesh.}
 }
 \description{

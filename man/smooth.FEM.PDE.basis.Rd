@@ -9,11 +9,13 @@ smooth.FEM.PDE.basis(locations = NULL, observations, FEMbasis,
        CPP_CODE = TRUE)
 }
 \arguments{
-\item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observation in \code{observations}. ***}
+\item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.}
 
 \item{observations}{A #observations vector with the observed data values over the domain.
-The locations of the observations can be specified with the \code{locations}
-argument, otherwise the locations are intented to be the corresponding nodes of the mesh****.
+The locations of the observations can be specified with the \code{locations} argument.
+Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
+\code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+ node.
 \code{NA} values are admissible to indicate that the node is not associated with any observed data value.}
 
 \item{FEMbasis}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
@@ -31,8 +33,7 @@ argument, otherwise the locations are intented to be the corresponding nodes of 
 \item{GCV}{Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and
 the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.}
 
-\item{CPP_CODE}{Boolean. If \code{TRUE} it avoids the computation of some additional quantities, that are not necessary if the
-functions using the FEM basis are called with the flag \code{CPP_CODE=TRUE}.}
+\item{CPP_CODE}{Boolean. If \code{TRUE} the computation relies on the C++ implementation of the algorithm. This usually ensures a much faster computation.}
 }
 \value{
 A list with the following variables:
@@ -47,23 +48,31 @@ A list with the following variables:
 This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 }
 \examples{
+# Load the mesh and plot it
 data(mesh.2D.simple)
 plot(mesh.2D.simple)
+# Create a vector of noisy samples of an underlying spatial field,
+# located over the nodes of the mesh
 observations = sin(pi*mesh.2D.simple$nodes[,1]) + rnorm(n = nrow(mesh.2D.simple$nodes), sd = 0.1)
-
+# Create the FEM basis object
 FEMbasis = create.FEM.basis(mesh.2D.simple, 2)
 
-# Smoothing coefficients
+# Set a vector of smoothing coefficients
 lambda = c(10^-2, 10^-1, 0.5, 5, 10)
 
-# Anysotropic smoothing
+# Set the anysotropic smoothing matrix K
 PDE_parameters_anys = list(K = matrix(c(0.01,0,0,1), nrow = 2), b = c(0,0), c = 0)
+# Estimate one field for each smoothing parameter and plot these
 FEM_CPP_PDE = smooth.FEM.PDE.basis(observations = observations,
-                                   FEMbasis = FEMbasis, lambda = lambda, PDE_parameters = PDE_parameters_anys)
+                                   FEMbasis = FEMbasis, lambda = lambda,
+                                   PDE_parameters = PDE_parameters_anys)
 plot(FEM_CPP_PDE$fit.FEM)
 }
 \references{
 Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036.
  Azzimonti, L., Nobile, F., Sangalli, L.M., and Secchi, P., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335.
+}
+\seealso{
+\code{\link{smooth.FEM.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 }
 

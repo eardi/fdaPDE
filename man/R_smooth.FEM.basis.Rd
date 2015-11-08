@@ -34,24 +34,13 @@ A list with the following variables:
 }
 \description{
 Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013). This version
-of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
-It can also be excecuted in debug mode.
-}
-\examples{
-library(FEMr)
-data(MeuseData)
-data(MeuseBorder)
-order=1
-mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
-plot(mesh)
-data = log(MeuseData[,7])
-FEMbasis = create.FEM.basis(mesh, order)
-lambda = 10^3.5
-ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda, CPP_CODE = FALSE)
-plot(ZincMeuse$fit.FEM)
+of the function is implemented using only R code rather than C++. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
+Despite its slowness, allows to easily explore the different steps of the smothing algorithm.
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+}
+\seealso{
+\code{\link{smooth.FEM.basis}}, \code{\link{smooth.FEM.PDE.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 }
 

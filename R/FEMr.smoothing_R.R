@@ -4,7 +4,8 @@
 #' @return A list with the following variables:
 #' \item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 #' \item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-#' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
+#' \item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \cr 
+#' \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 #' of the integrals over the elements of the mesh.} 
 #' @description Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
 #' These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
@@ -48,6 +49,7 @@ R_elementProperties=function(mesh)
 #' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the product between the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
 #' @usage R_mass(FEMbasis)
+#' @seealso \code{\link{R_stiff}}
 
 R_mass=function(FEMbasis)
 {
@@ -104,6 +106,7 @@ R_mass=function(FEMbasis)
 #' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
 #' @usage R_stiff(FEMbasis)
+#' @seealso \code{\link{R_mass}}
 
 R_stiff= function(FEMbasis)
 {
@@ -197,22 +200,11 @@ R_stiff= function(FEMbasis)
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
 #' @description Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013). This version
-#' of the function is implemented using only R code. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-#' Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
-#' It can also be excecuted in debug mode.
+#' of the function is implemented using only R code rather than C++. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
+#' Despite its slowness, allows to easily explore the different steps of the smothing algorithm.
 #' @usage R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
+#' @seealso \code{\link{smooth.FEM.basis}}, \code{\link{smooth.FEM.PDE.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
-#' @examples library(FEMr)
-#' data(MeuseData)
-#' data(MeuseBorder)
-#' order=1
-#' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
-#' plot(mesh)
-#' data = log(MeuseData[,7])
-#' FEMbasis = create.FEM.basis(mesh, order)
-#' lambda = 10^3.5
-#' ZincMeuse = smooth.FEM.basis(observations = data, FEMbasis = FEMbasis, lambda = lambda, CPP_CODE = FALSE)
-#' plot(ZincMeuse$fit.FEM)
 
 R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covariates = NULL, GCV)
 {
@@ -357,9 +349,8 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
 #' basis function evaluated 
 #' @description The evaluation on a set of locations is performed for all the basis functions representing the Finite Element finite-dimensional space. Also their derivatives up to order 2 can be evaluated. 
 #' This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
-#' This function is usuful for the construction of the discretized problem when the mesh nodes are indipendent from the observations' locations. This case is not treated
-#' in Sangalli, Ramsay, Ramsay (2013), see e.g. Azzimonti et al. (2014).
 #' @usage R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
+#' @seealso \code{\link{R_eval.FEM}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 #'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
@@ -532,6 +523,7 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 #' @description A Functional Object, represented respect to a Finite Element basis, is evaluated in a set of locations. 
 #' This version of the function is implemented using only R code. Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
 #' @usage R_eval.FEM(FEM, locations)
+#' @seealso \code{\link{R_eval.FEM.basis}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
 #'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 

@@ -19,11 +19,12 @@ A  \code{FEM} object. This contains the \code{mesh}, along with some additional 
 \item{\code{nbasis}}{Scalar. The number of basis.}
 \item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 \item{\code{transf}}{A three-dimensional array such that  \code{transf[i,,]} is the 2-by-2 matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-\item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
+\item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \cr
+\code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
 of the integrals over the elements of the mesh.}
 }
 \description{
-Sets up a Finite Element basis. It requires a triangular mesh, a \code{MESH2D} object, as imput.
+Sets up a Finite Element basis. It requires a triangular mesh, a \code{MESH2D} object, as input.
 The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh.
 Linear (\code{order = 1}) and quadratic (\code{order = 2})
 Finite Element are currently implemented.
@@ -39,5 +40,8 @@ FEMbasis = create.FEM.basis(mesh, order = 1)
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
+}
+\seealso{
+\code{\link{create.MESH.2D}}
 }
 
