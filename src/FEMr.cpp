@@ -46,9 +46,9 @@ SEXP regression_Laplace(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Ro
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -76,9 +76,9 @@ SEXP regression_Laplace(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Ro
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -118,9 +118,9 @@ SEXP regression_PDE(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -149,9 +149,9 @@ SEXP regression_PDE(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -195,9 +195,9 @@ SEXP regression_PDE_space_varying(SEXP Rlocations, SEXP Robservations, SEXP Rmes
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -225,9 +225,9 @@ SEXP regression_PDE_space_varying(SEXP Rlocations, SEXP Robservations, SEXP Rmes
 		const std::vector<VectorXr>& solution = regression.getSolution();
 		const std::vector<Real>& dof = regression.getDOF();
 		//Copy result in R memory
-		result = PROTECT(allocVector(VECSXP, 2));
-		SET_VECTOR_ELT(result, 0, allocMatrix(REALSXP, solution[0].size(), solution.size()));
-		SET_VECTOR_ELT(result, 1, allocVector(REALSXP, solution.size()));
+		result = PROTECT(Rf_allocVector(VECSXP, 2));
+		SET_VECTOR_ELT(result, 0, Rf_allocMatrix(REALSXP, solution[0].size(), solution.size()));
+		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
 		for(int j = 0; j < solution.size(); j++)
@@ -263,7 +263,7 @@ SEXP get_integration_points(SEXP Rmesh, SEXP Rorder)
     if(order == 1)
     {
     	MeshHandler<1> mesh(Rmesh);
-    	PROTECT(result=allocVector(REALSXP, 2*IntegratorTriangleP2::NNODES*mesh.num_triangles()));
+    	PROTECT(result=Rf_allocVector(REALSXP, 2*IntegratorTriangleP2::NNODES*mesh.num_triangles()));
 
     	FiniteElement<IntegratorTriangleP2,1> fe;
     	for(auto i=0; i<mesh.num_triangles(); i++)
@@ -281,7 +281,7 @@ SEXP get_integration_points(SEXP Rmesh, SEXP Rorder)
     else if(order == 2)
     {
     	MeshHandler<2> mesh(Rmesh);
-    	PROTECT(result=allocVector(REALSXP, 2*IntegratorTriangleP4::NNODES*mesh.num_triangles()));
+    	PROTECT(result=Rf_allocVector(REALSXP, 2*IntegratorTriangleP4::NNODES*mesh.num_triangles()));
 
     	FiniteElement<IntegratorTriangleP4,2> fe;
     	for(auto i=0; i<mesh.num_triangles(); i++)

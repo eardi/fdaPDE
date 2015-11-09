@@ -12,9 +12,9 @@ MeshHandler<ORDER>::MeshHandler(SEXP mesh)
 	triangles_  = INTEGER(VECTOR_ELT(mesh_, 3));
 	neighbors_  = INTEGER(VECTOR_ELT(mesh_, 8));
 	
-	num_nodes_ = INTEGER(getAttrib(VECTOR_ELT(mesh_, 0), R_DimSymbol))[0];
-	num_edges_ = INTEGER(getAttrib(VECTOR_ELT(mesh_, 6), R_DimSymbol))[0];
-	num_triangles_ = INTEGER(getAttrib(VECTOR_ELT(mesh_, 3), R_DimSymbol))[0];
+	num_nodes_ = INTEGER(Rf_getAttrib(VECTOR_ELT(mesh_, 0), R_DimSymbol))[0];
+	num_edges_ = INTEGER(Rf_getAttrib(VECTOR_ELT(mesh_, 6), R_DimSymbol))[0];
+	num_triangles_ = INTEGER(Rf_getAttrib(VECTOR_ELT(mesh_, 3), R_DimSymbol))[0];
 	
 }
 #endif

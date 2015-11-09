@@ -3,6 +3,7 @@
 
 // Insert principal libraries
 #ifdef R_VERSION_
+#define R_NO_REMAP
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h> 

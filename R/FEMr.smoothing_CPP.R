@@ -38,12 +38,12 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
     locations<-matrix(nrow = 0, ncol = 2)
   }
   
-  if(is.null(BC$Indices))
+  if(is.null(BC$BC_indices))
   {
-    BC$Indices<-vector(length=0)
+    BC$BC_indices<-vector(length=0)
   }else
   {
-    BC$Indices<-as.vector(BC$Indices)-1
+    BC$BC_indices<-as.vector(BC$BC_indices)-1
   }
   
   if(is.null(BC$Values))
@@ -63,7 +63,7 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
   storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
-  storage.mode(BC$Indices)<- "integer"
+  storage.mode(BC$BC_indices)<- "integer"
   storage.mode(BC$Values)<-"double"
   
   GCV = as.integer(GCV)
@@ -72,7 +72,7 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
   ## Call C++ function
   bigsol <- .Call("regression_Laplace", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, covariates,
-                  BC$Indices, BC$Values, GCV,
+                  BC$BC_indices, BC$Values, GCV,
                   package = "FEMr")
   
   ## Reset them correctly
@@ -101,12 +101,12 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
     locations<-matrix(nrow = 0, ncol = 2)
   }
   
-  if(is.null(BC$Indices))
+  if(is.null(BC$BC_indices))
   {
-    BC$Indices<-vector(length=0)
+    BC$BC_indices<-vector(length=0)
   }else
   {
-    BC$Indices<-as.vector(BC$Indices)-1
+    BC$BC_indices<-as.vector(BC$BC_indices)-1
   }
   
   if(is.null(BC$Values))
@@ -127,7 +127,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
-  storage.mode(BC$Indices)<- "integer"
+  storage.mode(BC$BC_indices)<- "integer"
   storage.mode(BC$Values)<-"double"
   storage.mode(GCV)<-"integer"
   
@@ -138,7 +138,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   ## Call C++ function
   bigsol <- .Call("regression_PDE", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates,
-                  BC$Indices, BC$Values, GCV,
+                  BC$BC_indices, BC$Values, GCV,
                   package = "FEMr")
   
   ## Reset them correctly
@@ -148,7 +148,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   return(bigsol)
 }
 
-CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
+CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV)
 {
   
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
@@ -167,12 +167,12 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda,
     locations<-matrix(nrow = 0, ncol = 2)
   }
   
-  if(is.null(BC$Indices))
+  if(is.null(BC$BC_indices))
   {
-    BC$Indices<-vector(length=0)
+    BC$BC_indices<-vector(length=0)
   }else
   {
-    BC$Indices<-as.vector(BC$Indices)-1
+    BC$BC_indices<-as.vector(BC$BC_indices)-1
   }
   
   if(is.null(BC$Values))
@@ -201,7 +201,7 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda,
   storage.mode(FEMbasis$order) <- "integer"
   storage.mode(covariates) <- "double"
   storage.mode(lambda)<- "double"
-  storage.mode(BC$Indices)<- "integer"
+  storage.mode(BC$BC_indices)<- "integer"
   storage.mode(BC$Values)<-"double"
   storage.mode(GCV)<-"integer"
   
@@ -213,7 +213,7 @@ CPP_smooth.FEM.PDE.SV.basis<-function(locations, observations, FEMbasis, lambda,
   ## Call C++ function
   bigsol <- .Call("regression_PDE_space_varying", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
-                  BC$Indices, BC$Values, GCV,
+                  BC$BC_indices, BC$Values, GCV,
                   package = "FEMr")
   
   ## Reset them correctly

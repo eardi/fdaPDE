@@ -41,13 +41,13 @@ RegressionData::RegressionData(SEXP Rlocations, SEXP Robservations, SEXP Rorder,
 	order_ =  INTEGER(Rorder)[0];
 	DOF_ = INTEGER(DOF)[0];
 
-	UInt length_indexes = length(RBCIndices);
+	UInt length_indexes = Rf_length(RBCIndices);
     //for (UInt i = 0; i<length_indexes; ++i)  bc_indices_.push_back(INTEGER(RBCIndices)[i]);
     //for (UInt i = 0; i<length_indexes; ++i)  bc_values_.push_back(REAL(RBCValues)[i]);
 	bc_indices_.assign(INTEGER(RBCIndices), INTEGER(RBCIndices) +  length_indexes);
-	bc_values_.assign(REAL(RBCValues),REAL(RBCValues) + length(RBCIndices));
+	bc_values_.assign(REAL(RBCValues),REAL(RBCValues) + Rf_length(RBCIndices));
 
-    UInt length_lambda = length(Rlambda);
+    UInt length_lambda = Rf_length(Rlambda);
     for (UInt i = 0; i<length_lambda; ++i)  lambda_.push_back(REAL(Rlambda)[i]);
 
 }
@@ -93,7 +93,7 @@ void RegressionDataEllipticSpaceVarying::print(std::ostream & out) const
 
 void RegressionData::setObservations(SEXP Robservations)
 {
-	UInt n_obs_ = length(Robservations);
+	UInt n_obs_ = Rf_length(Robservations);
 	observations_.resize(n_obs_);
 	observations_indices_.reserve(n_obs_);
 
@@ -129,8 +129,8 @@ void RegressionData::setCovariates(SEXP Rcovariates)
 {
 
 
-	n_ = INTEGER(getAttrib(Rcovariates, R_DimSymbol))[0];
-	p_ = INTEGER(getAttrib(Rcovariates, R_DimSymbol))[1];
+	n_ = INTEGER(Rf_getAttrib(Rcovariates, R_DimSymbol))[0];
+	p_ = INTEGER(Rf_getAttrib(Rcovariates, R_DimSymbol))[1];
 
 	covariates_.resize(n_, p_);
 
@@ -145,7 +145,7 @@ void RegressionData::setCovariates(SEXP Rcovariates)
 
 void RegressionData::setLocations(SEXP Rlocations)
 {
-	n_ = INTEGER(getAttrib(Rlocations, R_DimSymbol))[0];
+	n_ = INTEGER(Rf_getAttrib(Rlocations, R_DimSymbol))[0];
 
 	for(auto i=0; i<n_; ++i)
 	{

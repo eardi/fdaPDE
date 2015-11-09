@@ -59,7 +59,7 @@ create.FEM.basis = function(mesh, order)
 #' @param FEMbasis A FEM object defining the Finite Element basis, created by \link{create.FEM.basis}.
 #' @description This function defines a FEM object. This is not uscalled directly by users.
 #' @usage FEM(coeff,FEMbasis)
-#' @return An object of the class \code{FEM}. This contains a list with components \code{coeff} and \code{FEMbasis}.
+#' @return An object of the class \code{FEMbasis}. This contains a list with components \code{coeff} and \code{FEMbasis}.
 #' @examples 
 #' ## Upload a triangular mesh and plot it
 #' data("mesh.2D.rectangular")

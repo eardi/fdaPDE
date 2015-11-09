@@ -20,7 +20,7 @@ argument, otherwise the locations are intented to be the corresponding nodes of 
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 
-\item{PDE_parameters}{A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients; \code{beta}, a vector of length 2 of advection coefficients;  \code{c}, a scalar reaction coefficient.}
+\item{PDE_parameters}{A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients; \code{b}, a vector of length 2 of advection coefficients;  \code{c}, a scalar reaction coefficient.}
 
 \item{covariates}{A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.}
 

@@ -13,7 +13,7 @@ The number of columns corresponds to the number of functional replicates.}
 \item{FEMbasis}{A FEM object defining the Finite Element basis, created by \link{create.FEM.basis}.}
 }
 \value{
-An object of the class \code{FEM}. This contains a list with components \code{coeff} and \code{FEMbasis}.
+An object of the class \code{FEMbasis}. This contains a list with components \code{coeff} and \code{FEMbasis}.
 }
 \description{
 This function defines a FEM object. This is not uscalled directly by users.

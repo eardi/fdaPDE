@@ -27,7 +27,7 @@ public:
 	#ifdef R_VERSION_
 	Diffusivity(SEXP RGlobalVector)
 	{
-		UInt num_int_nodes = length(RGlobalVector)/4;
+		UInt num_int_nodes = Rf_length(RGlobalVector)/4;
 		K_.resize(num_int_nodes);
 		for(auto l=0; l<num_int_nodes;l++)
 		{
@@ -56,7 +56,7 @@ public:
 	#ifdef R_VERSION_
 	Advection(SEXP RGlobalVector)
 	{
-		UInt num_int_nodes = length(RGlobalVector)/2;
+		UInt num_int_nodes = Rf_length(RGlobalVector)/2;
 		beta_.resize(num_int_nodes);
 		for(auto l=0; l<num_int_nodes;l++)
 		{
@@ -82,7 +82,7 @@ public:
 #ifdef R_VERSION_
 	Reaction(SEXP RGlobalVector)
 	{
-		UInt num_int_nodes = length(RGlobalVector);
+		UInt num_int_nodes = Rf_length(RGlobalVector);
 		c_.resize(num_int_nodes);
 		for(auto l=0; l<num_int_nodes;l++)
 		{
@@ -105,7 +105,7 @@ public:
 	#ifdef R_VERSION_
 	ForcingTerm(SEXP RGlobalVector)
 	{
-		UInt num_int_nodes = length(RGlobalVector);
+		UInt num_int_nodes = Rf_length(RGlobalVector);
 		u_.resize(num_int_nodes);
 		for(auto l=0; l<num_int_nodes;l++)
 		{
