@@ -1,70 +1,55 @@
 library(FEMr)
-#setwd("~/workspace/RPDE/RScripts")
-
+## Load the Meuse data and a domain boundary for these data
 data(MeuseData)
 data(MeuseBorder)
+## Create a triangular mesh for these data with the provided boundary and plot it
+order=1
+mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
+plot(mesh)
+## Create the Finite Element basis 
+FEMbasis = create.FEM.basis(mesh, order)
+## Estimate zync field without using covariates, setting the smoothing parameter to 10^3.5
+data = log(MeuseData[,"zinc"])
+lambda = 10^3.5
+ZincMeuse = smooth.FEM.basis(observations = data, 
+                             FEMbasis = FEMbasis, lambda = lambda)
+## Plot the estimated spatial field 
+plot(ZincMeuse$fit.FEM)
+# Now repeat the analysis using as covariates the square root of the log-distance 
+# from river \code{sqrt(dist.log(m))} and the altitude \code{elev}
+desmat = matrix(1,nrow=nrow(MeuseData),ncol=2)
+desmat[,1] = sqrt(MeuseData[,"dist.log(m)"])
+desmat[,2] = MeuseData[,"elev"]
+ZincMeuseCovar = smooth.FEM.basis(observations = data, covariates = desmat, 
+                                  FEMbasis = FEMbasis, lambda = lambda)
+# Plot of the non parametric part (f) of the regression model y_i = beta_1 x_i1 + beta_2 x_i2 + f
+plot(ZincMeuseCovar$fit.FEM)
+# Print covariates' regression coefficients
+print(ZincMeuseCovar$beta)
 
+# Repeat analysis with FE of order 2
+
+## Create a triangular mesh for these data with the provided boundary and plot it
 order=2
 mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 plot(mesh)
-
-mesh <- refine.MESH.2D(mesh, maximum_area = 5000)
-plot(mesh)
-
-data = log(MeuseData[,7])
-
-covariates = matrix(1,nrow=length(data),ncol=2)
-covariates[,1] = sqrt(MeuseData[,9])
-covariates[,2] = (MeuseData[,8])
-
-#  set up the FEM basis object and plot it
-
-# NO ORDER
-basisobj = create.FEM.basis(mesh, order)
-
-#  smooth the data without covariates
+## Create the Finite Element basis 
+FEMbasis = create.FEM.basis(mesh, order)
+## Estimate zync field without using covariates, setting the smoothing parameter to 10^3.5
+data = log(MeuseData[,"zinc"])
 lambda = 10^3.5
-
-#Rprof("smooth.out", memory.profiling = TRUE)
-# ouputR<-smooth.FEM.basis(locations = MeuseData[,c(2,3)],
-#                              observations = data, basisobj = basisobj,
-#                             lambda = lambda, GCV = FALSE, CPP_CODE = FALSE)
-# Rprof(NULL)
-# system.time(smooth.FEM.basis(locations = MeuseData[,c(2,3)],
-#                              observations = data, basisobj = basisobj,
-#                              lambda = lambda, GCV = FALSE, CPP_CODE = TRUE))
-
-ZincMeusefd1 = smooth.FEM.basis(locations = MeuseData[,c(2,3)], 
-                                observations = data, basisobj = basisobj,
-                                  lambda = lambda, GCV = FALSE, covariates = covariates, CPP_CODE = TRUE)
-plot.FEM(ZincMeusefd1$fit.FEM, num_refinements = 10)
-
-## What if BC Dirichlet
-
-# BorderIndices = (1:length(mesh$nodesmarker))[mesh$nodesmarker==1]
-# Indices= BorderIndices
-# Values = rep(x = 7, times = length(Indices))
-# BC = list(Indices = Indices, Values = Values)
-# 
-# output = smooth.FEM.basis(#locations = MeuseData[,c(2,3)], 
-#                             observations = data, 
-#                             #covariates = covariates, 
-#                             basisobj = basisobj,
-#                             GCV = FALSE,
-#                             lambda = lambda, BC = BC, CPP_CODE = TRUE)
-# plot(output$felsplobj, num_refinements = 10)
-# 
-# ## Generalized Elliptic PDE (example with preferential smoothing by advection i direction (1,1))
-# 
-# PDE_parameters = list(K = 1*matrix(c(1,0,0,1), nrow = 2), beta = c(0.1,0.1),
-#                       #c = 50e-4
-#                       c = 0
-#                       )
-# output = smooth.FEM.PDE.basis(observations = data, 
-#                           basisobj = basisobj, lambda = lambda, PDE_parameters = PDE_parameters, 
-#                           covariates = NULL,
-#                           BC = NULL,
-#                           GCV = FALSE
-#                           )
-# plot(output$felsplobj, num_refinements = 10)
-# 
+ZincMeuse = smooth.FEM.basis(observations = data, 
+                             FEMbasis = FEMbasis, lambda = lambda)
+## Plot the estimated spatial field 
+plot(ZincMeuse$fit.FEM)
+# Now repeat the analysis using as covariates the square root of the log-distance 
+# from river \code{sqrt(dist.log(m))} and the altitude \code{elev}
+desmat = matrix(1,nrow=nrow(MeuseData),ncol=2)
+desmat[,1] = sqrt(MeuseData[,"dist.log(m)"])
+desmat[,2] = MeuseData[,"elev"]
+ZincMeuseCovar = smooth.FEM.basis(observations = data, covariates = desmat, 
+                                  FEMbasis = FEMbasis, lambda = lambda)
+# Plot of the non parametric part (f) of the regression model y_i = beta_1 x_i1 + beta_2 x_i2 + f
+plot(ZincMeuseCovar$fit.FEM)
+# Print covariates' regression coefficients
+print(ZincMeuseCovar$beta)

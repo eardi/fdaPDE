@@ -28,7 +28,7 @@ Otherwise if only the vector of observations is given, these are consider to be 
 
 \item{BC}{A list with two vectors: 
 \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-\code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_Indices}.}
+\code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_indices}.}
 
 \item{GCV}{Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
 the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.}

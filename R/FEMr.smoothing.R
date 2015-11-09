@@ -11,7 +11,7 @@
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_Indices}.
+#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_indices}.
 #' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
 #'        the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.
 #' @param CPP_CODE Boolean. If \code{TRUE} the computation relies on the C++ implementation of the algorithm. This usually ensures a much faster computation.
@@ -116,7 +116,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_Indices}.
+#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_indices}.
 #' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
 #'        the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.
 #' @param CPP_CODE Boolean. If \code{TRUE} the computation relies on the C++ implementation of the algorithm. This usually ensures a much faster computation.
@@ -206,7 +206,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
-#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_Indices}.
+#'  \code{BC_values}, a vector with the values that the spatial field must take at the nodes indicated in \code{BC_indices}.
 #' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
 #'        the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.
 #' @param CPP_CODE Boolean. If \code{TRUE} the computation relies on the C++ implementation of the algorithm. This usually ensures a much faster computation.
