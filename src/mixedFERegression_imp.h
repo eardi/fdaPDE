@@ -124,7 +124,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::addDirichletBC(const vect
 	const std::vector<Real>& bc_values = regressionData_.getDirichletValues();
 	UInt nbc_indices = bc_indices.size();
 
-	Real pen=10e30;
+	Real pen=10e20;
 
 	for( auto i=0; i<nbc_indices; i++)
 	 {

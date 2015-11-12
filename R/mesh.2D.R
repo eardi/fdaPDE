@@ -123,18 +123,21 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   ## If attributes not specified, set them to a matrix with zero columns
   if (any(is.na(nodesattributes))) {
     nodesattributes <- matrix(0, nrow(nodes), 0)
-  }
-  ## Make sure the size of the point attribute matrix is correct
-  if (nrow(nodesattributes) != nrow(nodes)) {
-    stop("Point attribute matrix \'nodesattributes\' does not have same number of rows the point matrix \'nodes\'")
+  }else{
+    nodesattributes <- as.matrix(nodesattributes)
+    ## Make sure the size of the point attribute matrix is correct
+    if (nrow(nodesattributes) != nrow(nodes)) {
+      stop("Point attribute matrix \'nodesattributes\' does not have same number of rows the point matrix \'nodes\'")
+    }
   }
   
   ## If boundary nodes not specified, set them to 0
-  if (is.na(nodesmarkers)) {
+  if (any(is.na(nodesmarkers))) {
     nodesmarkers <- 0
+  }else{
+    nodesmarkers = as.vector(nodesmarkers)
   }
-  nodesmarkers <- rep(nodesmarkers, length.out=nrow(nodes))
-  
+    
   ## Deal with segments
   if (any(is.na(segments))) {
     segments <- matrix(0, 0, 2)
@@ -201,7 +204,7 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
     nodesattributes,
     segments,
     segmentsmarkers,
-    holes,
+    t(holes),
     triangles,
     flags
   )
@@ -304,16 +307,23 @@ refine.MESH.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
     flags = paste(flags,"VV",sep = '')
   }
   
+  nodesmarkers = NULL
+  if (ncol(mesh$nodesmarkers) == 0) {
+    nodesmarkers <- 0
+  }else{
+    nodesmarkers = as.vector(mesh$nodesmarkers)
+  }
+  
   out<-NULL
   #If triangles is null it makes the trianglulation
   #If triangle is not null it makes a refinement with no parameter, to compose the mesh object
   out <- triangulate_native(
     mesh$nodes,
-    mesh$nodesmarker,
-    mesh$nodesattribute,
+    nodesmarkers,
+    mesh$nodesattributes,
     mesh$segments,
-    mesh$segmentmarker,
-    mesh$holes,
+    mesh$segmentmarkers,
+    t(mesh$holes),
     mesh$triangles,
     flags
   )

@@ -154,7 +154,10 @@ SEXP R_triangulate_native(SEXP P, SEXP PB, SEXP PA, SEXP S, SEXP SB, SEXP(H), SE
   in.numberofpoints = LENGTH(P)/2;
   in.pointlist = REAL(P);
 
-  in.pointmarkerlist = INTEGER(PB);
+  if(Rf_length(PB) == 0)
+	  in.pointmarkerlist = NULL;
+  else
+	  in.pointmarkerlist = INTEGER(PB);
 
   in.numberofpointattributes = Rf_ncols(PA);   
   in.pointattributelist = REAL(PA);
