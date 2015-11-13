@@ -1,17 +1,17 @@
 
 #include <iostream>
-#include "../../src/FEMr.hpp"
+#include "../../src/FEMr.h"
 //#include "IO_handler.hpp"
-#include "../../src/mesh_objects.hpp"
-#include "../../src/mesh.hpp"
-#include "../../src/finite_element.hpp"
-#include "../../src/integration.hpp"
-#include "../../src/matrix_assembler.hpp"
-#include "../../src/param_functors.hpp"
-#include "../../src/solver.hpp"
+#include "../../src/mesh_objects.h"
+#include "../../src/mesh.h"
+#include "../../src/finite_element.h"
+#include "../../src/integration.h"
+#include "../../src/matrix_assembler.h"
+#include "../../src/param_functors.h"
+#include "../../src/solver.h"
 
-#include "../../src/regressionData.hpp"
-#include "../../src/mixedFERegression.hpp"
+#include "../../src/regressionData.h"
+#include "../../src/mixedFERegression.h"
 
 //#include <iomanip>
 
