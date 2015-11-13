@@ -4,7 +4,7 @@
 #' @param order Either "1" or "2". Order of the Finite Element basis. When \code{order = 1} the basis system is piecewise linear. When 
 #' \code{order = 2} the basis system is piecewise quadratic. This parameter must be less or equal to the \code{order} 
 #' specified in the \code{MESH2D}  object. See \link{create.MESH.2D}.
-#' @return A  \code{FEM} object. This contains the \code{mesh}, along with some additional quantities:
+#' @return A  \code{FEMbasis} object. This contains the \code{mesh}, along with some additional quantities:
 #' \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
 #' \item{\code{nbasis}}{Scalar. The number of basis.} 
 #' \item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.} 

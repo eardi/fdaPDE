@@ -16,7 +16,7 @@ Otherwise if only the vector of observations is given, these are consider to be 
 \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
  node.}
 
-\item{FEMbasis}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 

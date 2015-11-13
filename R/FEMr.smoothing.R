@@ -6,7 +6,7 @@
 #' \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
 #'  node.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
-#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
@@ -110,7 +110,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #'  node.
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
-#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param PDE_parameters A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients; \code{b}, a vector of length 2 of advection coefficients;  \code{c}, a scalar reaction coefficient.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
@@ -199,7 +199,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
 #'  node.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
-#' @param FEMbasis A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param PDE_parameters A list specifying the space-varying parameters of the elliptic PDE in the regularizing term: \code{K}, a function that for each spatial location in the spatial domain 
 #' (indicated by the vector of the 2 spatial coordinates) returns a 2-by-2 matrix of diffusion coefficients; \code{b}, a function that for each spatial location in the spatial domain returns a vector of length 2 of transport coefficients;  \code{c}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.

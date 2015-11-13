@@ -18,7 +18,7 @@ Otherwise if only the vector of observations is given, these are consider to be 
  node.
 \code{NA} values are admissible to indicate that the node is not associated with any observed data value.}
 
-\item{FEMbasis}{A FEM object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 
