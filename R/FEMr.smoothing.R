@@ -309,10 +309,10 @@ getBetaCoefficients<-function(locations, observations, fit.FEM, covariates)
     covariates <- as.matrix(covariates)
     if(is.null(locations))
     {
-      locations <- as.matrix(locations)
       loc_nodes = (1:length(observations))[!is.na(observations)]
       fnhat = fit.FEM$coeff[loc_nodes,]
     }else{
+      locations <- as.matrix(locations)
       loc_nodes = 1:length(observations)
       fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE = FALSE)
     }
