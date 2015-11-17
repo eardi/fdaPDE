@@ -4,7 +4,7 @@ Date: 2015-06-18
 Title: Regression with partial differential regularizations, using the Finite Element Method
 Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
 		     email = "eardi.lila@mail.polimi.it"),
-	      person("Laura", "Sangalli", role = "aut",
+	      person("Laura M.", "Sangalli", role = "aut",
 		     email = "laura.sangalli@polimi.it"),
 	      person("Jim", "Ramsay", role = "aut",
 		     email = " ramsay@psych.mcgill.ca"),
@@ -20,8 +20,7 @@ Depends:
     rgl
 Suggests:
     MASS
-Description: FEMr: Finite Element Methods regression. 
-             The package implements regression models with partial differential regularizations, making use of the Finite Element Method. 
+Description: The package implements regression models with partial differential regularizations, making use of the Finite Element Method. 
              The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. 
              A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0 + file LICENSE
