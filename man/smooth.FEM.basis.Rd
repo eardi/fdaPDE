@@ -16,7 +16,7 @@ Otherwise if only the vector of observations is given, these are consider to be 
 \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
  node.}
 
-\item{FEMbasis}{A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A \code{FEMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 
@@ -33,8 +33,8 @@ the Generalized Cross Validation criterion, for each value of the smoothing para
 }
 \value{
 A list with the following variables:
-\item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
-\item{\code{PDEmisfit.FEM}}{A FEM object that represents the Laplacian of the estimated spatial field.}
+\item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
+\item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the Laplacian of the estimated spatial field.}
 \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
 \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
 \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}

@@ -14,7 +14,7 @@ The locations of the observations can be specified with the \code{locations}
 argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
 \code{NA} values are admissible to indicate the missing value on the corresponding node.}
 
-\item{FEMbasis}{An an object of type FEM; See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{An an object of type \code{FEMbasis}; See \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar smoothing parameter.}
 

@@ -7,7 +7,7 @@
 R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 }
 \arguments{
-\item{FEMbasis}{An an object of type FEM; See \link{create.FEM.basis}.}
+\item{FEMbasis}{An an object of type \code{FEMbasis}; See \link{create.FEM.basis}.}
 
 \item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
 
@@ -23,7 +23,7 @@ The evaluation on a set of locations is performed for all the basis functions re
 This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
 }
 \references{
-Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 }
 \seealso{

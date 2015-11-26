@@ -6,7 +6,7 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
   FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
   FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
-  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
   
   if(is.null(covariates))
   {
@@ -71,7 +71,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
   FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
   FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
-  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
   
   if(is.null(covariates))
   {
@@ -139,7 +139,7 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
   ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
   FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
   FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
-  FEMbasis$mesh$neighbors = FEMbasis$mesh$neighbors - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
   
   if(is.null(covariates))
   {
@@ -209,41 +209,37 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
   return(bigsol)
 }
 
-CPP_eval.FEM.fd = function(X,Y,fdobj,fast)
+CPP_eval.FEM = function(FEM, locations, redundant)
 {
-  # EVAL_FEM_FD evaluates the FEM fd object at points (X,Y)
-  #
-  #        arguments:
-  # X         an array of x-coordinates.
-  # Y         an array of y-coordinates.
-  # FELSPLOBJ a FELspline object
-  # FAST      a boolean indicating if the walking algorithm should be apply 
-  #        output:
-  # EVALMAT   an array of the same size as X and Y containing the value of 
-  #           FELSPLOBJ at (X,Y).
-  
-  ## C++ indexes starts from zero, needed conversion.
-  fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles - 1
-  fdobj$basis$params$mesh$edges = fdobj$basis$params$mesh$edges - 1
-  fdobj$basis$params$mesh$neighbors = fdobj$basis$params$mesh$neighbors - 1
+  FEMbasis = FEM$FEMbasis
+  # Indexes in C++ starts from 0, in R from 1, opportune transformation
+  ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
   
   # Imposing types, this is necessary for correct reading from C++
-  storage.mode(fdobj$basis$params$mesh$points) <- "double"
-  storage.mode(fdobj$basis$params$mesh$triangles) <- "integer"
-  storage.mode(fdobj$basis$params$mesh$edges) <- "integer"
-  storage.mode(fdobj$basis$params$mesh$neighbors) <- "integer"
-  storage.mode(fdobj$basis$params$order) <- "integer"
-  fdobj$coef = as.vector(fdobj$coef)
-  storage.mode(fdobj$coef) <- "double"
-  storage.mode(X) <- "double"
-  storage.mode(Y) <- "double"
-  storage.mode(fast) <- "integer"
+  ## Set propr type for correct C++ reading
+  locations <- as.matrix(locations)
+  storage.mode(locations) <- "double"
+  storage.mode(FEMbasis$mesh$points) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
+  coeff = as.matrix(FEM$coeff)
+  storage.mode(coeff) <- "double"
+  storage.mode(locations) <- "double"
+  storage.mode(redundant) <- "integer"
   
   #Calling the C++ function "eval_FEM_fd" in RPDE_interface.cpp
-  evalmat <- .Call("eval_FEM_fd",fdobj$basis$params$mesh, as.vector(X), as.vector(Y), as.vector(fdobj$coef), 
-                   fdobj$basis$params$order, fast,
+  evalmat = matrix(0,nrow(locations),ncol(coeff))
+  for (i in 1:ncol(coeff))
+  {
+    evalmat[,i] <- .Call("eval_FEM_fd", FEMbasis$mesh, locations[,1], locations[,2], coeff[,i], 
+                   FEMbasis$order, redundant,
                    package = "FEMr")
-  
+  }
   #Returning the evaluation matrix
   evalmat
 }
@@ -264,7 +260,7 @@ CPP_get_evaluations_points = function(mesh, order)
   ## C++ indexes starts from zero, needed conversion.
   mesh$triangles = mesh$triangles - 1
   mesh$edges = mesh$edges - 1
-  mesh$neighbors = mesh$neighbors - 1
+  mesh$neighbors[mesh$neighbors != -1] = mesh$neighbors[mesh$neighbors != -1] - 1
   
   # Imposing types, this is necessary for correct reading from C++
   storage.mode(mesh$points) <- "double"

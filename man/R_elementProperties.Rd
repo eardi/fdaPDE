@@ -7,13 +7,13 @@
 R_elementProperties(mesh)
 }
 \arguments{
-\item{mesh}{A  MESH2D mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.}
+\item{mesh}{A \code{MESH2D} mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.}
 }
 \value{
 A list with the following variables:
-\item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
-\item{\code{transf}}{A matrix such that \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-\item{\code{metric}}{A matrix such that \code{metric[i,,]} is the 2-by-2 matrix \cr 
+\item{\code{detJ}}{A vector of #triangles. The ith element contains the determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
+\item{\code{transf}}{A matrix #triangles-by-2-by-2. \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
+\item{\code{metric}}{A matrix #triangles-by-2-by-2. \code{metric[i,,]} is the 2-by-2 matrix \cr 
 \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 of the integrals over the elements of the mesh.}
 }

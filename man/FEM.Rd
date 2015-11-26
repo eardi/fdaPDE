@@ -10,13 +10,13 @@ FEM(coeff,FEMbasis)
 \item{coeff}{A vector or a matrix containg the coefficients for the Finite Element basis expansion. The number of rows (or the vector's length) corresponds to the number of basis in code{FEMbasis}. 
 The number of columns corresponds to the number of functional replicates.}
 
-\item{FEMbasis}{A FEM object defining the Finite Element basis, created by \link{create.FEM.basis}.}
+\item{FEMbasis}{A \code{FEMbasis} object defining the Finite Element basis, created by \link{create.FEM.basis}.}
 }
 \value{
 An object of the class \code{FEMbasis}. This contains a list with components \code{coeff} and \code{FEMbasis}.
 }
 \description{
-This function defines a FEM object. This is not uscalled directly by users.
+This function defines a \code{FEM} object. This is not uscalled directly by users.
 }
 \examples{
 ## Upload a triangular mesh and plot it

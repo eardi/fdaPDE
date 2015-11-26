@@ -8,11 +8,11 @@
 
 #define R_VERSION_
 
-#include "FEMr.hpp"
-//#include "IO_handler.hpp"
-#include "mesh_objects.hpp"
-#include "mesh.hpp"
-#include "evaluator.hpp"
+#include "FEMr.h"
+//#include "IO_handler.h"
+#include "mesh_objects.h"
+#include "mesh.h"
+#include "evaluator.h"
 
 extern "C" {
 //! This function manages the various option for the solution evaluation.
@@ -36,8 +36,8 @@ SEXP eval_FEM_fd(SEXP Rmesh, SEXP RX, SEXP RY, SEXP Rcoef, SEXP Rorder, SEXP Rfa
 	int order;
 	bool fast;
 
-	int n_coef 	= length(Rcoef);
-	int n_X 	= length(RX);
+	int n_coef 	= Rf_length(Rcoef);
+	int n_X 	= Rf_length(RX);
 
     // Cast all computation parameters
     X 			= REAL(RX);
@@ -46,24 +46,32 @@ SEXP eval_FEM_fd(SEXP Rmesh, SEXP RX, SEXP RY, SEXP Rcoef, SEXP Rorder, SEXP Rfa
     order 		= INTEGER(Rorder)[0];
     fast 		= INTEGER(Rfast)[0];
 
-	//std::cout<<"Starting Evaluation"<<std::endl;
-
     SEXP result;
-	PROTECT(result=allocVector(REALSXP, n_X));
-
+	PROTECT(result=Rf_allocVector(REALSXP, n_X));
+	bool isinside[n_X];
     //Set the mesh
-
+	//std::cout<<"Length "<<n_X<<"--X0 "<<X[0]<<"--Y0 "<<Y[0];
     if(order == 1)
     {
-		Evaluator<1> evaluator(Rmesh);
-		evaluator.eval(X, Y, n_X, coef, order, fast, REAL(result));
+    	MeshHandler<1> mesh(Rmesh);
+		Evaluator<1> evaluator(mesh);
+		evaluator.eval(X, Y, n_X, coef, order, fast, REAL(result), isinside);
 	}
 	else if(order == 2)
 	{
-		Evaluator<2> evaluator(Rmesh);
-		evaluator.eval(X, Y, n_X, coef, order, fast, REAL(result));
+    	MeshHandler<2> mesh(Rmesh);
+    	Evaluator<2> evaluator(mesh);
+		evaluator.eval(X, Y, n_X, coef, order, fast, REAL(result), isinside);
 	}
 
+    for (int i=0; i<n_X;++i)
+    {
+    	if(!(isinside[i]))
+    	{
+    		REAL(result)[i]=NA_REAL;
+    	}
+
+    }
 
 	UNPROTECT(1);
     // result list

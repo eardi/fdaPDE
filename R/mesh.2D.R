@@ -12,9 +12,9 @@ triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
   
   storage.mode(P)  <- "double"
   storage.mode(PA) <- "double"
-  storage.mode(PB) <- "integer"
+  #storage.mode(PB) <- "integer"
   storage.mode(S)  <- "integer"
-  storage.mode(SB) <- "integer"
+  #storage.mode(SB) <- "integer"
   storage.mode(H)  <- "double"
   storage.mode(TR) <- "integer"
   storage.mode(flags) <- 'character'
@@ -75,7 +75,7 @@ triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
 #' \item{\code{triangles}}{A #triangles-by-3 (when \code{order} = 1) or #triangles-by-6 (when \code{order} = 2) matrix.
 #' This option is used when a triangulation is already available. It specifies the triangles giving the indices in \code{nodes} of the triangles' vertices and (when \code{nodes} = 2) also if the triangles' edges midpoints. The triangles' vertices and midpoints are ordered as descrcibed 
 #' at  \cr https://www.cs.cmu.edu/~quake/triangle.highorder.html.}
-#' \item{\code{segmentsmarker}}{A vector of length #segments, as passed in input, with entries either '1' or '0'. An entry '1' indicates that the corresponding element in \code{segments} is a boundary segment;  
+#' \item{\code{segmentsmarker}}{A vector of length #segments with entries either '1' or '0'. An entry '1' indicates that the corresponding element in \code{segments} is a boundary segment;  
 #' an entry '0' indicates that the corresponding segment is not a boundary segment.}
 #' \item{\code{edges}}{A #edges-by-2 matrix containg all the edges of the triangles in the output triangulation. Each row contains the row's indices in \code{nodes}, indicating the nodes where the edge starts from and ends to.}
 #' \item{\code{edgesmarkers}}{A vector of lenght #edges with entries either '1' or '0'. An entry '1' indicates that the corresponding element in \code{edge} is a boundary edge;  
@@ -107,8 +107,9 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   ###   Input checking   ###
   ##########################
   
-  nodesmarkers = NA
-  segmentsmarkers = NA
+  # Triangle finds out which are on the border (see https://www.cs.cmu.edu/~quake/triangle.help.html)
+  nodesmarkers = vector(mode = "integer", 0)
+  segmentsmarkers = vector(mode = "integer", 0)
   
   ## Deal with nodes
   if (ncol(nodes) != 2) {
@@ -132,11 +133,11 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   }
   
   ## If boundary nodes not specified, set them to 0
-  if (any(is.na(nodesmarkers))) {
-    nodesmarkers <- 0
-  }else{
-    nodesmarkers = as.vector(nodesmarkers)
-  }
+#   if (any(is.na(nodesmarkers))) {
+#     nodesmarkers <- vector(mode = "integer", 0)
+#   }else{
+#     nodesmarkers = as.vector(nodesmarkers)
+#   }
     
   ## Deal with segments
   if (any(is.na(segments))) {
@@ -148,10 +149,11 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   }
   
   ## If boundary segments not specified, set them to 0
-  if (any(is.na(segmentsmarkers))) {
-    segmentsmarkers <- 0
-  }
-  segmentsmarkers <- rep(segmentsmarkers, length.out=nrow(segments))
+#   if (any(is.na(segmentsmarkers))) {
+#     segmentsmarkers <- vector(mode = "integer", 0)
+#   }else{
+#     segmentsmarkers = as.vector(segmentsmarkers)
+#   }
   
   ## If hole not specified, set it to empty matrix
   if (any(is.na(holes))) {
@@ -307,19 +309,16 @@ refine.MESH.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
     flags = paste(flags,"VV",sep = '')
   }
   
-  nodesmarkers = NULL
-  if (ncol(mesh$nodesmarkers) == 0) {
-    nodesmarkers <- 0
-  }else{
-    nodesmarkers = as.vector(mesh$nodesmarkers)
-  }
+  # Triangle finds out which are on the border (see https://www.cs.cmu.edu/~quake/triangle.help.html)
+  mesh$nodesmarkers = vector(mode = "integer", 0)
+  mesh$segmentsmarkers = vector(mode = "integer", 0)
   
   out<-NULL
   #If triangles is null it makes the trianglulation
   #If triangle is not null it makes a refinement with no parameter, to compose the mesh object
   out <- triangulate_native(
     mesh$nodes,
-    nodesmarkers,
+    mesh$nodesmarkers,
     mesh$nodesattributes,
     mesh$segments,
     mesh$segmentmarkers,
@@ -345,7 +344,7 @@ refine.MESH.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
   
   out[[10]] = mesh$holes
   names(out)[10]<-"holes"
-  out[[11]] = order
+  out[[11]] = mesh$order
   names(out)[11]<-"order"
   
   class(out)<-"MESH2D"

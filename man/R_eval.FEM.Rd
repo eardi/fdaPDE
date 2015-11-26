@@ -7,12 +7,12 @@
 R_eval.FEM(FEM, locations)
 }
 \arguments{
-\item{FEM}{the Functional Object of class FEM to be evaluated}
+\item{FEM}{the Functional Object of class \code{FEM} to be evaluated}
 
 \item{locations}{A #locations-by-2 matrix where each row specifies the x and y coordinate of the corresponding location.}
 }
 \value{
-A matrix of numeric evaluations of the FEM object. Each row indicates the location where the evaluation has been taken, the column indicates the 
+A matrix of numeric evaluations of the \code{FEM} object. Each row indicates the location where the evaluation has been taken, the column indicates the 
 function evaluated.
 }
 \description{
@@ -20,7 +20,7 @@ A Functional Object, represented respect to a Finite Element basis, is evaluated
 This version of the function is implemented using only R code. Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
 }
 \references{
-Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
+Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 }
 \seealso{

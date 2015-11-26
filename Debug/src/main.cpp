@@ -16,7 +16,7 @@
 //#include <iomanip>
 
 //#include "regression_PDE.hpp"
-//#include "evaluator.hpp"
+#include "../../src/evaluator.h"
 //
 int main()
 {
@@ -71,6 +71,18 @@ int main()
 	{
 		std::cout<<regression.getSolution()[i];
 	}
+
+	Real result[2];
+	bool isinside[2];
+	Real X[1]; X[0]=-10;
+	Real Y[1]; Y[0]=10;
+	UInt n_X = 1;
+	Evaluator<2> evaluator(mesh);
+	const Real* coeff = regression.getSolution()[0].data();
+
+	evaluator.eval(X, Y, n_X, coeff, order, false, result, isinside);
+	std::cout<<"\n Evaluation "<<result[0];
+	std::cout<<"\n Is Inside "<<isinside[0];
 
 	return 0;
 }

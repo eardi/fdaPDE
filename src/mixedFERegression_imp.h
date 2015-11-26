@@ -150,7 +150,7 @@ template<typename InputHandler, typename Integrator, UInt ORDER>
 void MixedFERegression<InputHandler,Integrator,ORDER>::getDataMatrix(SpMat& DMat)
 {
 		UInt nnodes = mesh_.num_nodes();
-		UInt nlocations = regressionData_.getNumberofObservations();
+		//UInt nlocations = regressionData_.getNumberofObservations();
 
 		DMat.resize(nnodes,nnodes);
 
@@ -247,7 +247,7 @@ template<typename InputHandler, typename Integrator, UInt ORDER>
 void MixedFERegression<InputHandler,Integrator,ORDER>::setH()
 {
 	//std::cout<<"Computing Projection Matrix"<<std::endl;
-	UInt nnodes = mesh_.num_nodes();
+	//UInt nnodes = mesh_.num_nodes();
 	UInt nlocations = regressionData_.getNumberofObservations();
 
 	//regressionData_.printCovariates(std::cout);
@@ -570,7 +570,7 @@ template<typename InputHandler, typename Integrator, UInt ORDER>
 void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVarying()
 {
 	//std::cout<<"Space-varying Coefficient - Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
-		UInt ndata=regressionData_.getObservations().size();
+		//UInt ndata=regressionData_.getObservations().size();
 		UInt nnodes=mesh_.num_nodes();
 
 		FiniteElement<Integrator, ORDER> fe;

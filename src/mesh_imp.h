@@ -1,6 +1,7 @@
 #ifndef MESH_IMP_H_
 #define MESH_IMP_H_
 
+#include<iostream>
 
 #ifdef R_VERSION_
 template <UInt ORDER>
@@ -54,6 +55,7 @@ template <UInt ORDER>
 Triangle<ORDER * 3> MeshHandler<ORDER>::getNeighbors(Id id_triangle, UInt number) const
 {
 	Id id_neighbour = neighbors_[number * num_triangles_ + id_triangle];
+	//std::cout<<"Neighbour id "<< id_neighbour;
 	if (id_neighbour == -1) return Triangle<ORDER * 3>(); //Triangle with NVAL ID
 	
 	return getTriangle(id_neighbour);
@@ -98,17 +100,18 @@ Triangle<ORDER * 3> MeshHandler<ORDER>::findLocationWalking(const Point& point, 
 			distance_old = distance;
 		}
 	}
-	
+
 	//Walking algorithm to the point
 	Triangle<ORDER * 3> current_triangle = starting_triangles[min_index];
-	
-	int direction = current_triangle.getPointDirection(point);
+
+	int direction=0;
 
 	//Test for found Triangle, or out of border
-	while(direction != -1 && current_triangle.getId() != Identifier::NVAL)
+	while(current_triangle.getId() != Identifier::NVAL && !current_triangle.isPointInside(point) )
 	{
-		current_triangle = getNeighbors(current_triangle.getId(), direction);
 		direction = current_triangle.getPointDirection(point);
+		current_triangle = getNeighbors(current_triangle.getId(), direction);
+		//std::cout<<"Direction "<<direction<< " ID "<<current_triangle.getId();
 	}	
 	
 	return current_triangle;

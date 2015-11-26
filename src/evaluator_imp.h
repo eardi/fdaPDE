@@ -2,7 +2,7 @@
 #define __EVALUATOR_IMP_HPP__
 
 template <UInt ORDER>
-void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, Real *coef, UInt order, bool fast, Real* result)
+void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, bool* isinside)
 {
 	
 	
@@ -14,7 +14,6 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, Real *coef, UInt orde
 	Eigen::Matrix<Real,3*ORDER,1> coefficients;
 	
 	starting_triangles[0] = mesh_.getTriangle(0);
-	
 	for (int i = 0; i<length; ++i)
 	{
 		current_point = Point(X[i],Y[i]);
@@ -24,17 +23,13 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, Real *coef, UInt orde
 		//cout<<"triangle: "<< current_triangle.getId()<<endl;
 		if(current_triangle.getId() == Identifier::NVAL && fast == false)       //To avoid problems with non convex mesh
 			current_triangle = mesh_.findLocationNaive(current_point);
-		
 		if(current_triangle.getId() == Identifier::NVAL)         
-			{
-				#ifdef R_VERSION_
-				result[i] = NA_REAL;
-				#else
-				result[i] = std::nan(NULL);
-				#endif
-			}
+		{
+			isinside[i]=false;
+		}
 		else 
 		{
+			isinside[i]=true;
 			for (int i=0; i<(3*ORDER); ++i)		
 			{
 				coefficients[i] = coef[current_triangle[i].getId()];

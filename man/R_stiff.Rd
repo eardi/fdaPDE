@@ -7,7 +7,7 @@
 R_stiff(FEMbasis)
 }
 \arguments{
-\item{FEMbasis}{A FEM object representing the basis; See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A \code{FEM} object representing the basis; See \code{\link{create.FEM.basis}}.}
 }
 \value{
 A square matrix with the integrals of all the basis functions' gradients pairwise dot products.

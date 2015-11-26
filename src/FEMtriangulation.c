@@ -164,7 +164,10 @@ SEXP R_triangulate_native(SEXP P, SEXP PB, SEXP PA, SEXP S, SEXP SB, SEXP(H), SE
 
   in.numberofsegments = LENGTH(S)/2;
   in.segmentlist = INTEGER(S);
-  in.segmentmarkerlist = INTEGER(SB);
+  if(Rf_length(SB) == 0)
+  	in.segmentmarkerlist = NULL;
+  else
+    in.segmentmarkerlist = INTEGER(SB);
   in.numberofholes = LENGTH(H)/2;
   in.holelist = REAL(H);				/* Not needed if -E switch used. */
   

@@ -18,11 +18,13 @@ Otherwise if only the vector of observations is given, these are consider to be 
  node.
 \code{NA} values are admissible to indicate that the node is not associated with any observed data value.}
 
-\item{FEMbasis}{A FEMbasis object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A \code{FEMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
 \item{lambda}{A scalar or vector of smoothing parameters.}
 
-\item{PDE_parameters}{A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients; \code{b}, a vector of length 2 of advection coefficients;  \code{c}, a scalar reaction coefficient.}
+\item{PDE_parameters}{A list specifying the parameters of the elliptic PDE in the regularizing term: \code{K}, a 2-by-2 matrix of diffusion coefficients. This induces an anisotropic 
+smoothing with a preferential direction that corresponds to the first eigenvector of the diffusion matrix K; \code{b}, a vector of length 2 of advection coefficients. This induces a 
+smoothing only in the direction specified by the vector \code{b}; \code{c}, a scalar reaction coefficient. \code{c} induces a shrinkage of the surface to zero}
 
 \item{covariates}{A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.}
 
@@ -37,8 +39,8 @@ the Generalized Cross Validation criterion, for each value of the smoothing para
 }
 \value{
 A list with the following variables:
-         \item{\code{fit.FEM}}{A FEM object that represents the fitted spatial field.}
-         \item{\code{PDEmisfit.FEM}}{A FEM object that represents the PDE misfit for the estimated spatial field.}
+         \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
+         \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the PDE misfit for the estimated spatial field.}
          \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
@@ -58,7 +60,7 @@ observations = sin(pi*mesh.2D.simple$nodes[,1]) + rnorm(n = nrow(mesh.2D.simple$
 FEMbasis = create.FEM.basis(mesh.2D.simple, 2)
 
 # Set a vector of smoothing coefficients
-lambda = c(10^-2, 10^-1, 0.5, 5, 10)
+lambda = c(10^-4, 1, 10^4)
 
 # Set the anysotropic smoothing matrix K
 PDE_parameters_anys = list(K = matrix(c(0.01,0,0,1), nrow = 2), b = c(0,0), c = 0)
@@ -67,9 +69,12 @@ FEM_CPP_PDE = smooth.FEM.PDE.basis(observations = observations,
                                    FEMbasis = FEMbasis, lambda = lambda, 
                                    PDE_parameters = PDE_parameters_anys)
 plot(FEM_CPP_PDE$fit.FEM)
+
+# Evaluate solution in three points
+eval.FEM(FEM_CPP_PDE$fit.FEM, locations = rbind(c(0,0),c(0.5,0),c(-2,-2)))
 }
 \references{
-Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036. 
+Azzimonti, L., Sangalli, L.M., Secchi, P., Domanin, M., and Nobile, F., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. DOI. 10.1080/01621459.2014.946036. \cr
  Azzimonti, L., Nobile, F., Sangalli, L.M., and Secchi, P., 2014. Mixed Finite Elements for Spatial Regression with PDE Penalization. SIAM/ASA Journal on Uncertainty Quantification, 2(1), pp.305-335.
 }
 \seealso{

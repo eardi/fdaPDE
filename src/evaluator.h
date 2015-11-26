@@ -1,6 +1,7 @@
 #ifndef __EVALUATOR_HPP__
 #define __EVALUATOR_HPP__
 
+#include <iostream>
 #include "finite_element.h"
 #include "FEMr.h"
 #include "matrix_assembler.h"
@@ -33,7 +34,7 @@ class Evaluator
 		\param result a double pointer to an already allocated memory space, where the evaluations
 		will be stored
 		*/
-		void eval(Real* X, Real *Y, UInt length, Real *coef, UInt order, bool fast, Real* result);
+		void eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, bool* isinside);
 		
 	private:
 		const MeshHandler<ORDER> &mesh_;

@@ -7,7 +7,7 @@
 R_mass(FEMbasis)
 }
 \arguments{
-\item{FEMbasis}{A FEM object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A \code{FEM} object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.}
 }
 \value{
 A square matrix with the integrals of all the basis' functions pairwise products.

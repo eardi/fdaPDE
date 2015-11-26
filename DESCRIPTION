@@ -1,5 +1,5 @@
 Package: FEMr
-Version: 0.9-1
+Version: 0.1-1
 Date: 2015-06-18
 Title: Regression with partial differential regularizations, using the Finite Element Method
 Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
