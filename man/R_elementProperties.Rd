@@ -18,7 +18,8 @@ A list with the following variables:
 of the integrals over the elements of the mesh.}
 }
 \description{
-Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
+Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. 
+It computes some quantities associated to the linear map that transforms the ith triangle in the reference triangular element. 
 These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
 }
 

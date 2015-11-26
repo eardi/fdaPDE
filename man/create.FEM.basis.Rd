@@ -17,7 +17,7 @@ specified in the \code{MESH2D}  object. See \link{create.MESH.2D}.}
 A  \code{FEMbasis} object. This contains the \code{mesh}, along with some additional quantities:
 \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
 \item{\code{nbasis}}{Scalar. The number of basis.} 
-\item{\code{detJ}}{The determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.} 
+\item{\code{detJ}}{The determinant of the transformation from the nodes of the reference triangle to the nodes of the i-th triangle; this coincides with the double of the area of the i-th triangle.} 
 \item{\code{transf}}{A three-dimensional array such that  \code{transf[i,,]} is the 2-by-2 matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 \item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \cr 
 \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
@@ -30,16 +30,13 @@ Linear (\code{order = 1}) and quadratic (\code{order = 2})
 Finite Element are currently implemented.
 }
 \examples{
-## Creates a simple traingulated domain with a concavity; this is a MESH2D object  
+## Creates a simple triangulated domain with a concavity; this is a MESH2D object  
 mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),
 segments=rbind(c(1, 2), c(2, 3), c(3, 4), c(4, 5), c(5, 1)), order=1)
 ## Plot it
 plot(mesh)                   
 ## Creates the basis
 FEMbasis = create.FEM.basis(mesh, order = 1)
-}
-\references{
-Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp. 681-703.
 }
 \seealso{
 \code{\link{create.MESH.2D}}

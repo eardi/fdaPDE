@@ -2,7 +2,7 @@
 % Please edit documentation in R/FEMr.smoothing_R.R
 \name{R_eval.FEM}
 \alias{R_eval.FEM}
-\title{Evaluate a FEM object on a set of point locations}
+\title{Evaluate a FEM object at a set of locations}
 \usage{
 R_eval.FEM(FEM, locations)
 }

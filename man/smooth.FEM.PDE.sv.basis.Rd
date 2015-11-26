@@ -11,10 +11,10 @@ smooth.FEM.PDE.sv.basis(locations = NULL, observations, FEMbasis,
 \arguments{
 \item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.}
 
-\item{observations}{A #observations vector with the observed data values over the domain. 
+\item{observations}{A vector of length #observations with the observed data values over the domain. 
 The locations of the observations can be specified with the \code{locations} argument. 
 Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
-\code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+\code{nodes} of the mesh. In this last case, an \code{NA} value in the \code{observations} vector indicates that there is no observation associated to the corresponding
  node.}
 
 \item{FEMbasis}{A \code{FEMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
@@ -49,7 +49,7 @@ A list with the following variables:
          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 }
 \description{
-This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
+This function implements a spatial regression model with differential regularization; anysotropic and non-stationary case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 }
 \examples{
 # Loading the mesh

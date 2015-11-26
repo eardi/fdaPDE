@@ -10,22 +10,22 @@
 }
 \description{
 This data set gives locations, top soil heavy metal concentrations (ppm) and other variables, collected in a flood plain of the river Meuse. 
-For details on this dataset, see \code{meuse.all} in \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}. The version of the dataset
-here provides 155 samples. Moreover, a definition of the domain's boundary is provided through the table {\link{MeuseBorder}}, 
+For details on this dataset, see \code{meuse.all} in \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}. This version of the dataset
+includes 155 observations. Moreover, a definition of the domain's boundary is provided through the file {\link{MeuseBorder}}, 
 as it is used in many examples to illustrate FEMr features. 
 \itemize{
-  \item sample. original sample number. In this version of the dataset some samples has been left out becouse not indicative, or outliers.
-  \item x. numeric vector indicating the x-coordinate (m) in RDM (Dutch topographical map coordinates)
-  \item y. numeric vector indicating the y-coordinate (m) in RDM (Dutch topographical map coordinates)
-  \item cadmium. topsoil cadmium concentration (ppm)
-  \item copper. topsoil copper concentration (ppm)
-  \item lead. topsoil lead concentration (ppm)
-  \item zinc. topsoil zinc concentration (ppm)
-  \item elev. relative elevation
-  \item dist.log(m). logarithm of the distance to river Meuse (metres), as obtained during the field survey
-  \item om. organic matter, as percentage
-  \item ffreq. flooding frequency class
-  \item soil. soil type
+  \item sample: original sample number. In this version of the dataset some observations has been left out because not indicative, or outliers.
+  \item x: numeric vector indicating the x-coordinate (m) in RDM (Dutch topographical map coordinates).
+  \item y: numeric vector indicating the y-coordinate (m) in RDM (Dutch topographical map coordinates).
+  \item cadmium: topsoil cadmium concentration (ppm).
+  \item copper: topsoil copper concentration (ppm).
+  \item lead: topsoil lead concentration (ppm).
+  \item zinc: topsoil zinc concentration (ppm).
+  \item elev: relative elevation.
+  \item dist.log(m): logarithm of the distance to river Meuse (metres), as obtained during the field survey.
+  \item om: organic matter, as percentage.
+  \item ffreq: flooding frequency class.
+  \item soil: soil type.
 }
 }
 

@@ -2,29 +2,29 @@
 % Please edit documentation in R/FEMr.smoothing_R.R
 \name{R_eval.FEM.basis}
 \alias{R_eval.FEM.basis}
-\title{Evaluate Finite Element bases and their Derivatives}
+\title{Evaluate Finite Element bases and their Derivatives at a set of locations}
 \usage{
 R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 }
 \arguments{
-\item{FEMbasis}{An an object of type \code{FEMbasis}; See \link{create.FEM.basis}.}
+\item{FEMbasis}{An \code{FEMbasis} object representing the Finite Element basis; See \link{create.FEM.basis}.}
 
-\item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
+\item{locations}{A 2 columns matrix where each row specifies locations where the bases should be evaluated.}
 
-\item{nderivs}{A 2-elements vector specifying the partial derivatives order of the basis functions to evaluate. The vectors' element must
-be 0,1 or 2, where 0 indicates that the original basis function should be evaluated.}
+\item{nderivs}{A vector of lenght 2 specifying the order of the partial derivatives of the bases to be evaluated. The vectors' entries can
+be 0,1 or 2, where 0 indicates that only the basis functions, and not their derivatives, should be evaluated.}
 }
 \value{
 A matrix of basis function values. Each row indicates the location where the evaluation has been taken, the column indicates the 
 basis function evaluated
 }
 \description{
-The evaluation on a set of locations is performed for all the basis functions representing the Finite Element finite-dimensional space. Also their derivatives up to order 2 can be evaluated. 
+Only executed when the function \code{smooth.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. It evaluates the Finite Element basis functions and their derivatives up to order 2 at the specified set of locations. 
 This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
- Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
+Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 }
 \seealso{
 \code{\link{R_eval.FEM}}

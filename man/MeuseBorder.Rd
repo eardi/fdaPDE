@@ -5,14 +5,12 @@
 \title{Boundary of the Meuse River data set}
 \format{A data frame with 52 rows and 2 variables.}
 \description{
-This file provides the boundary of the domain of the Meuse dataset  {\link{MeuseData}}.
+This file provides the boundary of the domain of the {\link{MeuseData}}.
 }
 \details{
 \itemize{
-  \item vertex_start. A vector having as entries the row's indices of the samples in {\link{MeuseData}}, indicating 
-  the location where a boundary segment starts from.
-  \item vertex_end. A vector having as entries the row's indices of the locations in {\link{MeuseData}}, indicating 
-  the location where a boundary segment ends to.
+  \item vertex_start. A vector having as entries the row's indices of the location in {\link{MeuseData}} where a boundary segment starts from.
+  \item vertex_end. A vector having as entries the row's indices of the location in {\link{MeuseData}} where a boundary segment ends to.
 }
 }
 

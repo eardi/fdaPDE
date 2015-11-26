@@ -4,7 +4,7 @@
 \alias{eval.FEM}
 \title{Evaluate a FEM object on a set of point locations}
 \usage{
-eval.FEM(FEM, locations, CPP_CODE = TRUE)
+eval.FEM(FEM, locations)
 }
 \arguments{
 \item{FEM}{the Functional Object of class \code{FEM} to be evaluated}

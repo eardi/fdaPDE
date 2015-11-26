@@ -2,40 +2,37 @@
 % Please edit documentation in R/FEMr.smoothing_R.R
 \name{R_smooth.FEM.basis}
 \alias{R_smooth.FEM.basis}
-\title{Compute a solution for a Spatial Spline problem}
+\title{Spatial regression with differential regularization (fully implemented in R code)}
 \usage{
 R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
 }
 \arguments{
-\item{locations}{A 2 column matrix where each row specifies the coordinates of the corresponding observation.}
+\item{locations}{A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observations in the vector \code{observations}.}
 
-\item{observations}{A vector specifying the observed values on the domain. 
-The locations of the observations can be specified with the \code{locations} 
-argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
-\code{NA} values are admissible to indicate the missing value on the corresponding node.}
+\item{observations}{A #observations vector with the observed data values over the domain. The locations of the observations can be specified with the \code{locations} argument.
+Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table nodes of the mesh. In this last
+case, an \code{NA} value in the observations vector indicates that there is no observation associated to the corresponding node.}
 
-\item{FEMbasis}{An an object of type \code{FEMbasis}; See \code{\link{create.FEM.basis}}.}
+\item{FEMbasis}{A F\code{EMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.}
 
-\item{lambda}{A scalar smoothing parameter.}
+\item{lambda}{A scalar or vector of smoothing parameters.}
 
-\item{covariates}{A design matrix where each row represents the covariates associated to each row.}
+\item{covariates}{A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.}
 
-\item{GCV}{If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
-the Generalized Cross Validation parameter, for value of \code{lambda}.}
+\item{GCV}{Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
+the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.}
 }
 \value{
-A list with the following variables:
-         \item{\code{fit.FEM}}{A FEM object of the FEM type defined by the coefficients vector resulting from smoothing.}
-         \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM type for the value of the Laplace operator}
-         \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
-         \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
-         \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
-         \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
+A list with the following quantities:
+   \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
+   \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the Laplacian of the estimated spatial field.}
+   \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
+   \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
+   \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
+   \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 }
 \description{
-Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013). This version
-of the function is implemented using only R code rather than C++. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-Despite its slowness, allows to easily explore the different steps of the smothing algorithm.
+Spatial regression with differential regularization (fully implemented in R code)
 }
 \references{
 Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
