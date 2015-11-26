@@ -7,7 +7,8 @@
 #' \item{\code{metric}}{A matrix #triangles-by-2-by-2. \code{metric[i,,]} is the 2-by-2 matrix \cr 
 #' \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
 #' of the integrals over the elements of the mesh.} 
-#' @description Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. For each linear map that transforms the ith triangle in the reference element, three properties are computed. 
+#' @description Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. 
+#' It computes some quantities associated to the linear map that transforms the ith triangle in the reference triangular element. 
 #' These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
 #' @usage R_elementProperties(mesh)
 
@@ -46,8 +47,8 @@ R_elementProperties=function(mesh)
 #' @param FEMbasis A \code{FEM} object representing the Finite Element basis. See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis' functions pairwise products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
-#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the product between the ith and kth element 
-#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
+#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the integral over the domain of the product between the ith and kth element 
+#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating over all the mesh triangles. 
 #' @usage R_mass(FEMbasis)
 #' @seealso \code{\link{R_stiff}}
 
@@ -100,11 +101,11 @@ R_mass=function(FEMbasis)
 
 #' Compute the stiffness matrix
 #' 
-#' @param FEMbasis A \code{FEM} object representing the basis; See \code{\link{create.FEM.basis}}.
+#' @param FEMbasis A \code{FEMbasis} object representing the basis; See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis functions' gradients pairwise dot products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
-#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the intergal over the domain of the scalar product between the gradient of the ith and kth element 
-#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating the mesh by triangles. 
+#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the integral over the domain of the scalar product between the gradient of the ith and kth element 
+#' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating over all the mesh triangles. 
 #' @usage R_stiff(FEMbasis)
 #' @seealso \code{\link{R_mass}}
 
@@ -180,28 +181,24 @@ R_stiff= function(FEMbasis)
   K1
 }
 
-#' Compute a solution for a Spatial Spline problem
+#' Spatial regression with differential regularization (fully implemented in R code)
 #' 
-#' @param observations A vector specifying the observed values on the domain. 
-#' The locations of the observations can be specified with the \code{locations} 
-#' argument, otherwise the locations are intented to be the corresponding nodes of the mesh. 
-#' \code{NA} values are admissible to indicate the missing value on the corresponding node.
-#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param FEMbasis An an object of type \code{FEMbasis}; See \code{\link{create.FEM.basis}}.
-#' @param lambda A scalar smoothing parameter.
-#' @param covariates A design matrix where each row represents the covariates associated to each row.
-#' @param GCV If \code{TRUE} computes the trace of the smoothing matrix, the estimate of the error's variance and 
-#'        the Generalized Cross Validation parameter, for value of \code{lambda}.
-#' @return A list with the following variables:
-#'          \item{\code{fit.FEM}}{A FEM object of the FEM type defined by the coefficients vector resulting from smoothing.}
-#'          \item{\code{PDEmisfit.FEM}}{A FEM object of the FEM type for the value of the Laplace operator}
-#'          \item{\code{beta}}{If covariates is not \code{NULL}, a vector with the linear coefficients associated with each covariate.}
-#'          \item{\code{edf}}{If GCV is \code{TRUE}, a vector with the trace of the smoothing matrix for each penalization parameter in the vector \code{lambda}.}
-#'          \item{\code{stderr}}{If GCV is \code{TRUE}, a vector with the estimate of the standard deviation of the error for each penalization parameter in the vector \code{lambda}.}
-#'          \item{\code{GCV}}{If GCV is \code{TRUE}, a vector with the GCV index for each penalization parameter in the vector \code{lambda}.}
-#' @description Compute a solution for a Spatial Spline problem following the model in: Sangalli, Ramsay, Ramsay (2013). This version
-#' of the function is implemented using only R code rather than C++. It is called by \code{smooth.FEM.basis} when \code{CPP_CODE} is \code{FALSE}.
-#' Despite its slowness, allows to easily explore the different steps of the smothing algorithm.
+#' @param observations A #observations vector with the observed data values over the domain. The locations of the observations can be specified with the \code{locations} argument.
+#' Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table nodes of the mesh. In this last
+#' case, an \code{NA} value in the observations vector indicates that there is no observation associated to the corresponding node.
+#' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates of the corresponding observations in the vector \code{observations}.
+#' @param FEMbasis A F\code{EMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
+#' @param lambda A scalar or vector of smoothing parameters.
+#' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
+#' @param GCV Boolean. If \code{TRUE} the following quantities are computed: the trace of the smoothing matrix, the estimated error standard deviation,  and 
+#'        the Generalized Cross Validation criterion, for each value of the smoothing parameter specified in \code{lambda}.
+#' @return A list with the following quantities:
+#'    \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
+#'    \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the Laplacian of the estimated spatial field.}
+#'    \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
+#'    \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
+#'    \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
+#'    \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
 #' @usage R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
 #' @seealso \code{\link{smooth.FEM.basis}}, \code{\link{smooth.FEM.PDE.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
@@ -338,21 +335,21 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   return(bigsol)
 }
 
-#' Evaluate Finite Element bases and their Derivatives
+#' Evaluate Finite Element bases and their Derivatives at a set of locations
 #' 
-#' @param locations A 2 column matrix where each row specifies the coordinates of the corresponding observation.
-#' @param FEMbasis An an object of type \code{FEMbasis}; See \link{create.FEM.basis}.
-#' @param nderivs A 2-elements vector specifying the partial derivatives order of the basis functions to evaluate. The vectors' element must
-#' be 0,1 or 2, where 0 indicates that the original basis function should be evaluated.
+#' @param locations A 2 columns matrix where each row specifies locations where the bases should be evaluated.
+#' @param FEMbasis An \code{FEMbasis} object representing the Finite Element basis; See \link{create.FEM.basis}.
+#' @param nderivs A vector of lenght 2 specifying the order of the partial derivatives of the bases to be evaluated. The vectors' entries can
+#' be 0,1 or 2, where 0 indicates that only the basis functions, and not their derivatives, should be evaluated.
 #' @return 
 #' A matrix of basis function values. Each row indicates the location where the evaluation has been taken, the column indicates the 
 #' basis function evaluated 
-#' @description The evaluation on a set of locations is performed for all the basis functions representing the Finite Element finite-dimensional space. Also their derivatives up to order 2 can be evaluated. 
+#' @description Only executed when the function \code{smooth.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. It evaluates the Finite Element basis functions and their derivatives up to order 2 at the specified set of locations. 
 #' This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
 #' @usage R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 #' @seealso \code{\link{R_eval.FEM}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
-#'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
+#' Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
 R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 { 
@@ -513,7 +510,7 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
   return(evalmat)
 }
 
-#' Evaluate a FEM object on a set of point locations
+#' Evaluate a FEM object at a set of locations
 #' 
 #' @param locations A #locations-by-2 matrix where each row specifies the x and y coordinate of the corresponding location.
 #' @param FEM the Functional Object of class \code{FEM} to be evaluated

@@ -1,9 +1,9 @@
 #' Spatial regression with differential regularization: stationary and isotropic case (Laplacian)
 #' 
-#' @param observations A #observations vector with the observed data values over the domain. 
+#' @param observations A vector of length #observations with the observed data values over the domain. 
 #' The locations of the observations can be specified with the \code{locations} argument. 
 #' Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
-#' \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+#' \code{nodes} of the mesh. In this last case, an \code{NA} value in the \code{observations} vector indicates that there is no observation associated to the corresponding
 #'  node.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
 #' @param FEMbasis A \code{FEMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
@@ -103,10 +103,10 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 
 #' Spatial regression with differential regularization: anysotropic case (elliptic PDE)
 #' 
-#' @param observations A #observations vector with the observed data values over the domain. 
+#' @param observations A vector of length #observations with the observed data values over the domain. 
 #' The locations of the observations can be specified with the \code{locations} argument. 
 #' Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
-#' \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+#' \code{nodes} of the mesh. In this last case, an \code{NA} value in the \code{observations} vector indicates that there is no observation associated to the corresponding
 #'  node.
 #' \code{NA} values are admissible to indicate that the node is not associated with any observed data value.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
@@ -198,10 +198,10 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 
 #' Spatial regression with differential regularization: anysotropic and non-stationary case (elliptic PDE with space-varying coefficients)
 #' 
-#' @param observations A #observations vector with the observed data values over the domain. 
+#' @param observations A vector of length #observations with the observed data values over the domain. 
 #' The locations of the observations can be specified with the \code{locations} argument. 
 #' Otherwise if only the vector of observations is given, these are consider to be located in the corresponding node in the table
-#' \code{nodes} of the mesh. In this last case an \code{NA} value in the \code{observations} vector, indicates that there is not an observation associated to the corresponding
+#' \code{nodes} of the mesh. In this last case, an \code{NA} value in the \code{observations} vector indicates that there is no observation associated to the corresponding
 #'  node.
 #' @param locations A #observations-by-2 matrix where each row specifies the spatial coordinates \code{x} and \code{y} of the corresponding observations in the vector \code{observations}.
 #' @param FEMbasis A \code{FEMbasis} object describing the Finite Element basis, as created by \code{\link{create.FEM.basis}}.
@@ -226,7 +226,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #'          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
-#' @description This function implements a spatial regression model with differential regularization; anysotropic case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
+#' @description This function implements a spatial regression model with differential regularization; anysotropic and non-stationary case. In particular, the regularizing term involves a second order elliptic PDE with space-varying coefficients, that models the space-variation of the phenomenon. Space-varying covariates can be included in the model. The technique accurately handle data distributed over irregularly shaped domains. Moreover, various conditions can be imposed at the domain boundaries.
 #' @usage smooth.FEM.PDE.sv.basis(locations = NULL, observations, FEMbasis, 
 #'  lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, 
 #'  CPP_CODE = TRUE)
