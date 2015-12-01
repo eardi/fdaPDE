@@ -2,7 +2,7 @@
 #' 
 #' @param mesh A \code{MESH2D} mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
 #' @return A list with the following variables:
-#' \item{\code{detJ}}{A vector of #triangles. The ith element contains the determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
+#' \item{\code{detJ}}{A vector of length #triangles. The ith element contains the determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 #' \item{\code{transf}}{A matrix #triangles-by-2-by-2. \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 #' \item{\code{metric}}{A matrix #triangles-by-2-by-2. \code{metric[i,,]} is the 2-by-2 matrix \cr 
 #' \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
@@ -104,7 +104,7 @@ R_mass=function(FEMbasis)
 #' @param FEMbasis A \code{FEMbasis} object representing the basis; See \code{\link{create.FEM.basis}}.
 #' @return A square matrix with the integrals of all the basis functions' gradients pairwise dot products.
 #' The dimension of the matrix is equal to the number of the nodes of the mesh.
-#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the mass matrix. The element (i,j) of this matrix contains the integral over the domain of the scalar product between the gradient of the ith and kth element 
+#' @description Only executed when \code{smooth.FEM.basis} is run with the option  \code{CPP_CODE} = \code{FALSE}. It computes the stifness matrix. The element (i,j) of this matrix contains the integral over the domain of the scalar product between the gradient of the ith and kth element 
 #' of the Finite Element basis. As common practise in Finite Element Analysis, this quantities are computed iterating over all the mesh triangles. 
 #' @usage R_stiff(FEMbasis)
 #' @seealso \code{\link{R_mass}}
@@ -337,7 +337,7 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
 
 #' Evaluate Finite Element bases and their Derivatives at a set of locations
 #' 
-#' @param locations A 2 columns matrix where each row specifies locations where the bases should be evaluated.
+#' @param locations A 2-columns matrix with the spatial locations where the bases should be evaluated.
 #' @param FEMbasis An \code{FEMbasis} object representing the Finite Element basis; See \link{create.FEM.basis}.
 #' @param nderivs A vector of lenght 2 specifying the order of the partial derivatives of the bases to be evaluated. The vectors' entries can
 #' be 0,1 or 2, where 0 indicates that only the basis functions, and not their derivatives, should be evaluated.
@@ -348,8 +348,6 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
 #' This version of the function is implemented using only R code. It is called by \link{R_smooth.FEM.basis}.
 #' @usage R_eval.FEM.basis(FEMbasis, locations, nderivs = matrix(0,1,2))
 #' @seealso \code{\link{R_eval.FEM}}
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
-#' Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
 R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 { 
@@ -512,17 +510,14 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 
 #' Evaluate a FEM object at a set of locations
 #' 
-#' @param locations A #locations-by-2 matrix where each row specifies the x and y coordinate of the corresponding location.
-#' @param FEM the Functional Object of class \code{FEM} to be evaluated
+#' @param locations A 2-columns matrix with the spatial locations where the FEM object should be evaluated
+#' @param A FEM object to be evaluated
 #' @return 
 #' A matrix of numeric evaluations of the \code{FEM} object. Each row indicates the location where the evaluation has been taken, the column indicates the 
 #' function evaluated.
-#' @description A Functional Object, represented respect to a Finite Element basis, is evaluated in a set of locations. 
-#' This version of the function is implemented using only R code. Despite its slowness, this version allows an easier one to one comparison between the implemented code and the model described in Sangalli, Ramsay, Ramsay (2013).
+#' @description Only executed when the function \code{smooth.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. It evaluates a FEM object at the specified set of locations. 
 #' @usage R_eval.FEM(FEM, locations)
 #' @seealso \code{\link{R_eval.FEM.basis}}
-#' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703. \cr
-#'  Azzimonti, L. et al., 2014. Blood flow velocity field estimation via spatial regression with PDE penalization Blood flow velocity field estimation via spatial regression with PDE penalization. , (September), pp.37.41.
 
 R_eval.FEM <- function(FEM, locations)
 { 
