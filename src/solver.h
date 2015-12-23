@@ -1,7 +1,7 @@
 #ifndef __SOLVER_HPP__
 #define __SOLVER_HPP__
 
-#include "FEMr.h"
+#include "fdaPDE.h"
 
 
 //!  A Linear System QR solver class

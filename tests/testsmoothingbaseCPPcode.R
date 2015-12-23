@@ -3,7 +3,7 @@
 ## - 1st order FEs 
 ## - C++ code
 
-library(FEMr)
+library(fdaPDE)
 
 order = 1
 mesh<-create.MESH.2D(nodes=rbind(c(0, 0), c(0, 1), c(0.5, 0.5), c(1, 1), c(1, 0)),

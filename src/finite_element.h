@@ -1,7 +1,7 @@
 #ifndef __FINITE_ELEMENT_HPP__
 #define __FINITE_ELEMENT_HPP__
 
-#include "FEMr.h"
+#include "fdaPDE.h"
 #include "integration.h"
 #include "mesh_objects.h"
 

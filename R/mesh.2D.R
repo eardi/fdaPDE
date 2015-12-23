@@ -28,7 +28,7 @@ triangulate_native <- function(P, PB, PA, S, SB,H, TR, flags) {
                H,
                t(TR),
                flags,
-               PACKAGE="FEMr")
+               PACKAGE="fdaPDE")
   names(out) <- c("P", "PB", "PA", "T", "S", "SB", "E", "EB","TN", "VP", "VE", "VN", "VA")
   class(out) <- "triangulation"
   return(out)

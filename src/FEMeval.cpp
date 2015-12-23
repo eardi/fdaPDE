@@ -8,7 +8,7 @@
 
 #define R_VERSION_
 
-#include "FEMr.h"
+#include "fdaPDE.h"
 //#include "IO_handler.h"
 #include "mesh_objects.h"
 #include "mesh.h"

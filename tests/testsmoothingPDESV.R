@@ -3,7 +3,7 @@
 ## - 1st order FEs
 ## - C++ code
 
-library(FEMr)
+library(fdaPDE)
 
 data(mesh.2D.rectangular)
 observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + rnorm(n = nrow(mesh.2D.rectangular$nodes), sd = 0.1)

@@ -2,8 +2,8 @@
 
 # .onLoad <- function(libname, pkgname) 
 # {
-#   library.dynam("FEMr", pkgname, libname)
+#   library.dynam("fdaPDE", pkgname, libname)
 # }
 
 # .onUnload <- function(libpath)
-#   library.dynam.unload("FEMr", libpath)
+#   library.dynam.unload("fdaPDE", libpath)

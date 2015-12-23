@@ -3,7 +3,7 @@
 #' This data set gives locations, top soil heavy metal concentrations (ppm) and other variables, collected in a flood plain of the river Meuse. 
 #' For details on this dataset, see \code{meuse.all} in \url{https://cran.r-project.org/web/packages/gstat/gstat.pdf}. This version of the dataset
 #' includes 155 observations. Moreover, a definition of the domain's boundary is provided through the file {\link{MeuseBorder}}, 
-#' as it is used in many examples to illustrate FEMr features. 
+#' as it is used in many examples to illustrate fdaPDE features. 
 #' \itemize{
 #'   \item sample: original sample number. In this version of the dataset some observations has been left out because not indicative, or outliers.
 #'   \item x: numeric vector indicating the x-coordinate (m) in RDM (Dutch topographical map coordinates).

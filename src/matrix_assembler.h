@@ -2,8 +2,8 @@
 #define MATRIX_ASSEMBLER_H_
 
 
+#include "fdaPDE.h"
 #include "finite_element.h"
-#include "FEMr.h"
 #include "mesh_objects.h"
 #include "param_functors.h"
 //! A Stiff class: a class for the stiffness operator.

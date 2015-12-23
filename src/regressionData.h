@@ -1,7 +1,7 @@
 #ifndef __REGRESSIONDATA_HPP__
 #define __REGRESSIONDATA_HPP__
 
-#include "FEMr.h"
+#include "fdaPDE.h"
 #include "mesh_objects.h"
 #include "param_functors.h"
 

@@ -510,8 +510,8 @@ R_eval.FEM.basis <- function(FEMbasis, locations, nderivs = matrix(0,1,2))
 
 #' Evaluate a FEM object at a set of locations
 #' 
+#' @param FEM A \code{FEM} object to be evaluated
 #' @param locations A 2-columns matrix with the spatial locations where the FEM object should be evaluated
-#' @param A FEM object to be evaluated
 #' @return 
 #' A matrix of numeric evaluations of the \code{FEM} object. Each row indicates the location where the evaluation has been taken, the column indicates the 
 #' function evaluated.

@@ -2,8 +2,9 @@
 #define __EVALUATOR_HPP__
 
 #include <iostream>
+
+#include "fdaPDE.h"
 #include "finite_element.h"
-#include "FEMr.h"
 #include "matrix_assembler.h"
 #include "mesh.h"
 

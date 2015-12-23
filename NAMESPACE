@@ -1,4 +1,4 @@
-useDynLib(FEMr)
+useDynLib(fdaPDE)
 
 import(rgl)
 export(create.MESH.2D,refine.MESH.2D)

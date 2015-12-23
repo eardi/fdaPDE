@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "../../src/FEMr.h"
+#include "../../src/fdaPDE.h"
 //#include "IO_handler.hpp"
 #include "../../src/mesh_objects.h"
 #include "../../src/mesh.h"

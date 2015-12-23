@@ -1,7 +1,7 @@
 #ifndef __INTEGRATION_HPP__
 #define __INTEGRATION_HPP__
 
-#include "FEMr.h"
+#include "fdaPDE.h"
 #include "mesh_objects.h"
 
 

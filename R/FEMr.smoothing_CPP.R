@@ -1,4 +1,4 @@
-#dyn.load("../Release/FEMr.so")
+#dyn.load("../Release/fdaPDE.so")
 
 CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV)
 {
@@ -55,7 +55,7 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
   bigsol <- .Call("regression_Laplace", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
-                  package = "FEMr")
+                  package = "fdaPDE")
   
   ## Reset them correctly
   #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
@@ -123,7 +123,7 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
   bigsol <- .Call("regression_PDE", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
-                  package = "FEMr")
+                  package = "fdaPDE")
   
   ## Reset them correctly
   #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
@@ -200,7 +200,7 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
   bigsol <- .Call("regression_PDE_space_varying", locations, observations, FEMbasis$mesh, 
                   FEMbasis$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
-                  package = "FEMr")
+                  package = "fdaPDE")
   
   ## Reset them correctly
   #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
@@ -238,7 +238,7 @@ CPP_eval.FEM = function(FEM, locations, redundant)
   {
     evalmat[,i] <- .Call("eval_FEM_fd", FEMbasis$mesh, locations[,1], locations[,2], coeff[,i], 
                    FEMbasis$order, redundant,
-                   package = "FEMr")
+                   package = "fdaPDE")
   }
   #Returning the evaluation matrix
   evalmat
@@ -271,7 +271,7 @@ CPP_get_evaluations_points = function(mesh, order)
   
   #Calling the C++ function "eval_FEM_fd" in RPDE_interface.cpp
   points <- .Call("get_integration_points",mesh, order,
-                  package = "FEMr")
+                  package = "fdaPDE")
   
   #Returning the evaluation matrix
   points

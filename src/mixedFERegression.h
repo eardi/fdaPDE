@@ -1,8 +1,8 @@
 #ifndef __MIXEDFEREGRESSION_HPP__
 #define __MIXEDFEREGRESSION_HPP__
 
+#include "fdaPDE.h"
 #include "finite_element.h"
-#include "FEMr.h"
 #include "matrix_assembler.h"
 #include "mesh.h"
 #include "param_functors.h"
