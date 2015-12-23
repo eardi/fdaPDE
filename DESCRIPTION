@@ -1,8 +1,8 @@
 Package: fdaPDE
 Version: 0.1-1
 Date: 2015-06-18
-Title: Regression with partial differential regularizations, using the Finite Element Method
-Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
+Title: Regression with Partial Differential Regularizations, using the Finite Element Method
+Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
 		     email = "eardi.lila@mail.polimi.it"),
 	      person("Laura M.", "Sangalli", role = "aut",
 		     email = "laura.sangalli@polimi.it"),
@@ -11,7 +11,7 @@ Authors@R: c(person("Eardi", "Developer", role = c("aut", "cre"),
 		    person("Luca", "Formaggia", role = "aut",
 		     email = " luca.formaggia@polimi.it"))
 Author: Eardi Lila [aut, cre],
-    Laura Sangalli [aut],
+    Laura M. Sangalli [aut],
     Jim Ramsay [aut],
     Luca Formaggia [aut]
 Maintainer: Eardi Lila <eardi.lila@mail.polimi.it>
@@ -20,9 +20,7 @@ Depends:
     rgl
 Suggests:
     MASS
-Description: The package implements regression models with partial differential regularizations, making use of the Finite Element Method. 
-             The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. 
-             A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
+Description: This package implements regression models with partial differential regularizations, making use of the Finite Element Method. The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0 + file LICENSE
 Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes
