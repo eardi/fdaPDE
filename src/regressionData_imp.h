@@ -21,7 +21,7 @@ RegressionDataElliptic::RegressionDataElliptic(std::vector<Point>& locations, Ve
 		 RegressionData(locations, observations, order, lambda, covariates , bc_indices, bc_values, DOF), K_(K), beta_(beta), c_(c)
 {;}
 
-RegressionDataEllipticSpaceVarying::RegressionDataEllipticSpaceVarying(std::vector<Point>& locations, VectorXr& observations, UInt order, std::vector<Real> lambda, const std::vector<Eigen::Matrix<Real,2,2> >& K,	const std::vector<Eigen::Matrix<Real,2,1> >& beta,
+RegressionDataEllipticSpaceVarying::RegressionDataEllipticSpaceVarying(std::vector<Point>& locations, VectorXr& observations, UInt order, std::vector<Real> lambda, const std::vector<Eigen::Matrix<Real,2,2>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,2> > >& K,	const std::vector<Eigen::Matrix<Real,2,1>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,1> > >& beta,
 		const std::vector<Real>& c, const std::vector<Real>& u, MatrixXr& covariates , std::vector<UInt>& bc_indices, std::vector<Real>& bc_values, bool DOF):
 		RegressionData(locations, observations, order, lambda, covariates , bc_indices, bc_values, DOF), K_(K), beta_(beta), c_(c), u_(u)
 {;}

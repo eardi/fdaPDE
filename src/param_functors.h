@@ -18,11 +18,11 @@ public:
 
 class Diffusivity
 {
-	std::vector<Eigen::Matrix<Real,2,2> > K_;
+	std::vector<Eigen::Matrix<Real,2,2>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,2> > > K_;
 public:
 	Diffusivity():
 			K_(){};
-	Diffusivity(const std::vector<Eigen::Matrix<Real,2,2> >& K):
+	Diffusivity(const std::vector<Eigen::Matrix<Real,2,2>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,2> > >& K):
 		K_(K){};
 	#ifdef R_VERSION_
 	Diffusivity(SEXP RGlobalVector)
@@ -49,9 +49,9 @@ public:
 
 class Advection : public virtual Function
 {
-	std::vector<Eigen::Matrix<Real,2,1> > beta_;
+	std::vector<Eigen::Matrix<Real,2,1>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,1> > > beta_;
 public:
-	Advection(const std::vector<Eigen::Matrix<Real,2,1> >& beta):
+	Advection(const std::vector<Eigen::Matrix<Real,2,1>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,1> > >& beta):
 		beta_(beta){};
 	#ifdef R_VERSION_
 	Advection(SEXP RGlobalVector)

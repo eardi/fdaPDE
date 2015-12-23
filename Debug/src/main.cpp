@@ -49,11 +49,13 @@ int main()
 
 	Eigen::Matrix<Real,2,2> K0;
 		K0 << 1,0,0,1;
-	std::vector<Eigen::Matrix<Real,2,2> > K (3*IntegratorTriangleP4::NNODES, K0);
+	std::vector<Eigen::Matrix<Real,2,2>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,2> > >
+		K (3*IntegratorTriangleP4::NNODES, K0);
 
 	Eigen::Matrix<Real,2,1> beta0;
 		beta0 << 0,0;
-	std::vector<Eigen::Matrix<Real,2,1> > beta (3*IntegratorTriangleP4::NNODES, beta0);
+	std::vector<Eigen::Matrix<Real,2,1>, Eigen::aligned_allocator<Eigen::Matrix<Real,2,1> > >
+		beta (3*IntegratorTriangleP4::NNODES, beta0);
 
 	std::vector<Real> c (3*IntegratorTriangleP4::NNODES,0);
 	std::vector<Real> u (3*IntegratorTriangleP4::NNODES,0);

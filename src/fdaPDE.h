@@ -16,6 +16,7 @@
 #include <limits>
 #include <vector>
 
+#include "Eigen/Eigen/StdVector"
 #include "Eigen/Eigen/Sparse"
 #include "Eigen/Eigen/Dense"
 #define  EIGEN_MPL2_ONLY
