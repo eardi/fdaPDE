@@ -1,4 +1,4 @@
-library(FEMr)
+library(fdaPDE)
 ## Load the Meuse data and a domain boundary for these data
 data(MeuseData)
 data(MeuseBorder)

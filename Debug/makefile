@@ -9,4 +9,4 @@ mesh_objects.o: ../src/mesh_objects.cpp
 	g++ -Wall -pedantic -std=c++0x -c -DNDEBUG -fpic -pipe  -g  -c ../src/mesh_objects.cpp -o mesh_objects.o
 
 all: main.o integration.o mesh_objects.o
-	g++ -o FEMr main.o integration.o mesh_objects.o
+	g++ -o fdaPDE main.o integration.o mesh_objects.o
