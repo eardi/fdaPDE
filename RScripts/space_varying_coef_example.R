@@ -1,4 +1,4 @@
-library(FEMr)
+library(fdaPDE)
 #setwd("~/workspace/RPDE/RScripts")
 
 # Create a gid of points

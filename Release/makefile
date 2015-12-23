@@ -1,8 +1,8 @@
-FEMr: ../src/FEMr.cpp
+fdaPDE: ../src/fdaPDE.cpp
 	R CMD build ../
 
-all: clean FEMr
-	R CMD INSTALL --no-lock FEMr_0.9-1.tar.gz
+all: clean fdaPDE
+	R CMD INSTALL --no-lock fdaPDE_0.1-1.tar.gz
 	
 clean:
 	rm -f *.tar.gz *.o
