@@ -1,6 +1,6 @@
 Package: fdaPDE
 Version: 0.1-1
-Date: 2015-06-18
+Date: 2015-12-23
 Title: Regression with Partial Differential Regularizations, using the Finite Element Method
 Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
 		     email = "eardi.lila@mail.polimi.it"),
@@ -17,10 +17,11 @@ Author: Eardi Lila [aut, cre],
 Maintainer: Eardi Lila <eardi.lila@mail.polimi.it>
 Depends:
     R (>= 3.0.0),
+    stats, grDevices, graphics,
     rgl
 Suggests:
     MASS
-Description: This package implements regression models with partial differential regularizations, making use of the Finite Element Method. The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
+Description: An implementation of regression models with partial differential regularizations, making use of the Finite Element Method. The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0 + file LICENSE
 Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes

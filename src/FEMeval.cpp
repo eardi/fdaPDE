@@ -48,7 +48,7 @@ SEXP eval_FEM_fd(SEXP Rmesh, SEXP RX, SEXP RY, SEXP Rcoef, SEXP Rorder, SEXP Rfa
 
     SEXP result;
 	PROTECT(result=Rf_allocVector(REALSXP, n_X));
-	bool isinside[n_X];
+	std::vector<bool> isinside(n_X);
     //Set the mesh
 	//std::cout<<"Length "<<n_X<<"--X0 "<<X[0]<<"--Y0 "<<Y[0];
     if(order == 1)

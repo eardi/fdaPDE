@@ -2,7 +2,7 @@
 #define __EVALUATOR_IMP_HPP__
 
 template <UInt ORDER>
-void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, bool* isinside)
+void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, std::vector<bool>& isinside)
 {
 	
 	

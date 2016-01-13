@@ -1,6 +1,9 @@
 useDynLib(fdaPDE)
 
 import(rgl)
+importFrom("grDevices", "heat.colors")
+importFrom("graphics", "plot", "segments")
+importFrom("stats", "lm.fit")
 export(create.MESH.2D,refine.MESH.2D)
 export(create.FEM.basis, smooth.FEM.basis, smooth.FEM.PDE.basis, smooth.FEM.PDE.sv.basis, FEM, eval.FEM)
 export(plot.MESH2D,plot.FEM)

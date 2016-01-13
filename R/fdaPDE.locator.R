@@ -14,6 +14,11 @@
 eval.FEM <- function(FEM, locations, CPP_CODE = TRUE)
 {
   res = NULL
+  if(is.vector(locations))
+  {
+    locations = rbind(locations)
+  }
+  
   if(CPP_CODE == FALSE)
   {
     res = R_eval.FEM(FEM, locations)

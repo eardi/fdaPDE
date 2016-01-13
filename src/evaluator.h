@@ -35,7 +35,7 @@ class Evaluator
 		\param result a double pointer to an already allocated memory space, where the evaluations
 		will be stored
 		*/
-		void eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, bool* isinside);
+		void eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, std::vector<bool>& isinside);
 		
 	private:
 		const MeshHandler<ORDER> &mesh_;
