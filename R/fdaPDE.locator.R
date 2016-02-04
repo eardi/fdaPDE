@@ -24,7 +24,7 @@ eval.FEM <- function(FEM, locations, CPP_CODE = TRUE)
     res = R_eval.FEM(FEM, locations)
   }else
   {
-    res = CPP_eval.FEM(FEM, locations, TRUE)
+    res = CPP_eval.FEM(FEM, locations, FALSE)
   }
   
   return(res)

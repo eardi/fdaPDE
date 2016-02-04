@@ -2,7 +2,7 @@ fdaPDE: ../src/fdaPDE.cpp
 	R CMD build ../
 
 all: clean fdaPDE
-	R CMD INSTALL --no-lock fdaPDE_0.1-1.tar.gz
+	R CMD INSTALL --no-lock fdaPDE_0.1-2.tar.gz
 	
 clean:
 	rm -f *.tar.gz *.o

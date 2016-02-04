@@ -98,6 +98,7 @@ class Edge: public Identifier{
 template <UInt NNODES>
 class Triangle : public Identifier {
 public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     static const UInt numVertices=3;
     static const UInt numSides=3;
 	static const UInt myDim=2;

@@ -18,13 +18,19 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UIn
 	{
 		current_point = Point(X[i],Y[i]);
 		//current_triangle = mesh_.findLocationNaive(current_point);
+		//std::cout<<"Looking For Position Walking... \n";
 		current_triangle = mesh_.findLocationWalking(current_point, starting_triangles);
 		//current_triangle.print(cout);
 		//cout<<"triangle: "<< current_triangle.getId()<<endl;
-		if(current_triangle.getId() == Identifier::NVAL && fast == false)       //To avoid problems with non convex mesh
+		if(current_triangle.getId() == Identifier::NVAL && fast == false)
+		{
+			//To avoid problems with non convex mesh
+			//std::cout<<"Position Not Found Walking... \n";
 			current_triangle = mesh_.findLocationNaive(current_point);
+		}
 		if(current_triangle.getId() == Identifier::NVAL)         
 		{
+			//std::cout<<"Position Not Found Naively... \n";
 			isinside[i]=false;
 		}
 		else 

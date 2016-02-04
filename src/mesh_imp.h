@@ -65,14 +65,14 @@ template <UInt ORDER>
 Triangle<ORDER * 3> MeshHandler<ORDER>::findLocationNaive(Point point) const
 {
 	Triangle<ORDER * 3> current_triangle; 
-	
+	//std::cout<<"Start searching point naively \n";
 	for(Id id=0; id < num_triangles_; ++id)
 	{
 		current_triangle = getTriangle(id);
 		if(current_triangle.isPointInside(point)) 
 			return current_triangle;
 	}
-
+	//std::cout<<"Point not found \n";
 	return Triangle<ORDER * 3>(); //default triangle with NVAL ID
 }
 

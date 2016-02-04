@@ -1,9 +1,9 @@
 Package: fdaPDE
-Version: 0.1-1
+Version: 0.1-2
 Date: 2016-01-15
 Title: Regression with Partial Differential Regularizations, using the Finite Element Method
 Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
-		     email = "eardi.lila@mail.polimi.it"),
+		     email = "el425@cam.ac.uk"),
 	      person("Laura M.", "Sangalli", role = "aut",
 		     email = "laura.sangalli@polimi.it"),
 	      person("Jim", "Ramsay", role = "aut",
@@ -14,7 +14,7 @@ Author: Eardi Lila [aut, cre],
     Laura M. Sangalli [aut],
     Jim Ramsay [aut],
     Luca Formaggia [aut]
-Maintainer: Eardi Lila <el425@mail.polimi.it>
+Maintainer: Eardi Lila <el425@cam.ac.uk>
 Depends:
     R (>= 3.0.0),
     stats, grDevices, graphics,
