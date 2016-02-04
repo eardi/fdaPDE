@@ -102,7 +102,7 @@ public:
      * points for the walking algorithm
       \return The triangle that contains the point
     */ 
-    Triangle<ORDER * 3> findLocationWalking(const Point& point, const vector<Triangle<ORDER * 3> >& starting_triangles) const;
+    Triangle<ORDER * 3> findLocationWalking(const Point& point, const Triangle<ORDER * 3>& starting_triangle) const;
     
     //int readMesh(std::string const & file);
 	//double measure()const;

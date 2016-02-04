@@ -7,19 +7,22 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UIn
 	
 	
 	Triangle<3*ORDER> current_triangle;
-	std::vector<Triangle<3*ORDER> > starting_triangles;
-	starting_triangles.resize(1);
+	// std::vector<Triangle<3*ORDER> > starting_triangles; Problem with alignment not solved
+	// by http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.html
+	// starting_triangles.resize(1);
+	Triangle<3*ORDER> starting_triangle;
+
 
 	Point current_point;
 	Eigen::Matrix<Real,3*ORDER,1> coefficients;
 	
-	starting_triangles[0] = mesh_.getTriangle(0);
+	starting_triangle = mesh_.getTriangle(0);
 	for (int i = 0; i<length; ++i)
 	{
 		current_point = Point(X[i],Y[i]);
 		//current_triangle = mesh_.findLocationNaive(current_point);
 		//std::cout<<"Looking For Position Walking... \n";
-		current_triangle = mesh_.findLocationWalking(current_point, starting_triangles);
+		current_triangle = mesh_.findLocationWalking(current_point, starting_triangle);
 		//current_triangle.print(cout);
 		//cout<<"triangle: "<< current_triangle.getId()<<endl;
 		if(current_triangle.getId() == Identifier::NVAL && fast == false)
@@ -41,7 +44,7 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UIn
 				coefficients[i] = coef[current_triangle[i].getId()];
 			}
 			result[i] = evaluate_point<ORDER>(current_triangle, current_point, coefficients);
-			starting_triangles[0] = current_triangle;
+			starting_triangle = current_triangle;
 		}
 	}
 }
