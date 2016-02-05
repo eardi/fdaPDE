@@ -6,7 +6,12 @@ template <class Integrator, UInt ORDER>
 FiniteElement<Integrator, ORDER>::FiniteElement()
 {
 	//Set the properties of the reference element
-	reference_ = Triangle<ORDER*3> (Id(0), std::vector<Point> { {Point(0,0), Point(1,0), Point(0,1)} });
+	std::vector<Point> reference_nodes;
+	reference_nodes.push_back(Point(0,0));
+	reference_nodes.push_back(Point(1,0));
+	reference_nodes.push_back(Point(0,1));
+
+	reference_ = Triangle<ORDER*3> (Id(0), reference_nodes);
 
 	//How it will be used, it does not depend on J^-1 -> set one time
 	setPhiMaster();

@@ -340,6 +340,7 @@
 
 #define ONETHIRD 0.333333333333333333333333333333333333333333333333333333333333
 
+#define NO_TIMER //To avoid obsolet call to timer in C
 #include <R.h>
 #include <Rdefines.h>
 #include <Rinternals.h>
