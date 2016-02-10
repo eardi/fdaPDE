@@ -533,6 +533,7 @@ R_eval.FEM <- function(FEM, locations)
   
   # Get nodes and index
   
+  FEMbasis = FEM$FEMbasis
   mesh = FEMbasis$mesh
   
   nodes = mesh$nodes
