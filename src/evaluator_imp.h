@@ -2,7 +2,7 @@
 #define __EVALUATOR_IMP_HPP__
 
 template <UInt ORDER>
-void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool fast, Real* result, std::vector<bool>& isinside)
+void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UInt order, bool redundancy, Real* result, std::vector<bool>& isinside)
 {
 	
 	
@@ -21,15 +21,16 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UIn
 	{
 		current_point = Point(X[i],Y[i]);
 		//current_triangle = mesh_.findLocationNaive(current_point);
-		//std::cout<<"Looking For Position Walking... \n";
+		//std::cout<<"Finding point.. "<<i<<" from "<<current_triangle.getId()<<"\n";
 		current_triangle = mesh_.findLocationWalking(current_point, starting_triangle);
 		//current_triangle.print(cout);
-		//cout<<"triangle: "<< current_triangle.getId()<<endl;
-		if(current_triangle.getId() == Identifier::NVAL && fast == false)
+		//std::cout<<"Walking...triangle: "<< current_triangle.getId()<<std::endl;
+		if(current_triangle.getId() == Identifier::NVAL && redundancy == true)
 		{
 			//To avoid problems with non convex mesh
 			//std::cout<<"Position Not Found Walking... \n";
 			current_triangle = mesh_.findLocationNaive(current_point);
+			//std::cout<<"Naively...triangle: "<< current_triangle.getId()<<std::endl;
 		}
 		if(current_triangle.getId() == Identifier::NVAL)         
 		{

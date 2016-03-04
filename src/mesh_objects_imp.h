@@ -73,9 +73,9 @@ bool Triangle<NNODES>::isPointInside(const Point& point) const
 
 	Eigen::Matrix<Real,3,1> lambda = getBaryCoordinates(point);
 	
-	return ((-tolerance <= lambda[0] && lambda[0] <= 1+tolerance) && 
-			(-tolerance <= lambda[1] && lambda[1] <= 1+tolerance) &&
-			(-tolerance <= lambda[2] && lambda[2] <= 1+tolerance) );
+	return ((-tolerance <= lambda[0]) &&
+			(-tolerance <= lambda[1]) &&
+			(-tolerance <= lambda[2]) );
 	
 }  
 
@@ -91,8 +91,8 @@ int Triangle<NNODES>::getPointDirection(const Point& point) const
 	
 	//Find the minimum coordinate (if negative stronger straight to the point searched)
 	int min_index;
-	if(lambda[0] < lambda[1] && lambda[0] < lambda[2]) 		min_index = 0;
-	else if(lambda[1] < lambda[0] && lambda[1] < lambda[2]) min_index = 1;
+	if(lambda[0] <= lambda[1] && lambda[0] <= lambda[2]) 		min_index = 0;
+	else if(lambda[1] <= lambda[0] && lambda[1] <= lambda[2]) min_index = 1;
 	else 													min_index = 2;
 	
 	if(lambda[min_index] < -tolerance) 	return min_index;

@@ -110,8 +110,9 @@ Triangle<ORDER * 3> MeshHandler<ORDER>::findLocationWalking(const Point& point, 
 	while(current_triangle.getId() != Identifier::NVAL && !current_triangle.isPointInside(point) )
 	{
 		direction = current_triangle.getPointDirection(point);
+		//std::cout<<"Direction "<<direction<<";";
 		current_triangle = getNeighbors(current_triangle.getId(), direction);
-		//std::cout<<"Direction "<<direction<< " ID "<<current_triangle.getId();
+  	    //std::cout<<" ID "<<current_triangle.getId();
 	}	
 	
 	return current_triangle;

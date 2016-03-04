@@ -1,9 +1,6 @@
 #' Create a FEM basis
 #' 
 #' @param mesh A \code{MESH2D}  object representing the domain triangulation. See \link{create.MESH.2D}.
-#' @param order Either "1" or "2". Order of the Finite Element basis. When \code{order = 1} the basis system is piecewise linear. When 
-#' \code{order = 2} the basis system is piecewise quadratic. This parameter must be less or equal to the \code{order} 
-#' specified in the \code{MESH2D}  object. See \link{create.MESH.2D}.
 #' @return A  \code{FEMbasis} object. This contains the \code{mesh}, along with some additional quantities:
 #' \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
 #' \item{\code{nbasis}}{Scalar. The number of basis.} 
@@ -14,9 +11,9 @@
 #' of the integrals over the elements of the mesh.}
 #' @description Sets up a Finite Element basis. It requires a triangular mesh, a \code{MESH2D} object, as input. 
 #' The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh. 
-#' Linear (\code{order = 1}) and quadratic (\code{order = 2}) 
+#' Linear if (\code{order = 1}) in the input \code{mesh} and quadratic if (\code{order = 2}) in the input \code{mesh}
 #' Finite Element are currently implemented.
-#' @usage create.FEM.basis(mesh, order)
+#' @usage create.FEM.basis(mesh)
 #' @seealso \code{\link{create.MESH.2D}}
 #' @examples 
 #' ## Creates a simple triangulated domain with a concavity; this is a MESH2D object  
@@ -25,15 +22,12 @@
 #' ## Plot it
 #' plot(mesh)                   
 #' ## Creates the basis
-#' FEMbasis = create.FEM.basis(mesh, order = 1)
+#' FEMbasis = create.FEM.basis(mesh)
 
-create.FEM.basis = function(mesh, order)
+create.FEM.basis = function(mesh)
 {
-  type <- NULL
-  if (class(mesh) == "MESH2D")
-  {
-    type <- "FEM"
-  }
+  if (class(mesh)!="MESH2D")
+    stop("'mesh' is not of class 'MESH2D'")
   
   #  The number of basis functions corresponds to the number of vertices
   #  for order = 1, and to vertices plus edge midpoints for order = 2
@@ -47,7 +41,8 @@ create.FEM.basis = function(mesh, order)
   #  eleProp = R_elementProperties(mesh)
   #}
   
-  FEMbasis = list(type = type, mesh = mesh, order = as.integer(order), nbasis = nbasis, detJ=eleProp$detJ, transf = eleProp$transf, metric = eleProp$metric)
+  FEMbasis = list(mesh = mesh, order = as.integer(mesh$order), nbasis = nbasis, detJ=eleProp$detJ, transf = eleProp$transf, metric = eleProp$metric)
+  class(FEMbasis) = "FEMbasis"
   
   FEMbasis
 }
@@ -67,7 +62,7 @@ create.FEM.basis = function(mesh, order)
 #' data("mesh.2D.rectangular")
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
-#' FEMbasis = create.FEM.basis(mesh.2D.rectangular, 1)
+#' FEMbasis = create.FEM.basis(mesh.2D.rectangular)
 #' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, FEMbasis)
@@ -75,10 +70,16 @@ create.FEM.basis = function(mesh, order)
 
 FEM<-function(coeff,FEMbasis)
 {
-  if(is.vector(coeff))
-  {
-    coeff = as.matrix(coeff)
-  }
+  if (is.null(coeff)) 
+    stop("coeff required;  is NULL.")
+  if (is.null(FEMbasis)) 
+    stop("FEMbasis required;  is NULL.")
+  if(class(FEMbasis) != "FEMbasis")
+    stop("FEMbasis not of class 'FEMbasis'")
+  coeff = as.matrix(coeff)
+  if(nrow(coeff) != FEMbasis$nbasis)
+    stop("Number of row of 'coeff' different from number of basis")
+  
   fclass = NULL
   fclass = list(coeff=coeff, FEMbasis=FEMbasis)
   class(fclass)<-"FEM"
@@ -100,7 +101,7 @@ FEM<-function(coeff,FEMbasis)
 #' data("mesh.2D.rectangular")
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
-#' FEMbasis = create.FEM.basis(mesh.2D.rectangular, 1)
+#' FEMbasis = create.FEM.basis(mesh.2D.rectangular)
 #' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, FEMbasis)
@@ -131,7 +132,7 @@ plot.FEM = function(x, num_refinements = NULL, ...)
 #' data("mesh.2D.rectangular")
 #' plot(mesh.2D.rectangular)
 #' ## Create a linear Finite Element basis
-#' FEMbasis = create.FEM.basis(mesh.2D.rectangular, 1)
+#' FEMbasis = create.FEM.basis(mesh.2D.rectangular)
 #' ## Define a sinusoidal function as expansion of this basis and plot it
 #' coeff <- sin(mesh.2D.rectangular$nodes[,1])*cos(mesh.2D.rectangular$nodes[,2])
 #' FEM_object<- FEM(coeff, FEMbasis)

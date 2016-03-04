@@ -38,7 +38,7 @@
 #' mesh <- create.MESH.2D(nodes = MeuseData[,c(2,3)], segments = MeuseBorder, order = order)
 #' plot(mesh)
 #' ## Create the Finite Element basis 
-#' FEMbasis = create.FEM.basis(mesh, order)
+#' FEMbasis = create.FEM.basis(mesh)
 #' ## Estimate zync field without using covariates, setting the smoothing parameter to 10^3.5
 #' data = log(MeuseData[,"zinc"])
 #' lambda = 10^3.5
@@ -61,16 +61,34 @@
 
 smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
-  bigsol = NULL  
-  lambda = as.vector(lambda)
+ 
+  ##################### Checking parameters, sizes and conversion ################################
+  checkSmoothingParameters(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = NULL, PDE_parameters_func = NULL)
   
+  ## Coverting to format for internal usage
+  if(!is.null(locations))
+    locations = as.matrix(locations)
+  observations = as.matrix(observations)
+  lambda = as.matrix(lambda)
+  if(!is.null(covariates))
+    covariates = as.matrix(covariates)
+  if(!is.null(BC))
+  {
+    BC$BC_indices = as.matrix(BC$BC_indices)
+    BC$BC_values = as.matrix(BC$BC_values)
+  }
+  
+  checkSmoothingParametersSize(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = NULL, PDE_parameters_func = NULL)
+  ################## End checking parameters, sizes and conversion #############################
+  
+  
+  bigsol = NULL
   if(CPP_CODE == FALSE)
   {
     print('R Code Execution')
     if(!is.null(BC))
     {
-      print('Dirichlet Boundary Conditions are ignored when CPP_CODE = FALSE. 
-            If you want to use Dirichlet boundary conditions, please set CPP_CODE = TRUE')
+      stop('If you want to use Dirichlet boundary conditions, please set CPP_CODE = TRUE')
     }
     
     bigsol = R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)   
@@ -90,7 +108,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
   PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
-  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
+  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates, CPP_CODE)
   if(GCV == TRUE)
   {
     seq=getGCV(locations = locations, observations = observations, fit.FEM = fit.FEM, covariates = covariates, edf = bigsol[[2]])
@@ -146,7 +164,7 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #' # located over the nodes of the mesh
 #' observations = sin(pi*mesh.2D.simple$nodes[,1]) + rnorm(n = nrow(mesh.2D.simple$nodes), sd = 0.1)
 #' # Create the FEM basis object
-#' FEMbasis = create.FEM.basis(mesh.2D.simple, 2)
+#' FEMbasis = create.FEM.basis(mesh.2D.simple)
 #' 
 #' # Set a vector of smoothing coefficients
 #' lambda = c(10^-4, 1, 10^4)
@@ -163,8 +181,34 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #' eval.FEM(FEM_CPP_PDE$fit.FEM, locations = rbind(c(0,0),c(0.5,0),c(-2,-2)))
 smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
+  ##################### Checking parameters, sizes and conversion ################################
+  checkSmoothingParameters(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = PDE_parameters, PDE_parameters_func = NULL)
+  
+  ## Coverting to format for internal usage
+  if(!is.null(locations))
+    locations = as.matrix(locations)
+  observations = as.matrix(observations)
+  lambda = as.matrix(lambda)
+  if(!is.null(covariates))
+    covariates = as.matrix(covariates)
+  if(!is.null(BC))
+  {
+    BC$BC_indices = as.matrix(BC$BC_indices)
+    BC$BC_values = as.matrix(BC$BC_values)
+  }
+  
+  if(!is.null(PDE_parameters))
+  {
+    PDE_parameters$K = as.matrix(PDE_parameters$K)
+    PDE_parameters$b = as.matrix(PDE_parameters$b)
+    PDE_parameters$c = as.matrix(PDE_parameters$c)
+  }
+  
+  checkSmoothingParametersSize(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = PDE_parameters, PDE_parameters_func = NULL)
+  ################## End checking parameters, sizes and conversion #############################
+  
+  
   bigsol = NULL  
-  lambda = as.vector(lambda)
   
   if(CPP_CODE == FALSE)
   {
@@ -185,7 +229,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
   PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
-  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
+  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates, CPP_CODE)
   if(GCV == TRUE)
   {
     seq=getGCV(locations = locations, observations = observations, fit.FEM = fit.FEM, covariates = covariates, edf = bigsol[[2]])
@@ -211,10 +255,14 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' @param lambda A scalar or vector of smoothing parameters.
 #' @param PDE_parameters A list specifying the space-varying parameters of the elliptic PDE in the regularizing term: \code{K}, a function that for each spatial location in the spatial domain 
 #' (indicated by the vector of the 2 spatial coordinates) returns a 2-by-2 matrix of diffusion coefficients. This induces an anisotropic 
-#' smoothing with a local preferential direction that corresponds to the first eigenvector of the diffusion matrix K; \code{b}, a function that for each spatial location in the spatial domain returns 
-#' a vector of length 2 of transport coefficients. This induces a local
-#' smoothing only in the direction specified by the vector \code{b}; \code{c}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.
-#' \code{c} induces a shrinkage of the surface to zero
+#' smoothing with a local preferential direction that corresponds to the first eigenvector of the diffusion matrix K.The function must support recycling for efficiency reasons, thus if the input parameter is a #point-by-2 matrix, the output should be
+#' an array with dimensions 2-by-2-by-#points.\code{b}, a function that for each spatial location in the spatial domain returns 
+#' a vector of length 2 of transport coefficients. This induces a local smoothing only in the direction specified by the vector \code{b}. The function must support recycling for efficiency reasons, thus if the input parameter is a #point-by-2 matrix, the output should be
+#' a matrix with dimensions 2-by-#points; \code{c}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.
+#' \code{c} induces a shrinkage of the surface to zero. The function must support recycling for efficiency reasons, thus if the input parameter is a #point-by-2 matrix, the output should be
+#' a vector with length #points; \code{u}, a function that for each spatial location in the spatial domain  returns a scalar reaction coefficient.
+#' \code{u} induces a reaction effect. The function must support recycling for efficiency reasons, thus if the input parameter is a #point-by-2 matrix, the output should be
+#' a vector with length #points.
 #' @param covariates A #observations-by-#covariates matrix where each row represents the covariates associated with the corresponding observed data value in \code{observations}.
 #' @param BC A list with two vectors: 
 #'  \code{BC_indices}, a vector with the indices in \code{nodes} of boundary nodes where a Dirichlet Boundary Condition should be applied;
@@ -240,7 +288,7 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' # Loading the mesh
 #' data(mesh.2D.rectangular)
 #' # Create the FEM basis object
-#' FEMbasis = create.FEM.basis(mesh.2D.rectangular, 2)
+#' FEMbasis = create.FEM.basis(mesh.2D.rectangular)
 #' # Create a vector of noisy samples of an underlying spatial field, 
 #' # located over the nodes of the mesh
 #' observations = sin(0.2*pi*mesh.2D.rectangular$nodes[,1]) + 
@@ -251,11 +299,17 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' K_func<-function(points)
 #' {
 #' mat<-c(0.01,0,0,1)
-#' as.vector(0.5*mat %*% t(points[,1]^2))
+#' output = array(0, c(2, 2, nrow(points)))
+#' for (i in 1:nrow(points))
+#'    output[,,i] = 0.5*mat %*% t(points[i,1]^2)
+#' output
 #' }
 #' b_func<-function(points)
 #' {
-#' rep(c(0,0), nrow(points))
+#' output = array(0, c(2, nrow(points)))
+#' for (i in 1:nrow(points))
+#'    output[,i] = 0
+#' output
 #' }
 #' 
 #' c_func<-function(points)
@@ -275,8 +329,26 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' plot(FEM_CPP_PDE$fit.FEM)
 smooth.FEM.PDE.sv.basis<-function(locations = NULL, observations, FEMbasis, lambda, PDE_parameters, covariates = NULL, BC = NULL, GCV = FALSE, CPP_CODE = TRUE)
 {
+  ##################### Checking parameters, sizes and conversion ################################
+  checkSmoothingParameters(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = NULL, PDE_parameters_func = PDE_parameters)
+  
+  ## Coverting to format for internal usage
+  if(!is.null(locations))
+    locations = as.matrix(locations)
+  observations = as.matrix(observations)
+  lambda = as.matrix(lambda)
+  if(!is.null(covariates))
+    covariates = as.matrix(covariates)
+  if(!is.null(BC))
+  {
+    BC$BC_indices = as.matrix(BC$BC_indices)
+    BC$BC_values = as.matrix(BC$BC_values)
+  }
+  
+  checkSmoothingParametersSize(locations, observations, FEMbasis, lambda, covariates, BC, GCV, CPP_CODE, PDE_parameters_constant = NULL, PDE_parameters_func = PDE_parameters)
+  ################## End checking parameters, sizes and conversion #############################
+  
   bigsol = NULL  
-  lambda = as.vector(lambda)
   
   if(CPP_CODE == FALSE)
   {
@@ -297,7 +369,7 @@ smooth.FEM.PDE.sv.basis<-function(locations = NULL, observations, FEMbasis, lamb
   PDEmisfit.FEM = FEM(g, FEMbasis)  
   
   reslist = NULL
-  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates)
+  beta = getBetaCoefficients(locations, observations, fit.FEM, covariates, CPP_CODE)
   if(GCV == TRUE)
   {
     seq=getGCV(locations = locations, observations = observations, fit.FEM = fit.FEM, covariates = covariates, edf = bigsol[[2]])
@@ -310,26 +382,24 @@ smooth.FEM.PDE.sv.basis<-function(locations = NULL, observations, FEMbasis, lamb
 }
 
 
-getBetaCoefficients<-function(locations, observations, fit.FEM, covariates)
+getBetaCoefficients<-function(locations, observations, fit.FEM, covariates, CPP_CODE = FALSE)
 {
   loc_nodes = NULL
   fnhat = NULL
-  betahat = NULL
+  betahat = list()
   
   if(!is.null(covariates))
   {
-    covariates <- as.matrix(covariates)
     if(is.null(locations))
     {
       loc_nodes = (1:length(observations))[!is.na(observations)]
-      fnhat = fit.FEM$coeff[loc_nodes,]
+      fnhat = as.matrix(fit.FEM$coeff[loc_nodes,])
     }else{
-      locations <- as.matrix(locations)
       loc_nodes = 1:length(observations)
-      fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE = FALSE)
+      fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE)
     }
-    
-    betahat = lm.fit(covariates,observations-fnhat)$coefficients
+    for(i in 1:ncol(fnhat))
+      betahat[[i]] = as.vector(lm.fit(covariates,as.vector(observations-fnhat[,i]))$coefficients)
   }
   
  return(betahat)
@@ -359,7 +429,7 @@ getGCV<-function(locations, observations, fit.FEM, covariates = NULL, edf)
     desmatprod = ( solve( t(covariates) %*% covariates ) ) %*% t(covariates)
     for ( i in 1:length(edf))
     {
-      betahat  = desmatprod %*% (observations-fnhat)[,i]
+      betahat  = desmatprod %*% (observations-fnhat[,i])
       zhat[,i]     = covariates %*% betahat + fnhat[,i]
     }
   }else{

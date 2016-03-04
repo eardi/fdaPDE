@@ -1,7 +1,7 @@
 Package: fdaPDE
 Version: 0.1-2
-Date: 2016-01-15
-Title: Regression with Partial Differential Regularizations, using the Finite Element Method
+Date: 2016-03-04
+Title: Functional Data Analysis and Partial Differential Equations; Statistical Analysis of Functional and Spatial Data, Based on Regression with Partial Differential Regularizations
 Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
 		     email = "el425@cam.ac.uk"),
 	      person("Laura M.", "Sangalli", role = "aut",
@@ -27,4 +27,5 @@ Description: An implementation of regression models with partial differential re
 License: CC BY-NC-SA 4.0
 Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes
+SystemRequirements:	C++11
 RoxygenNote: 5.0.0

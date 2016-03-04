@@ -208,6 +208,15 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   
   # Stores the number of nodes of the mesh. This corresponds to the number of elements of the FE basis.
   numnodes = nrow(FEMbasis$mesh$nodes)
+  if(!is.null(covariates))
+  {
+    covariates = as.matrix(covariates)
+  }
+  
+  if(!is.null(locations))
+  {
+    locations <- as.matrix(locations)
+  }
   
   #  ---------------------------------------------------------------
   # construct mass matrix K0 

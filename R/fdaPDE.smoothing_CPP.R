@@ -209,7 +209,7 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
   return(bigsol)
 }
 
-CPP_eval.FEM = function(FEM, locations, not_redundant)
+CPP_eval.FEM = function(FEM, locations, redundancy)
 {
   FEMbasis = FEM$FEMbasis
   # Indexes in C++ starts from 0, in R from 1, opportune transformation
@@ -230,14 +230,14 @@ CPP_eval.FEM = function(FEM, locations, not_redundant)
   coeff = as.matrix(FEM$coeff)
   storage.mode(coeff) <- "double"
   storage.mode(locations) <- "double"
-  storage.mode(not_redundant) <- "integer"
+  storage.mode(redundancy) <- "integer"
   
   #Calling the C++ function "eval_FEM_fd" in RPDE_interface.cpp
   evalmat = matrix(0,nrow(locations),ncol(coeff))
   for (i in 1:ncol(coeff))
   {
     evalmat[,i] <- .Call("eval_FEM_fd", FEMbasis$mesh, locations[,1], locations[,2], coeff[,i], 
-                   FEMbasis$order, not_redundant,
+                   FEMbasis$order, redundancy,
                    package = "fdaPDE")
   }
   #Returning the evaluation matrix

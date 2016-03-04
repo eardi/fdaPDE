@@ -13,19 +13,30 @@
 
 eval.FEM <- function(FEM, locations, CPP_CODE = TRUE)
 {
-  res = NULL
-  if(is.vector(locations))
-  {
-    locations = rbind(locations)
-  }
+  if (is.null(FEM)) 
+    stop("FEM required;  is NULL.")
+  if(class(FEM) != "FEM")
+    stop("'FEM' is not of class 'FEM'")
+  if (is.null(locations)) 
+    stop("locations required;  is NULL.")
+  if (is.null(CPP_CODE)) 
+    stop("CPP_CODE required;  is NULL.")
+  if(!is.logical(CPP_CODE))
+    stop("'CPP_CODE' is not logical")
   
+  locations = as.matrix(locations)
+  
+  if(ncol(locations) != 2)
+    stop("'locations' must be a 2-columns matrix")
+  
+  res = NULL
   if(CPP_CODE == FALSE)
   {
     res = R_eval.FEM(FEM, locations)
   }else
   {
-    res = CPP_eval.FEM(FEM, locations, FALSE)
+    res = CPP_eval.FEM(FEM, locations, TRUE)
   }
   
-  return(res)
+  return(as.matrix(res))
 }

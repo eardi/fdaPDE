@@ -112,25 +112,19 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   nodesmarkers = vector(mode = "integer", 0)
   segmentsmarkers = vector(mode = "integer", 0)
   
-  ## Deal with nodes
-  if (ncol(nodes) != 2) {
+  nodes = as.matrix(nodes)
+  if (ncol(nodes) != 2)
     stop("Matrix of nodes should have 2 columns")
-  }
-  
-  ## Check that there are no duplicate rows in nodes
-  if (anyDuplicated(nodes)) {
+  if (anyDuplicated(nodes))
     stop("Duplicated nodes")
-  }
   
   ## If attributes not specified, set them to a matrix with zero columns
   if (any(is.na(nodesattributes))) {
     nodesattributes <- matrix(0, nrow(nodes), 0)
   }else{
     nodesattributes <- as.matrix(nodesattributes)
-    ## Make sure the size of the point attribute matrix is correct
-    if (nrow(nodesattributes) != nrow(nodes)) {
+    if (nrow(nodesattributes) != nrow(nodes))
       stop("Point attribute matrix \'nodesattributes\' does not have same number of rows the point matrix \'nodes\'")
-    }
   }
   
   ## If boundary nodes not specified, set them to 0
@@ -144,8 +138,9 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
   if (any(is.na(segments))) {
     segments <- matrix(0, 0, 2)
   } else {
+    segments <- as.matrix(segments)
     if (ncol(segments) != 2) {
-      stop("Matrix of segments segments should have 2 columns")
+      stop("Matrix of segments should have 2 columns")
     }
   }
   
@@ -157,17 +152,17 @@ create.MESH.2D <- function(nodes, nodesattributes = NA, segments = NA, holes = N
 #   }
   
   ## If hole not specified, set it to empty matrix
-  if (any(is.na(holes))) {
+  if (any(is.na(holes)))
     holes <- matrix(0, 0, 2)
-  }
+  holes = as.matrix(holes)
   
   ## If triangles are not already specified
-  if(any(is.na(triangles))){
+  if(any(is.na(triangles)))
     triangles = matrix(0,nrow = 0, ncol = 3)
-  }
+  triangles = as.matrix(triangles)
   
-  flags="ven" 
-  
+  ## Set meshing parameters ##
+  flags="ven"
   if(nrow(segments) == 0){
     flags = paste(flags,"c",sep = '')
   }
