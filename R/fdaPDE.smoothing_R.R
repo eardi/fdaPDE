@@ -832,7 +832,7 @@ R_plot.ORDN.FEM = function(FEM, num_refinements, ...)
   # num_refinements sets the number od division on each triangle edge to be applied for rifenment
   if(is.null(num_refinements))
   {
-    num_refinements = 20
+    num_refinements = 10
   }
   
   # For the reference triangles we construct a regular mesh
@@ -940,7 +940,7 @@ R_image.ORDN.FEM = function(FEM, num_refinements)
   
   if(is.null(num_refinements))
   {
-    num_refinements = 20
+    num_refinements = 10
   }
   
   x = seq(from = 0, to = 1, length.out = num_refinements+1)
