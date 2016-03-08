@@ -19,7 +19,8 @@
 #' @return A list with the following variables:
 #' \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
 #' \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the Laplacian of the estimated spatial field.}
-#' \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
+#' \item{\code{beta}}{If covariates is not \code{NULL}, a matrix with number of rows equal to the number of covariates and numer of columns equal to length of lambda.  The \code{j}th column represents the vector of regression coefficients when 
+#' the smoothing parameter is equal to \code{lambda[j]}.}
 #' \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
 #' \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #' \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
@@ -145,7 +146,8 @@ smooth.FEM.basis<-function(locations = NULL, observations, FEMbasis, lambda, cov
 #' @return A list with the following variables:
 #'          \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
 #'          \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the PDE misfit for the estimated spatial field.}
-#'          \item{\code{beta}}{If covariates is not \code{NULL}, a vector of length #covariates with the regression coefficients associated with each covariate.}
+#'          \item{\code{beta}}{If covariates is not \code{NULL}, a matrix with number of rows equal to the number of covariates and numer of columns equal to length of lambda.  The \code{j}th column represents the vector of regression coefficients when 
+#'          the smoothing parameter is equal to \code{lambda[j]}.}
 #'          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
@@ -273,7 +275,8 @@ smooth.FEM.PDE.basis<-function(locations = NULL, observations, FEMbasis, lambda,
 #' @return A list with the following variables:
 #'          \item{\code{fit.FEM}}{A \code{FEM} object that represents the fitted spatial field.}
 #'          \item{\code{PDEmisfit.FEM}}{A \code{FEM} object that represents the PDE misfit for the estimated spatial field.}
-#'          \item{\code{beta}}{If covariates is not \code{NULL}, a vector of lenght #covariates with the regression coefficients associated with each covariate.}
+#'          \item{\code{beta}}{If covariates is not \code{NULL}, a matrix with number of rows equal to the number of covariates and numer of columns equal to length of lambda.  The \code{j}th column represents the vector of regression coefficients when 
+#'          the smoothing parameter is equal to \code{lambda[j]}.}
 #'          \item{\code{edf}}{If GCV is \code{TRUE}, a scalar or vector with the trace of the smoothing matrix for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{stderr}}{If GCV is \code{TRUE}, a scalar or vector with the estimate of the standard deviation of the error for each value of the smoothing parameter specified in \code{lambda}.}
 #'          \item{\code{GCV}}{If GCV is \code{TRUE}, a  scalar or vector with the value of the GCV criterion for each value of the smoothing parameter specified in \code{lambda}.}
@@ -386,7 +389,7 @@ getBetaCoefficients<-function(locations, observations, fit.FEM, covariates, CPP_
 {
   loc_nodes = NULL
   fnhat = NULL
-  betahat = list()
+  betahat = NULL
   
   if(!is.null(covariates))
   {
@@ -398,8 +401,10 @@ getBetaCoefficients<-function(locations, observations, fit.FEM, covariates, CPP_
       loc_nodes = 1:length(observations)
       fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE)
     }
+    ## #row number of covariates, #col number of functions
+    betahat = matrix(0, nrow = ncol(covariates), ncol = ncol(fnhat))
     for(i in 1:ncol(fnhat))
-      betahat[[i]] = as.vector(lm.fit(covariates,as.vector(observations-fnhat[,i]))$coefficients)
+      betahat[i] = as.vector(lm.fit(covariates,as.vector(observations-fnhat[,i]))$coefficients)
   }
   
  return(betahat)
