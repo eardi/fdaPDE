@@ -40,9 +40,9 @@ void Evaluator<ORDER>::eval(Real* X, Real *Y, UInt length, const Real *coef, UIn
 		else 
 		{
 			isinside[i]=true;
-			for (int i=0; i<(3*ORDER); ++i)		
+			for (int j=0; j<(3*ORDER); ++j)
 			{
-				coefficients[i] = coef[current_triangle[i].getId()];
+				coefficients[j] = coef[current_triangle[j].getId()];
 			}
 			result[i] = evaluate_point<ORDER>(current_triangle, current_point, coefficients);
 			starting_triangle = current_triangle;

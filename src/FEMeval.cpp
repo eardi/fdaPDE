@@ -36,7 +36,7 @@ SEXP eval_FEM_fd(SEXP Rmesh, SEXP RX, SEXP RY, SEXP Rcoef, SEXP Rorder, SEXP Rfa
 	int order;
 	bool fast;
 
-	int n_coef 	= Rf_length(Rcoef);
+	//int n_coef 	= Rf_length(Rcoef);
 	int n_X 	= Rf_length(RX);
 
     // Cast all computation parameters

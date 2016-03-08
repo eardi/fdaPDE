@@ -408,7 +408,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothLaplace()
 {
 	//std::cout<<"Laplace Penalization - Order: "<<ORDER<<std::endl;
 
-	UInt ndata=regressionData_.getObservations().size();
+	//UInt ndata=regressionData_.getObservations().size();
 	UInt nnodes=mesh_.num_nodes();
 
 	FiniteElement<Integrator, ORDER> fe;
@@ -457,7 +457,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothLaplace()
     _solution.resize(regressionData_.getLambda().size());
     _dof.resize(regressionData_.getLambda().size());
 
-    for(auto i = 0; i<regressionData_.getLambda().size(); ++i)
+    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
 	{
     	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
 
@@ -490,7 +490,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDE()
 {
 	//std::cout<<"Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
 
-	UInt ndata=regressionData_.getObservations().size();
+	//UInt ndata=regressionData_.getObservations().size();
 	UInt nnodes=mesh_.num_nodes();
 
 	FiniteElement<Integrator, ORDER> fe;
@@ -546,7 +546,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDE()
     _solution.resize(regressionData_.getLambda().size());
     _dof.resize(regressionData_.getLambda().size());
 
-    for(auto i = 0; i<regressionData_.getLambda().size(); ++i)
+    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
 	{
     	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
 
@@ -641,7 +641,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
     _solution.resize(regressionData_.getLambda().size());
     _dof.resize(regressionData_.getLambda().size());
 
-    for(auto i = 0; i<regressionData_.getLambda().size(); ++i)
+    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
 	{
     	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
 

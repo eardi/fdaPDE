@@ -33,7 +33,7 @@ SEXP regression_Laplace(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Ro
 	RegressionData regressionData(Rlocations, Robservations, Rorder, Rlambda, Rcovariates, RBCIndices, RBCValues, DOF);
 
 	//std::cout<< "Data loaded"<<std::endl;
-	SEXP result;
+	SEXP result = NILSXP;
 
     if(regressionData.getOrder()==1)
     {
@@ -51,14 +51,14 @@ SEXP regression_Laplace(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Ro
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -81,14 +81,14 @@ SEXP regression_Laplace(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Ro
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -105,7 +105,7 @@ SEXP regression_PDE(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder
 	RegressionDataElliptic regressionData(Rlocations, Robservations, Rorder, Rlambda, RK, Rbeta, Rc, Rcovariates, RBCIndices, RBCValues, DOF);
 
 	//std::cout<< "Data loaded"<<std::endl;
-	SEXP result;
+	SEXP result = NILSXP;
 
     if(regressionData.getOrder()==1)
     {
@@ -123,14 +123,14 @@ SEXP regression_PDE(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -154,14 +154,14 @@ SEXP regression_PDE(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -182,7 +182,7 @@ SEXP regression_PDE_space_varying(SEXP Rlocations, SEXP Robservations, SEXP Rmes
 	//regressionData.print();
 
 	//std::cout<< "Data Loaded"<<std::endl;
-	SEXP result;
+	SEXP result = NILSXP;
 
     if(regressionData.getOrder()==1)
     {
@@ -200,14 +200,14 @@ SEXP regression_PDE_space_varying(SEXP Rlocations, SEXP Robservations, SEXP Rmes
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -230,14 +230,14 @@ SEXP regression_PDE_space_varying(SEXP Rlocations, SEXP Robservations, SEXP Rmes
 		SET_VECTOR_ELT(result, 1, Rf_allocVector(REALSXP, solution.size()));
 
 		Real *rans = REAL(VECTOR_ELT(result, 0));
-		for(int j = 0; j < solution.size(); j++)
+		for(UInt j = 0; j < solution.size(); j++)
 		{
-			for(int i = 0; i < solution[0].size(); i++)
+			for(UInt i = 0; i < solution[0].size(); i++)
 				rans[i + solution[0].size()*j] = solution[j][i];
 		}
 
 		Real *rans2 = REAL(VECTOR_ELT(result, 1));
-		for(int i = 0; i < solution.size(); i++)
+		for(UInt i = 0; i < solution.size(); i++)
 		{
 			rans2[i] = dof[i];
 		}
@@ -266,10 +266,10 @@ SEXP get_integration_points(SEXP Rmesh, SEXP Rorder)
     	PROTECT(result=Rf_allocVector(REALSXP, 2*IntegratorTriangleP2::NNODES*mesh.num_triangles()));
 
     	FiniteElement<IntegratorTriangleP2,1> fe;
-    	for(auto i=0; i<mesh.num_triangles(); i++)
+    	for(UInt i=0; i<mesh.num_triangles(); i++)
     	{
     		fe.updateElement(mesh.getTriangle(i));
-    		for(int l = 0;l < IntegratorTriangleP2::NNODES; l++)
+    		for(UInt l = 0;l < IntegratorTriangleP2::NNODES; l++)
     		{
     			Point p = fe.coorQuadPt(l);
     			REAL(result)[i*IntegratorTriangleP2::NNODES + l] = p[0];
@@ -284,10 +284,10 @@ SEXP get_integration_points(SEXP Rmesh, SEXP Rorder)
     	PROTECT(result=Rf_allocVector(REALSXP, 2*IntegratorTriangleP4::NNODES*mesh.num_triangles()));
 
     	FiniteElement<IntegratorTriangleP4,2> fe;
-    	for(auto i=0; i<mesh.num_triangles(); i++)
+    	for(UInt i=0; i<mesh.num_triangles(); i++)
     	{
     		fe.updateElement(mesh.getTriangle(i));
-    		for(int l = 0;l < IntegratorTriangleP4::NNODES; l++)
+    		for(UInt l = 0;l < IntegratorTriangleP4::NNODES; l++)
     		{
     			Point p = fe.coorQuadPt(l);
     			REAL(result)[i*IntegratorTriangleP4::NNODES + l] = p[0];
