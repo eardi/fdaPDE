@@ -280,11 +280,11 @@ refine.MESH.2D<-function(mesh, minimum_angle = NA, maximum_area = NA, delaunay =
   flags="rpven" 
   
   if(!is.na(minimum_angle)){
-    flags <- paste(flags, "q", minimum_angle, sep='')
+    flags <- paste(flags, "q", sprintf("%.12f", minimum_angle), sep='')
   }
   
   if(!is.na(maximum_area)){
-    flags <- paste(flags, "a", maximum_area, sep='')
+    flags <- paste(flags, "a", sprintf("%.12f", maximum_area), sep='')
   }
   
   if(delaunay){
