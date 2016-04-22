@@ -404,7 +404,7 @@ getBetaCoefficients<-function(locations, observations, fit.FEM, covariates, CPP_
     ## #row number of covariates, #col number of functions
     betahat = matrix(0, nrow = ncol(covariates), ncol = ncol(fnhat))
     for(i in 1:ncol(fnhat))
-      betahat[i] = as.vector(lm.fit(covariates,as.vector(observations-fnhat[,i]))$coefficients)
+      betahat[,i] = as.vector(lm.fit(covariates,as.vector(observations-fnhat[,i]))$coefficients)
   }
   
  return(betahat)
@@ -421,7 +421,7 @@ getGCV<-function(locations, observations, fit.FEM, covariates = NULL, edf)
   if(is.null(locations))
   {
     loc_nodes = (1:length(observations))[!is.na(observations)]
-    fnhat = fit.FEM$coeff[loc_nodes,]
+    fnhat = as.matrix(fit.FEM$coeff[loc_nodes,])
   }else{
     loc_nodes = 1:length(observations)
     fnhat = eval.FEM(FEM = fit.FEM, locations = locations, CPP_CODE = FALSE)
@@ -448,11 +448,21 @@ getGCV<-function(locations, observations, fit.FEM, covariates = NULL, edf)
   
   zhat <- as.matrix(zhat)
   
+  if(any(np - edf <= 0))
+  {
+    warning("Some values of 'edf' are inconstistent. This might be due to ill-conditioning of the linear system. Try increasing value of 'lambda'.")  
+  }
+  
   for (i in 1:length(edf))
   {
     stderr2[i] = t(observations[loc_nodes] - zhat[,i]) %*% (observations[loc_nodes] - zhat[,i]) / ( np - edf[i] )
     GCV[i] = ( np / ( np - edf[i] )) * stderr2[i]
   }
   
-  return(list(stderr = sqrt(stderr2), GCV = GCV))
+  # NA if stderr2 is negative
+  stderr = vector('numeric', length(stderr2));
+  stderr[stderr2>=0] = sqrt(stderr2[stderr2>=0]);
+  stderr[stderr2<0] = NaN;
+  
+  return(list(stderr = stderr, GCV = GCV))
 }

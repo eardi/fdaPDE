@@ -237,6 +237,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setPsi(){
 			}
 		}
 
+		psi_.prune(pruning_coeff);
 		psi_.makeCompressed();
 }
 
@@ -634,9 +635,6 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
     //_b.resize(2*nnodes);
     _b = VectorXr::Zero(2*nnodes);
     _b.topRows(nnodes)=rightHandData;
-    //std::cout<<"Forcing Term "<<std::cout<<forcingTerm<<"END";
-    _b.bottomRows(nnodes)=forcingTerm;
-    //std::cout<<"b vector"<<_b;
 
     _solution.resize(regressionData_.getLambda().size());
     _dof.resize(regressionData_.getLambda().size());
@@ -650,6 +648,9 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
     	SpMat MMat_lambda = (-lambda)*MMat_;
     	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
 
+        //std::cout<<"Forcing Term "<<std::cout<<forcingTerm<<"END";
+        _b.bottomRows(nnodes)=lambda*forcingTerm;
+        //std::cout<<"b vector"<<_b;
     	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
 
 

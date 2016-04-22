@@ -9,13 +9,12 @@
 #include "regressionData.h"
 #include "solver.h"
 
-
 //! A LinearSystem class: A class for the linear system construction and resolution.
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
 class MixedFERegression{
 	private:
-
+		static constexpr Real pruning_coeff = 2.2204e-016*1000;
 		const MeshHandler<ORDER> &mesh_;
 		const InputHandler& regressionData_;
 		std::vector<coeff> tripletsData_;
