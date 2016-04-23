@@ -200,6 +200,8 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setPsi(){
 		//std::cout<<"Data Matrix Computation by Basis Evaluation.."<<std::endl;
 		UInt nnodes = mesh_.num_nodes();
 		UInt nlocations = regressionData_.getNumberofObservations();
+		Real eps = 2.2204e-016,
+			 tolerance = 100 * eps;
 
 		//cout<<"Nodes number "<<nnodes<<"Locations number "<<nlocations<<endl;
 
@@ -237,7 +239,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setPsi(){
 			}
 		}
 
-		psi_.prune(pruning_coeff);
+		psi_.prune(tolerance);
 		psi_.makeCompressed();
 }
 

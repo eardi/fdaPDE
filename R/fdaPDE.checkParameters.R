@@ -76,10 +76,10 @@ checkSmoothingParametersSize<-function(locations = NULL, observations, FEMbasis,
     stop("'observations' must be a column vector")
   if(nrow(observations) < 1)
     stop("'observations' must contain at least one element")
-  if(!is.null(locations))
+  if(is.null(locations))
   {
     if(nrow(observations) > nrow(FEMbasis$mesh$nodes))
-      stop("number of 'observations' is larger then the numer of 'noded' in the mesh")
+      stop("Size of 'observations' is larger then the size of 'nodes' in the mesh")
   }
   if(!is.null(locations))
   {

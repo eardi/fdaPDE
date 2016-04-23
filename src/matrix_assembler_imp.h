@@ -50,6 +50,8 @@ template<UInt ORDER, typename Integrator, typename A>
 void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 	                     FiniteElement<Integrator, ORDER>& fe, SpMat& OpMat)
 {
+	Real eps = 2.2204e-016,
+		 tolerance = 10 * eps;
 	std::vector<coeff> triplets;
 
 
@@ -85,6 +87,7 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
   	UInt nnodes = mesh.num_nodes();
   	OpMat.resize(nnodes, nnodes);
 	OpMat.setFromTriplets(triplets.begin(),triplets.end());
+	OpMat.prune(tolerance);
 	//cout<<"done!"<<endl;;
 }
 
