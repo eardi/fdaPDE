@@ -114,12 +114,11 @@ void Assembler::forcingTerm(const MeshHandler<ORDER>& mesh,
 		for(int i = 0; i < 3*ORDER; i++)
 		{
 			Real s=0;
-
 			for(int iq = 0;iq < Integrator::NNODES; iq++)
-			{
-				UInt globalIndex = fe.getGlobalIndex(iq);
-				s +=  fe.phiMaster(i,iq)* u(globalIndex) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[iq];//(*)
-			}
+				{
+					UInt globalIndex = fe.getGlobalIndex(iq);
+					s +=  fe.phiMaster(i,iq)* u(globalIndex) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[iq];//(*)
+				}
 			forcingTerm[identifiers[i]] += s;
 		}
 

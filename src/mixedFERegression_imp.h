@@ -631,6 +631,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
     //for(auto i=0;i<18;i++) std::cout<<u(i)<<std::endl;
     VectorXr forcingTerm;
     Assembler::forcingTerm(mesh_,fe, u, forcingTerm);
+    //std::cout<<"Forcing\n"<<forcingTerm;
 
     VectorXr rightHandData;
     getRightHandData(rightHandData);
