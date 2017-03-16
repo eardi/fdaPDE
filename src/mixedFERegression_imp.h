@@ -200,6 +200,8 @@ void MixedFERegressionBase<InputHandler,Integrator,ORDER>::setPsi(){
 		//std::cout<<"Data Matrix Computation by Basis Evaluation.."<<std::endl;
 		UInt nnodes = mesh_.num_nodes();
 		UInt nlocations = regressionData_.getNumberofObservations();
+		Real eps = 2.2204e-016,
+			 tolerance = 100 * eps;
 
 		//cout<<"Nodes number "<<nnodes<<"Locations number "<<nlocations<<endl;
 
@@ -237,7 +239,7 @@ void MixedFERegressionBase<InputHandler,Integrator,ORDER>::setPsi(){
 			}
 		}
 
-		psi_.prune(pruning_coeff);
+		psi_.prune(tolerance);
 		psi_.makeCompressed();
 }
 
@@ -869,7 +871,42 @@ class MixedFERegression<RegressionDataEllipticSpaceVarying, Integrator, ORDER> :
 public:
 	MixedFERegression(const MeshHandler<ORDER>& mesh, const RegressionDataEllipticSpaceVarying& regressionData):MixedFERegressionBase<RegressionDataEllipticSpaceVarying, Integrator, ORDER>(mesh, regressionData){};
 
+<<<<<<< HEAD
 	void apply()
+=======
+    if(!regressionData_.isLocationsByNodes())
+    {
+    	getDataMatrix(DMat_);
+    }
+    else
+    {
+    	getDataMatrixByIndices(DMat_);
+    }
+    //std::cout<<"Block Data"<<DMat_<<std::endl;
+
+    const Reaction& c = regressionData_.getC();
+    const Diffusivity& K = regressionData_.getK();
+    const Advection& beta = regressionData_.getBeta();
+    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), mesh_, fe, AMat_);
+    Assembler::operKernel(mass, mesh_, fe, MMat_);
+
+    const ForcingTerm& u = regressionData_.getU();
+    //for(auto i=0;i<18;i++) std::cout<<u(i)<<std::endl;
+    VectorXr forcingTerm;
+    Assembler::forcingTerm(mesh_,fe, u, forcingTerm);
+    //std::cout<<"Forcing\n"<<forcingTerm;
+
+    VectorXr rightHandData;
+    getRightHandData(rightHandData);
+    //_b.resize(2*nnodes);
+    _b = VectorXr::Zero(2*nnodes);
+    _b.topRows(nnodes)=rightHandData;
+
+    _solution.resize(regressionData_.getLambda().size());
+    _dof.resize(regressionData_.getLambda().size());
+
+    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
+>>>>>>> 72ade8994fb5954494c0a315822aac8fc204a9f2
 	{
 		//std::cout<<"Space-varying Coefficient - Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
 				//UInt ndata=regressionData_.getObservations().size();

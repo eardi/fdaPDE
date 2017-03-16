@@ -69,7 +69,7 @@ template <UInt NNODES>
 bool Triangle<NNODES>::isPointInside(const Point& point) const
 {
 	Real eps = 2.2204e-016,
-		 tolerance = 100 * eps;
+		 tolerance = 10 * eps;
 
 	Eigen::Matrix<Real,3,1> lambda = getBaryCoordinates(point);
 	
@@ -85,7 +85,7 @@ template <UInt NNODES>
 int Triangle<NNODES>::getPointDirection(const Point& point) const
 {
 	Real eps = 2.2204e-016,
-		 tolerance = 100 * eps;
+		 tolerance = 10 * eps;
 
 	Eigen::Matrix<Real,3,1> lambda = getBaryCoordinates(point);
 	

@@ -729,14 +729,13 @@ R_eval_local.FEM = function(FEM, locations, element_index)
   Pgpts = cbind(matrix(1,N,1),locations[,1],locations[,2])
   
   # Get nodes and index
-  
+  FEMbasis = FEM$FEMbasis
   mesh = FEMbasis$mesh
   nodes = mesh$nodes
   triangles = mesh$triangles
   coeff = FEM$coeff
   nsurf = dim(coeff)[2]
   
-  FEMbasis = FEM$FEMbasis
   order = FEMbasis$order
   #nodeindex = params$nodeindex
   detJ = FEMbasis$detJ

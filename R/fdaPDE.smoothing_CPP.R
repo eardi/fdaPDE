@@ -175,7 +175,6 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
   PDE_param_eval$c = (PDE_parameters$c)(points_eval)
   PDE_param_eval$u = (PDE_parameters$u)(points_eval)
   
-  #print(PDE_param_eval)
   ## Set propr type for correct C++ reading
   locations <- as.matrix(locations)
   storage.mode(locations) <- "double"
@@ -244,6 +243,8 @@ CPP_eval.FEM = function(FEM, locations, redundancy)
   evalmat
 }
 
+## C++ indexes mesh supposed to start from zero, i.e. 
+# conversion sould be done by calling function
 CPP_get_evaluations_points = function(mesh, order)
 {
   # EVAL_FEM_FD evaluates the FEM fd object at points (X,Y)
@@ -257,10 +258,10 @@ CPP_get_evaluations_points = function(mesh, order)
   # EVALMAT   an array of the same size as X and Y containing the value of 
   #           FELSPLOBJ at (X,Y).
   
-  ## C++ indexes starts from zero, needed conversion.
-  mesh$triangles = mesh$triangles - 1
-  mesh$edges = mesh$edges - 1
-  mesh$neighbors[mesh$neighbors != -1] = mesh$neighbors[mesh$neighbors != -1] - 1
+  ## C++ indexes starts from zero conversion sould be done by calling function
+  #mesh$triangles = mesh$triangles - 1
+  #mesh$edges = mesh$edges - 1
+  #mesh$neighbors[mesh$neighbors != -1] = mesh$neighbors[mesh$neighbors != -1] - 1
   
   # Imposing types, this is necessary for correct reading from C++
   storage.mode(mesh$nodes) <- "double"

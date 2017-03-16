@@ -50,6 +50,8 @@ template<UInt ORDER, typename Integrator, typename A>
 void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 	                     FiniteElement<Integrator, ORDER>& fe, SpMat& OpMat)
 {
+	Real eps = 2.2204e-016,
+		 tolerance = 10 * eps;
 	std::vector<coeff> triplets;
 	triplets.reserve(mesh.num_triangles()*9*ORDER);
 
@@ -86,7 +88,12 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
   	UInt nnodes = mesh.num_nodes();
   	OpMat.resize(nnodes, nnodes);
 	OpMat.setFromTriplets(triplets.begin(),triplets.end());
+<<<<<<< HEAD
 	//std::cout<<"done!"<<std::endl;
+=======
+	OpMat.prune(tolerance);
+	//cout<<"done!"<<endl;;
+>>>>>>> 72ade8994fb5954494c0a315822aac8fc204a9f2
 }
 
 template<UInt ORDER, typename Integrator>
@@ -112,12 +119,11 @@ void Assembler::forcingTerm(const MeshHandler<ORDER>& mesh,
 		for(int i = 0; i < 3*ORDER; i++)
 		{
 			Real s=0;
-
 			for(int iq = 0;iq < Integrator::NNODES; iq++)
-			{
-				UInt globalIndex = fe.getGlobalIndex(iq);
-				s +=  fe.phiMaster(i,iq)* u(globalIndex) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[iq];//(*)
-			}
+				{
+					UInt globalIndex = fe.getGlobalIndex(iq);
+					s +=  fe.phiMaster(i,iq)* u(globalIndex) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[iq];//(*)
+				}
 			forcingTerm[identifiers[i]] += s;
 		}
 
