@@ -1,5 +1,5 @@
 Package: fdaPDE
-Version: 0.1-3
+Version: 0.1-4
 Date: 2016-04-22
 Title: Functional Data Analysis and Partial Differential Equations; Statistical Analysis of Functional and Spatial Data, Based on Regression with Partial Differential Regularizations
 Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
@@ -15,17 +15,18 @@ Author: Eardi Lila [aut, cre],
     Jim Ramsay [aut],
     Luca Formaggia [aut]
 Maintainer: Eardi Lila <el425@cam.ac.uk>
-Depends:
+Depends: 
     R (>= 3.0.0),
     stats, grDevices, graphics,
-    rgl
+    rgl, Matrix
 LinkingTo: 
 	RcppEigen
-Suggests:
-    MASS
+Suggests: 
+    MASS,
+    testthat
 Description: An implementation of regression models with partial differential regularizations, making use of the Finite Element Method. The models efficiently handle data distributed over irregularly shaped domains and can comply with various conditions at the boundaries of the domain. A priori information about the spatial structure of the phenomenon under study can be incorporated in the model via the differential regularization.
 License: CC BY-NC-SA 4.0
 Copyright: See the individual source files for copyrights information
 NeedsCompilation: yes
-SystemRequirements:	C++11
+SystemRequirements: C++11
 RoxygenNote: 5.0.0

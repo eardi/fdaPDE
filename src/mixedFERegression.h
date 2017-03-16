@@ -12,8 +12,8 @@
 //! A LinearSystem class: A class for the linear system construction and resolution.
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-class MixedFERegression{
-	private:
+class MixedFERegressionBase{
+	protected:
 		static constexpr Real pruning_coeff = 2.2204e-016*1000;
 		const MeshHandler<ORDER> &mesh_;
 		const InputHandler& regressionData_;
@@ -41,7 +41,7 @@ class MixedFERegression{
 
 	public:
 		//!A Constructor.
-		MixedFERegression(const MeshHandler<ORDER>& mesh, const InputHandler& regressionData):mesh_(mesh), regressionData_(regressionData){};
+		MixedFERegressionBase(const MeshHandler<ORDER>& mesh, const InputHandler& regressionData):mesh_(mesh), regressionData_(regressionData){};
 		
 		//!A Destructor
 		//~Model(){};
@@ -96,6 +96,20 @@ class MixedFERegression{
 		void getRightHandData(VectorXr& rightHandData);
 		void computeDegreesOfFreedom(UInt output_index);
 };
+
+template<typename InputHandler, typename Integrator, UInt ORDER>
+class MixedFERegression : public MixedFERegressionBase<InputHandler, Integrator, ORDER>
+{
+public:
+	MixedFERegression(const MeshHandler<ORDER>& mesh, const InputHandler& regressionData):MixedFERegressionBase<InputHandler, Integrator, ORDER>(mesh, regressionData){};
+
+	void apply()
+	{
+		std::cout << "Option not implemented! \n";
+	}
+};
+
+
 
 #include "mixedFERegression_imp.h"
 

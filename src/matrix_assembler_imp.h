@@ -51,6 +51,7 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 	                     FiniteElement<Integrator, ORDER>& fe, SpMat& OpMat)
 {
 	std::vector<coeff> triplets;
+	triplets.reserve(mesh.num_triangles()*9*ORDER);
 
 
   	for(auto t=0; t<mesh.num_triangles(); t++)
@@ -85,7 +86,7 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
   	UInt nnodes = mesh.num_nodes();
   	OpMat.resize(nnodes, nnodes);
 	OpMat.setFromTriplets(triplets.begin(),triplets.end());
-	//cout<<"done!"<<endl;;
+	//std::cout<<"done!"<<std::endl;
 }
 
 template<UInt ORDER, typename Integrator>

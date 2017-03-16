@@ -73,7 +73,7 @@
 //}
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::buildCoeffMatrix(const SpMat& DMat,  const SpMat& AMat,  const SpMat& MMat)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::buildCoeffMatrix(const SpMat& DMat,  const SpMat& AMat,  const SpMat& MMat)
 {
 	//I reserve the exact memory for the nonzero entries of each row of the coeffmatrix for boosting performance
 	//_coeffmatrix.setFromTriplets(tripletA.begin(),tripletA.end());
@@ -112,7 +112,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::buildCoeffMatrix(const Sp
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::addDirichletBC(const vector<int>& bcindex, const vector<Real>& bcvalues)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::addDirichletBC(const vector<int>& bcindex, const vector<Real>& bcvalues)
 {
 
 
@@ -147,7 +147,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::addDirichletBC(const vect
 //construct NW block of the system matrix in Ramsay with covariates format
 //!! Depends on setPsi and setQ
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::getDataMatrix(SpMat& DMat)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::getDataMatrix(SpMat& DMat)
 {
 		UInt nnodes = mesh_.num_nodes();
 		//UInt nlocations = regressionData_.getNumberofObservations();
@@ -163,7 +163,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::getDataMatrix(SpMat& DMat
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::getDataMatrixByIndices(SpMat& DMat)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::getDataMatrixByIndices(SpMat& DMat)
 {
 		UInt nnodes = mesh_.num_nodes();
 		UInt nlocations = regressionData_.getNumberofObservations();
@@ -195,7 +195,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::getDataMatrixByIndices(Sp
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::setPsi(){
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::setPsi(){
 
 		//std::cout<<"Data Matrix Computation by Basis Evaluation.."<<std::endl;
 		UInt nnodes = mesh_.num_nodes();
@@ -242,7 +242,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setPsi(){
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::setQ()
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::setQ()
 {
 	//std::cout<<"Computing Orthogonal Space Projection Matrix"<<std::endl;
 	Q_.resize(H_.rows(),H_.cols());
@@ -254,7 +254,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setQ()
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::setH()
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::setH()
 {
 	//std::cout<<"Computing Projection Matrix"<<std::endl;
 	//UInt nnodes = mesh_.num_nodes();
@@ -286,7 +286,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::setH()
 }
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::getRightHandData(VectorXr& rightHandData)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::getRightHandData(VectorXr& rightHandData)
 {
 	UInt nnodes = mesh_.num_nodes();
 	UInt nlocations = regressionData_.getNumberofObservations();
@@ -328,7 +328,7 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::getRightHandData(VectorXr
 
 
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::computeDegreesOfFreedom(UInt output_index)
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::computeDegreesOfFreedom(UInt output_index)
 {
 	UInt nnodes = mesh_.num_nodes();
 	UInt nlocations = regressionData_.getNumberofObservations();
@@ -403,185 +403,385 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::computeDegreesOfFreedom(U
 
 
 
-//Implementation kept from Sangalli et al
+////Implementation kept from Sangalli et al
+//template<typename InputHandler, typename Integrator, UInt ORDER>
+//void MixedFERegressionBase<InputHandler,Integrator,ORDER>::smoothLaplace()
+//{
+//	//std::cout<<"Laplace Penalization - Order: "<<ORDER<<std::endl;
+//
+//	//UInt ndata=regressionData_.getObservations().size();
+//	UInt nnodes=mesh_.num_nodes();
+//
+//	FiniteElement<Integrator, ORDER> fe;
+//
+//	typedef EOExpr<Mass> ETMass;
+//	typedef EOExpr<Stiff> ETStiff;
+//
+//	Mass EMass;
+//	Stiff EStiff;
+//
+//	ETMass mass(EMass);
+//	ETStiff stiff(EStiff);
+//
+//	if(!regressionData_.isLocationsByNodes())
+//	{
+//		//std::cout<<"HERE";
+//		setPsi();
+//	}
+//
+//	if(!regressionData_.getCovariates().rows() == 0)
+//	{
+//		setH();
+//		setQ();
+//	}
+//
+//    if(!regressionData_.isLocationsByNodes())
+//    {
+//    	getDataMatrix(DMat_);
+//    }
+//    else
+//    {
+//    	getDataMatrixByIndices(DMat_);
+//    }
+//    //std::cout<<"Block Data"<<DMat_<<std::endl;
+//
+//
+//    Assembler::operKernel(stiff, mesh_, fe, AMat_);
+//    Assembler::operKernel(mass, mesh_, fe, MMat_);
+//
+//    VectorXr rightHandData;
+//    getRightHandData(rightHandData);
+//    _b = VectorXr::Zero(2*nnodes);
+//    _b.topRows(nnodes)=rightHandData;
+//    //std::cout<<"b vector"<<_b;
+//
+//    _solution.resize(regressionData_.getLambda().size());
+//    _dof.resize(regressionData_.getLambda().size());
+//
+//    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
+//	{
+//    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+//
+//    	Real lambda = regressionData_.getLambda()[i];
+//    	SpMat AMat_lambda = (-lambda)*AMat_;
+//    	SpMat MMat_lambda = (-lambda)*MMat_;
+//    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
+//
+//    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+//
+//
+//    	//Appling border conditions if necessary
+//    	if(regressionData_.getDirichletIndices().size() != 0)
+//    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
+//
+//    	//prova.solveSystem<SpConjGrad>();
+//    	this-> template solve<SpLU>(i);
+//    	if(regressionData_.computeDOF())
+//    		computeDegreesOfFreedom(i);
+//    	else
+//    		_dof[i] = -1;
+//
+//	}
+//
+//}
+//
+////Implementation kept from Sangalli et al
+//template<typename InputHandler, typename Integrator, UInt ORDER>
+//void MixedFERegressionBase<InputHandler,Integrator,ORDER>::smoothEllipticPDE()
+//{
+//	//std::cout<<"Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
+//
+//	//UInt ndata=regressionData_.getObservations().size();
+//	UInt nnodes=mesh_.num_nodes();
+//
+//	FiniteElement<Integrator, ORDER> fe;
+//
+//	typedef EOExpr<Mass> ETMass;
+//	typedef EOExpr<Stiff> ETStiff;
+//	typedef EOExpr<Grad> ETGrad;
+//
+//	Mass EMass;
+//	Stiff EStiff;
+//	Grad EGrad;
+//
+//	ETMass mass(EMass);
+//	ETStiff stiff(EStiff);
+//	ETGrad grad(EGrad);
+//
+//	if(!regressionData_.isLocationsByNodes())
+//	{
+//		//std::cout<<"HERE";
+//		setPsi();
+//	}
+//
+//	if(!regressionData_.getCovariates().rows() == 0)
+//	{
+//		setH();
+//		setQ();
+//	}
+//
+//    if(!regressionData_.isLocationsByNodes())
+//    {
+//    	getDataMatrix(DMat_);
+//    }
+//    else
+//    {
+//    	getDataMatrixByIndices(DMat_);
+//    }
+//    //std::cout<<"Block Data"<<DMat<<std::endl;
+//
+//
+//
+//    const Real& c = regressionData_.getC();
+//    const Eigen::Matrix<Real,2,2>& K = regressionData_.getK();
+//    const Eigen::Matrix<Real,2,1>& beta = regressionData_.getBeta();
+//    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), mesh_, fe, AMat_);
+//    Assembler::operKernel(mass, mesh_, fe, MMat_);
+//
+//    VectorXr rightHandData;
+//    getRightHandData(rightHandData);
+//    _b = VectorXr::Zero(2*nnodes);
+//    _b.topRows(nnodes)=rightHandData;
+//    //std::cout<<"b vector"<<_b;
+//
+//    _solution.resize(regressionData_.getLambda().size());
+//    _dof.resize(regressionData_.getLambda().size());
+//
+//    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
+//	{
+//    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+//
+//    	Real lambda = regressionData_.getLambda()[i];
+//    	SpMat AMat_lambda = (-lambda)*AMat_;
+//    	SpMat MMat_lambda = (-lambda)*MMat_;
+//    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
+//
+//    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+//
+//
+//    	//Appling border conditions if necessary
+//    	if(regressionData_.getDirichletIndices().size() != 0)
+//    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
+//
+//    	//prova.solveSystem<SpConjGrad>();
+//    	this-> template solve<SpLU>(i);
+//    	if(regressionData_.computeDOF())
+//    		computeDegreesOfFreedom(i);
+//    	else
+//    		_dof[i] = -1;
+//
+//	}
+//
+//}
+//
+//
+////Implementation kept from Sangalli et al
+//template<typename InputHandler, typename Integrator, UInt ORDER>
+//void MixedFERegressionBase<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVarying()
+//{
+//	//std::cout<<"Space-varying Coefficient - Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
+//		//UInt ndata=regressionData_.getObservations().size();
+//		UInt nnodes=mesh_.num_nodes();
+//
+//		FiniteElement<Integrator, ORDER> fe;
+//
+//		typedef EOExpr<Mass> ETMass;
+//		typedef EOExpr<Stiff> ETStiff;
+//		typedef EOExpr<Grad> ETGrad;
+//
+//		Mass EMass;
+//		Stiff EStiff;
+//		Grad EGrad;
+//
+//		ETMass mass(EMass);
+//		ETStiff stiff(EStiff);
+//		ETGrad grad(EGrad);
+//
+//	if(!regressionData_.isLocationsByNodes())
+//	{
+//		//std::cout<<"HERE";
+//		setPsi();
+//	}
+//
+//	if(!regressionData_.getCovariates().rows() == 0)
+//	{
+//		setH();
+//		setQ();
+//	}
+//
+//    if(!regressionData_.isLocationsByNodes())
+//    {
+//    	getDataMatrix(DMat_);
+//    }
+//    else
+//    {
+//    	getDataMatrixByIndices(DMat_);
+//    }
+//    //std::cout<<"Block Data"<<DMat_<<std::endl;
+//
+//    const Reaction& c = regressionData_.getC();
+//    const Diffusivity& K = regressionData_.getK();
+//    const Advection& beta = regressionData_.getBeta();
+//    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), mesh_, fe, AMat_);
+//    Assembler::operKernel(mass, mesh_, fe, MMat_);
+//
+//    const ForcingTerm& u = regressionData_.getU();
+//    //for(auto i=0;i<18;i++) std::cout<<u(i)<<std::endl;
+//    VectorXr forcingTerm;
+//    Assembler::forcingTerm(mesh_,fe, u, forcingTerm);
+//
+//    VectorXr rightHandData;
+//    getRightHandData(rightHandData);
+//    //_b.resize(2*nnodes);
+//    _b = VectorXr::Zero(2*nnodes);
+//    _b.topRows(nnodes)=rightHandData;
+//
+//    _solution.resize(regressionData_.getLambda().size());
+//    _dof.resize(regressionData_.getLambda().size());
+//
+//    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
+//	{
+//    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+//
+//    	Real lambda = regressionData_.getLambda()[i];
+//    	SpMat AMat_lambda = (-lambda)*AMat_;
+//    	SpMat MMat_lambda = (-lambda)*MMat_;
+//    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
+//
+//        //std::cout<<"Forcing Term "<<std::cout<<forcingTerm<<"END";
+//        _b.bottomRows(nnodes)=lambda*forcingTerm;
+//        //std::cout<<"b vector"<<_b;
+//    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+//
+//
+//    	//Appling border conditions if necessary
+//    	if(regressionData_.getDirichletIndices().size() != 0)
+//    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
+//
+//    	//prova.solveSystem<SpConjGrad>();
+//
+//    	//std::cout<< _coeffmatrix;
+//    	this-> template solve<SpLU>(i);
+//    	if(regressionData_.computeDOF())
+//    		computeDegreesOfFreedom(i);
+//    	else
+//    		_dof[i] = -1;
+//
+//	}
+//
+//}
+
+
+//solve sparse system with P method
+
 template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::smoothLaplace()
+template <typename P>
+void MixedFERegressionBase<InputHandler,Integrator,ORDER>::solve(UInt output_index)
 {
-	//std::cout<<"Laplace Penalization - Order: "<<ORDER<<std::endl;
-
-	//UInt ndata=regressionData_.getObservations().size();
-	UInt nnodes=mesh_.num_nodes();
-
-	FiniteElement<Integrator, ORDER> fe;
-
-	typedef EOExpr<Mass> ETMass;
-	typedef EOExpr<Stiff> ETStiff;
-
-	Mass EMass;
-	Stiff EStiff;
-
-	ETMass mass(EMass);
-	ETStiff stiff(EStiff);
-
-	if(!regressionData_.isLocationsByNodes())
-	{
-		//std::cout<<"HERE";
-		setPsi();
-	}
-
-	if(!regressionData_.getCovariates().rows() == 0)
-	{
-		setH();
-		setQ();
-	}
-
-    if(!regressionData_.isLocationsByNodes())
-    {
-    	getDataMatrix(DMat_);
-    }
-    else
-    {
-    	getDataMatrixByIndices(DMat_);
-    }
-    //std::cout<<"Block Data"<<DMat_<<std::endl;
-
-
-    Assembler::operKernel(stiff, mesh_, fe, AMat_);
-    Assembler::operKernel(mass, mesh_, fe, MMat_);
-
-    VectorXr rightHandData;
-    getRightHandData(rightHandData);
-    _b = VectorXr::Zero(2*nnodes);
-    _b.topRows(nnodes)=rightHandData;
-    //std::cout<<"b vector"<<_b;
-
-    _solution.resize(regressionData_.getLambda().size());
-    _dof.resize(regressionData_.getLambda().size());
-
-    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
-	{
-    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
-
-    	Real lambda = regressionData_.getLambda()[i];
-    	SpMat AMat_lambda = (-lambda)*AMat_;
-    	SpMat MMat_lambda = (-lambda)*MMat_;
-    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
-
-    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
-
-
-    	//Appling border conditions if necessary
-    	if(regressionData_.getDirichletIndices().size() != 0)
-    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
-
-    	//prova.solveSystem<SpConjGrad>();
-    	this-> template solve<SpLU>(i);
-    	if(regressionData_.computeDOF())
-    		computeDegreesOfFreedom(i);
-    	else
-    		_dof[i] = -1;
-
-	}
-
+	//std::cout<<this->_coeffmatrix;
+	this->_solution[output_index].resize(this->_coeffmatrix.rows());
+	P::solve(this->_coeffmatrix,this->_b,this->_solution[output_index]);
 }
 
-//Implementation kept from Sangalli et al
-template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDE()
+template<typename Integrator, UInt ORDER>
+class MixedFERegression<RegressionData, Integrator, ORDER> : public MixedFERegressionBase<RegressionData, Integrator, ORDER>
 {
-	//std::cout<<"Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
+public:
+	MixedFERegression(const MeshHandler<ORDER>& mesh, const RegressionData& regressionData):MixedFERegressionBase<RegressionData, Integrator, ORDER>(mesh, regressionData){};
 
-	//UInt ndata=regressionData_.getObservations().size();
-	UInt nnodes=mesh_.num_nodes();
-
-	FiniteElement<Integrator, ORDER> fe;
-
-	typedef EOExpr<Mass> ETMass;
-	typedef EOExpr<Stiff> ETStiff;
-	typedef EOExpr<Grad> ETGrad;
-
-	Mass EMass;
-	Stiff EStiff;
-	Grad EGrad;
-
-	ETMass mass(EMass);
-	ETStiff stiff(EStiff);
-	ETGrad grad(EGrad);
-
-	if(!regressionData_.isLocationsByNodes())
+	void apply()
 	{
-		//std::cout<<"HERE";
-		setPsi();
-	}
+		//std::cout<<"Laplace Penalization - Order: "<<ORDER<<std::endl;
 
-	if(!regressionData_.getCovariates().rows() == 0)
-	{
-		setH();
-		setQ();
-	}
-
-    if(!regressionData_.isLocationsByNodes())
-    {
-    	getDataMatrix(DMat_);
-    }
-    else
-    {
-    	getDataMatrixByIndices(DMat_);
-    }
-    //std::cout<<"Block Data"<<DMat<<std::endl;
-
-
-
-    const Real& c = regressionData_.getC();
-    const Eigen::Matrix<Real,2,2>& K = regressionData_.getK();
-    const Eigen::Matrix<Real,2,1>& beta = regressionData_.getBeta();
-    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), mesh_, fe, AMat_);
-    Assembler::operKernel(mass, mesh_, fe, MMat_);
-
-    VectorXr rightHandData;
-    getRightHandData(rightHandData);
-    _b = VectorXr::Zero(2*nnodes);
-    _b.topRows(nnodes)=rightHandData;
-    //std::cout<<"b vector"<<_b;
-
-    _solution.resize(regressionData_.getLambda().size());
-    _dof.resize(regressionData_.getLambda().size());
-
-    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
-	{
-    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
-
-    	Real lambda = regressionData_.getLambda()[i];
-    	SpMat AMat_lambda = (-lambda)*AMat_;
-    	SpMat MMat_lambda = (-lambda)*MMat_;
-    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
-
-    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
-
-
-    	//Appling border conditions if necessary
-    	if(regressionData_.getDirichletIndices().size() != 0)
-    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
-
-    	//prova.solveSystem<SpConjGrad>();
-    	this-> template solve<SpLU>(i);
-    	if(regressionData_.computeDOF())
-    		computeDegreesOfFreedom(i);
-    	else
-    		_dof[i] = -1;
-
-	}
-
-}
-
-
-//Implementation kept from Sangalli et al
-template<typename InputHandler, typename Integrator, UInt ORDER>
-void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVarying()
-{
-	//std::cout<<"Space-varying Coefficient - Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
 		//UInt ndata=regressionData_.getObservations().size();
-		UInt nnodes=mesh_.num_nodes();
+		UInt nnodes=MixedFERegression::mesh_.num_nodes();
+
+		FiniteElement<Integrator, ORDER> fe;
+
+		typedef EOExpr<Mass> ETMass;
+		typedef EOExpr<Stiff> ETStiff;
+
+		Mass EMass;
+		Stiff EStiff;
+
+		ETMass mass(EMass);
+		ETStiff stiff(EStiff);
+
+		if(!MixedFERegression::regressionData_.isLocationsByNodes())
+		{
+			//std::cout<<"HERE";
+			MixedFERegression::setPsi();
+		}
+
+		if(!MixedFERegression::regressionData_.getCovariates().rows() == 0)
+		{
+			MixedFERegression::setH();
+			MixedFERegression::setQ();
+		}
+
+	    if(!MixedFERegression::regressionData_.isLocationsByNodes())
+	    {
+	    	MixedFERegression::getDataMatrix(MixedFERegression::DMat_);
+	    }
+	    else
+	    {
+	    	MixedFERegression::getDataMatrixByIndices(MixedFERegression::DMat_);
+	    }
+	    //std::cout<<"Block Data"<<DMat_<<std::endl;
+
+
+	    Assembler::operKernel(stiff, MixedFERegression::mesh_, fe, MixedFERegression::AMat_);
+	    Assembler::operKernel(mass, MixedFERegression::mesh_, fe, MixedFERegression::MMat_);
+
+	    VectorXr rightHandData;
+	    MixedFERegression::getRightHandData(rightHandData);
+	    MixedFERegression::_b = VectorXr::Zero(2*nnodes);
+	    MixedFERegression::_b.topRows(nnodes)=rightHandData;
+	    //std::cout<<"b vector"<<_b;
+
+	    MixedFERegression::_solution.resize(MixedFERegression::regressionData_.getLambda().size());
+	    MixedFERegression::_dof.resize(MixedFERegression::regressionData_.getLambda().size());
+
+	    for(UInt i = 0; i<MixedFERegression::regressionData_.getLambda().size(); ++i)
+		{
+	    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+
+	    	Real lambda = MixedFERegression::regressionData_.getLambda()[i];
+	    	SpMat AMat_lambda = (-lambda)*MixedFERegression::AMat_;
+	    	SpMat MMat_lambda = (-lambda)*MixedFERegression::MMat_;
+	    	this->buildCoeffMatrix(MixedFERegression::DMat_, AMat_lambda, MMat_lambda);
+
+	    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+
+
+	    	//Appling border conditions if necessary
+	    	if(MixedFERegression::regressionData_.getDirichletIndices().size() != 0)
+	    		MixedFERegression::addDirichletBC(MixedFERegression::regressionData_.getDirichletIndices(), MixedFERegression::regressionData_.getDirichletValues());
+
+	    	//prova.solveSystem<SpConjGrad>();
+	    	this-> template solve<SpLU>(i);
+	    	if(MixedFERegression::regressionData_.computeDOF())
+	    		MixedFERegression::computeDegreesOfFreedom(i);
+	    	else
+	    		MixedFERegression::_dof[i] = -1;
+
+		}
+
+	}
+};
+
+template<typename Integrator, UInt ORDER>
+class MixedFERegression<RegressionDataElliptic, Integrator, ORDER> : public MixedFERegressionBase<RegressionDataElliptic, Integrator, ORDER>
+{
+public:
+	MixedFERegression(const MeshHandler<ORDER>& mesh, const RegressionDataElliptic& regressionData):MixedFERegressionBase<RegressionDataElliptic, Integrator, ORDER>(mesh, regressionData){};
+
+	void apply()
+	{
+		//std::cout<<"Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
+
+		//UInt ndata=regressionData_.getObservations().size();
+		UInt nnodes=MixedFERegression::mesh_.num_nodes();
 
 		FiniteElement<Integrator, ORDER> fe;
 
@@ -597,90 +797,170 @@ void MixedFERegression<InputHandler,Integrator,ORDER>::smoothEllipticPDESpaceVar
 		ETStiff stiff(EStiff);
 		ETGrad grad(EGrad);
 
-	if(!regressionData_.isLocationsByNodes())
-	{
-		//std::cout<<"HERE";
-		setPsi();
+		if(!MixedFERegression::regressionData_.isLocationsByNodes())
+		{
+			//std::cout<<"HERE";
+			MixedFERegression::setPsi();
+		}
+
+		if(!MixedFERegression::regressionData_.getCovariates().rows() == 0)
+		{
+			MixedFERegression::setH();
+			MixedFERegression::setQ();
+		}
+
+	    if(!MixedFERegression::regressionData_.isLocationsByNodes())
+	    {
+	    	MixedFERegression::getDataMatrix(MixedFERegression::DMat_);
+	    }
+	    else
+	    {
+	    	MixedFERegression::getDataMatrixByIndices(MixedFERegression::DMat_);
+	    }
+	    //std::cout<<"Block Data"<<DMat<<std::endl;
+
+
+
+	    const Real& c = MixedFERegression::regressionData_.getC();
+	    const Eigen::Matrix<Real,2,2>& K = MixedFERegression::regressionData_.getK();
+	    const Eigen::Matrix<Real,2,1>& beta = MixedFERegression::regressionData_.getBeta();
+	    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), MixedFERegression::mesh_, fe, MixedFERegression::AMat_);
+	    Assembler::operKernel(mass, MixedFERegression::mesh_, fe, MixedFERegression::MMat_);
+
+	    VectorXr rightHandData;
+	    MixedFERegression::getRightHandData(rightHandData);
+	    MixedFERegression::_b = VectorXr::Zero(2*nnodes);
+	    MixedFERegression::_b.topRows(nnodes)=rightHandData;
+	    //std::cout<<"b vector"<<_b;
+
+	    MixedFERegression::_solution.resize(MixedFERegression::regressionData_.getLambda().size());
+	    MixedFERegression::_dof.resize(MixedFERegression::regressionData_.getLambda().size());
+
+	    for(UInt i = 0; i<MixedFERegression::regressionData_.getLambda().size(); ++i)
+		{
+	    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+
+	    	Real lambda = MixedFERegression::regressionData_.getLambda()[i];
+	    	SpMat AMat_lambda = (-lambda)*MixedFERegression::AMat_;
+	    	SpMat MMat_lambda = (-lambda)*MixedFERegression::MMat_;
+	    	this->buildCoeffMatrix(MixedFERegression::DMat_, AMat_lambda, MMat_lambda);
+
+	    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+
+
+	    	//Appling border conditions if necessary
+	    	if(MixedFERegression::regressionData_.getDirichletIndices().size() != 0)
+	    		MixedFERegression::addDirichletBC(MixedFERegression::regressionData_.getDirichletIndices(), MixedFERegression::regressionData_.getDirichletValues());
+
+	    	//prova.solveSystem<SpConjGrad>();
+	    	this-> template solve<SpLU>(i);
+	    	if(MixedFERegression::regressionData_.computeDOF())
+	    		MixedFERegression::computeDegreesOfFreedom(i);
+	    	else
+	    		MixedFERegression::_dof[i] = -1;
+
+		}
 	}
+};
 
-	if(!regressionData_.getCovariates().rows() == 0)
-	{
-		setH();
-		setQ();
-	}
-
-    if(!regressionData_.isLocationsByNodes())
-    {
-    	getDataMatrix(DMat_);
-    }
-    else
-    {
-    	getDataMatrixByIndices(DMat_);
-    }
-    //std::cout<<"Block Data"<<DMat_<<std::endl;
-
-    const Reaction& c = regressionData_.getC();
-    const Diffusivity& K = regressionData_.getK();
-    const Advection& beta = regressionData_.getBeta();
-    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), mesh_, fe, AMat_);
-    Assembler::operKernel(mass, mesh_, fe, MMat_);
-
-    const ForcingTerm& u = regressionData_.getU();
-    //for(auto i=0;i<18;i++) std::cout<<u(i)<<std::endl;
-    VectorXr forcingTerm;
-    Assembler::forcingTerm(mesh_,fe, u, forcingTerm);
-
-    VectorXr rightHandData;
-    getRightHandData(rightHandData);
-    //_b.resize(2*nnodes);
-    _b = VectorXr::Zero(2*nnodes);
-    _b.topRows(nnodes)=rightHandData;
-
-    _solution.resize(regressionData_.getLambda().size());
-    _dof.resize(regressionData_.getLambda().size());
-
-    for(UInt i = 0; i<regressionData_.getLambda().size(); ++i)
-	{
-    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
-
-    	Real lambda = regressionData_.getLambda()[i];
-    	SpMat AMat_lambda = (-lambda)*AMat_;
-    	SpMat MMat_lambda = (-lambda)*MMat_;
-    	this->buildCoeffMatrix(DMat_, AMat_lambda, MMat_lambda);
-
-        //std::cout<<"Forcing Term "<<std::cout<<forcingTerm<<"END";
-        _b.bottomRows(nnodes)=lambda*forcingTerm;
-        //std::cout<<"b vector"<<_b;
-    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
-
-
-    	//Appling border conditions if necessary
-    	if(regressionData_.getDirichletIndices().size() != 0)
-    		addDirichletBC(regressionData_.getDirichletIndices(), regressionData_.getDirichletValues());
-
-    	//prova.solveSystem<SpConjGrad>();
-
-    	//std::cout<< _coeffmatrix;
-    	this-> template solve<SpLU>(i);
-    	if(regressionData_.computeDOF())
-    		computeDegreesOfFreedom(i);
-    	else
-    		_dof[i] = -1;
-
-	}
-
-}
-
-
-//solve sparse system with P method
-
-template<typename InputHandler, typename Integrator, UInt ORDER>
-template <typename P>
-void MixedFERegression<InputHandler,Integrator,ORDER>::solve(UInt output_index)
+template<typename Integrator, UInt ORDER>
+class MixedFERegression<RegressionDataEllipticSpaceVarying, Integrator, ORDER> : public MixedFERegressionBase<RegressionDataEllipticSpaceVarying, Integrator, ORDER>
 {
-	//std::cout<<this->_coeffmatrix;
-	this->_solution[output_index].resize(this->_coeffmatrix.rows());
-	P::solve(this->_coeffmatrix,this->_b,this->_solution[output_index]);
-}
+public:
+	MixedFERegression(const MeshHandler<ORDER>& mesh, const RegressionDataEllipticSpaceVarying& regressionData):MixedFERegressionBase<RegressionDataEllipticSpaceVarying, Integrator, ORDER>(mesh, regressionData){};
+
+	void apply()
+	{
+		//std::cout<<"Space-varying Coefficient - Elliptic PDE Penalization - Order: "<<ORDER<<std::endl;
+				//UInt ndata=regressionData_.getObservations().size();
+				UInt nnodes=MixedFERegression::mesh_.num_nodes();
+
+				FiniteElement<Integrator, ORDER> fe;
+
+				typedef EOExpr<Mass> ETMass;
+				typedef EOExpr<Stiff> ETStiff;
+				typedef EOExpr<Grad> ETGrad;
+
+				Mass EMass;
+				Stiff EStiff;
+				Grad EGrad;
+
+				ETMass mass(EMass);
+				ETStiff stiff(EStiff);
+				ETGrad grad(EGrad);
+
+			if(!MixedFERegression::regressionData_.isLocationsByNodes())
+			{
+				//std::cout<<"HERE";
+				MixedFERegression::setPsi();
+			}
+
+			if(!MixedFERegression::regressionData_.getCovariates().rows() == 0)
+			{
+				MixedFERegression::setH();
+				MixedFERegression::setQ();
+			}
+
+		    if(!MixedFERegression::regressionData_.isLocationsByNodes())
+		    {
+		    	MixedFERegression::getDataMatrix(MixedFERegression::DMat_);
+		    }
+		    else
+		    {
+		    	MixedFERegression::getDataMatrixByIndices(MixedFERegression::DMat_);
+		    }
+		    //std::cout<<"Block Data"<<DMat_<<std::endl;
+
+		    const Reaction& c = MixedFERegression::regressionData_.getC();
+		    const Diffusivity& K = MixedFERegression::regressionData_.getK();
+		    const Advection& beta = MixedFERegression::regressionData_.getBeta();
+		    Assembler::operKernel(c*mass+stiff[K]+dot(beta,grad), MixedFERegression::mesh_, fe, MixedFERegression::AMat_);
+		    Assembler::operKernel(mass, MixedFERegression::mesh_, fe, MixedFERegression::MMat_);
+
+		    const ForcingTerm& u = MixedFERegression::regressionData_.getU();
+		    //for(auto i=0;i<18;i++) std::cout<<u(i)<<std::endl;
+		    VectorXr forcingTerm;
+		    Assembler::forcingTerm(MixedFERegression::mesh_,fe, u, forcingTerm);
+
+		    VectorXr rightHandData;
+		    MixedFERegression::getRightHandData(rightHandData);
+		    //_b.resize(2*nnodes);
+		    MixedFERegression::_b = VectorXr::Zero(2*nnodes);
+		    MixedFERegression::_b.topRows(nnodes)=rightHandData;
+
+		    MixedFERegression::_solution.resize(MixedFERegression::regressionData_.getLambda().size());
+		    MixedFERegression::_dof.resize(MixedFERegression::regressionData_.getLambda().size());
+
+		    for(UInt i = 0; i<MixedFERegression::regressionData_.getLambda().size(); ++i)
+			{
+		    	//build(tripletsData_,(-regressionData_.getLambda())*stiff, (-regressionData_.getLambda())*mass, righthand, forcing);
+
+		    	Real lambda = MixedFERegression::regressionData_.getLambda()[i];
+		    	SpMat AMat_lambda = (-lambda)*MixedFERegression::AMat_;
+		    	SpMat MMat_lambda = (-lambda)*MixedFERegression::MMat_;
+		    	this->buildCoeffMatrix(MixedFERegression::DMat_, AMat_lambda, MMat_lambda);
+
+		        //std::cout<<"Forcing Term "<<std::cout<<forcingTerm<<"END";
+		    	MixedFERegression::_b.bottomRows(nnodes)=lambda*forcingTerm;
+		        //std::cout<<"b vector"<<_b;
+		    	//std::cout<<"AMat"<<std::endl<<_coeffmatrix;
+
+
+		    	//Appling border conditions if necessary
+		    	if(MixedFERegression::regressionData_.getDirichletIndices().size() != 0)
+		    		MixedFERegression::addDirichletBC(MixedFERegression::regressionData_.getDirichletIndices(), MixedFERegression::regressionData_.getDirichletValues());
+
+		    	//prova.solveSystem<SpConjGrad>();
+
+		    	//std::cout<< _coeffmatrix;
+		    	this-> template solve<SpLU>(i);
+		    	if(MixedFERegression::regressionData_.computeDOF())
+		    		MixedFERegression::computeDegreesOfFreedom(i);
+		    	else
+		    		MixedFERegression::_dof[i] = -1;
+
+			}
+	}
+};
 
 #endif

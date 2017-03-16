@@ -4,11 +4,8 @@
 #' @return A  \code{FEMbasis} object. This contains the \code{mesh}, along with some additional quantities:
 #' \item{\code{order}}{Either "1" or "2". Order of the Finite Element basis.} 
 #' \item{\code{nbasis}}{Scalar. The number of basis.} 
-#' \item{\code{detJ}}{The determinant of the transformation from the nodes of the reference triangle to the nodes of the i-th triangle; this coincides with the double of the area of the i-th triangle.} 
-#' \item{\code{transf}}{A three-dimensional array such that  \code{transf[i,,]} is the 2-by-2 matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-#' \item{\code{metric}}{A three-dimensional array such that \code{metric[i,,]} is the 2-by-2 matrix \cr 
-#' \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is used for the computation
-#' of the integrals over the elements of the mesh.}
+#' \item{\code{transf_coord}}{An object containing 4 vectors of length #triangles. The for of them encode the tranformation matrix [diff1x diff2x; diff1y diff2y] that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
+#' \item{\code{detJ}}{A vector of length #triangles. The ith element contains the determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
 #' @description Sets up a Finite Element basis. It requires a triangular mesh, a \code{MESH2D} object, as input. 
 #' The basis' functions are globally continuos surfaces, that are polynomials once restricted to a triangle in the mesh. 
 #' Linear if (\code{order = 1}) in the input \code{mesh} and quadratic if (\code{order = 2}) in the input \code{mesh}
@@ -41,7 +38,7 @@ create.FEM.basis = function(mesh)
   #  eleProp = R_elementProperties(mesh)
   #}
   
-  FEMbasis = list(mesh = mesh, order = as.integer(mesh$order), nbasis = nbasis, detJ=eleProp$detJ, transf = eleProp$transf, metric = eleProp$metric)
+  FEMbasis = list(mesh = mesh, order = as.integer(mesh$order), nbasis = nbasis, detJ=eleProp$detJ, transf_coord = eleProp$transf_coord)
   class(FEMbasis) = "FEMbasis"
   
   FEMbasis

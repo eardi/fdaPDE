@@ -2,43 +2,44 @@
 #' 
 #' @param mesh A \code{MESH2D} mesh object representing the triangular mesh. This can be created with  \code{\link{create.MESH.2D}}.
 #' @return A list with the following variables:
+#' \item{\code{transf_coord}}{An object containing 4 vectors of length #triangles. The for of them encode the tranformation matrix [diff1x diff2x; diff1y diff2y] that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
 #' \item{\code{detJ}}{A vector of length #triangles. The ith element contains the determinant of the transformation from the reference triangle to the nodes of the i-th triangle. It's values is also the double of the area of each triangle of the basis.}
-#' \item{\code{transf}}{A matrix #triangles-by-2-by-2. \code{transf[i,,]} is the 2-by-2 tranformation matrix that transforms the nodes of the reference triangle to the nodes of the i-th triangle.}
-#' \item{\code{metric}}{A matrix #triangles-by-2-by-2. \code{metric[i,,]} is the 2-by-2 matrix \cr 
-#' \code{transf[i,,]^{-1}*transf[i,,]^{-T}}. This matrix is usuful for the computation
-#' of the integrals over the elements of the mesh.} 
-#' @description Only executed when the function \code{create.FEM.basis} is run with the option \code{CPP_CODE} = \code{FALSE}. 
-#' It computes some quantities associated to the linear map that transforms the ith triangle in the reference triangular element. 
+#' @description It computes some quantities associated to the linear map that transforms the ith triangle in the reference triangular element. 
 #' These are used for the computation of the integrals necessary to build the mass and stiffness matrix.
 #' @usage R_elementProperties(mesh)
 
 R_elementProperties=function(mesh)
 {
   nele = dim(mesh$triangles)[[1]]
+  nodes = mesh$nodes
+  triangles = mesh$triangles
   
-  detJ   = matrix(0,nele,1)      #  vector of determinant of transformations
-  metric = array(0,c(nele,2,2))  #  3-d array of metric matrices
-  transf = array(0,c(nele,2,2))
+  #detJ   = matrix(0,nele,1)      #  vector of determinant of transformations
+  #metric = array(0,c(nele,2,2))  #  3-d array of metric matrices
+  #transf = array(0,c(nele,2,2))
   
-  for (i in 1:nele)
-  {
-    diff1x = mesh$nodes[mesh$triangles[i,2],1] - mesh$nodes[mesh$triangles[i,1],1]
-    diff1y = mesh$nodes[mesh$triangles[i,2],2] - mesh$nodes[mesh$triangles[i,1],2]
-    diff2x = mesh$nodes[mesh$triangles[i,3],1] - mesh$nodes[mesh$triangles[i,1],1]
-    diff2y = mesh$nodes[mesh$triangles[i,3],2] - mesh$nodes[mesh$triangles[i,1],2]
-    
-    transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
-    #  Jacobian or double of the area of triangle
-    detJ[i] = diff1x*diff2y - diff2x*diff1y
-    
-    #  Compute controvariant transformation matrix OSS: This is (tranf)^(-T)
-    Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/detJ[i]
-    
-    #  Compute metric matrix
-    metric[i,,] = t(Ael)%*%Ael
-  } 
+  transf_coord = NULL
+  transf_coord$diff1x = nodes[triangles[,2],1] - nodes[triangles[,1],1]
+  transf_coord$diff1y = nodes[triangles[,2],2] - nodes[triangles[,1],2]
+  transf_coord$diff2x = nodes[triangles[,3],1] - nodes[triangles[,1],1]
+  transf_coord$diff2y = nodes[triangles[,3],2] - nodes[triangles[,1],2]
   
-  FEStruct <- list(detJ=detJ, metric=metric, transf=transf)
+  #  Jacobian or double of the area of triangle
+  detJ = transf_coord$diff1x*transf_coord$diff2y - transf_coord$diff2x*transf_coord$diff1y
+  
+  #Too slow, computed only for stiff from diff1x,diff1y,..
+  # for (i in 1:nele)
+  # {
+  #   #transf[i,,] = rbind(cbind(diff1x,diff2x),c(diff1y,diff2y))
+  #   #  Compute controvariant transformation matrix OSS: This is (tranf)^(-T)
+  #   Ael = matrix(c(diff2y, -diff1y, -diff2x,  diff1x),nrow=2,ncol=2,byrow=T)/detJ[i]
+  #   
+  #   #  Compute metric matrix
+  #   metric[i,,] = t(Ael)%*%Ael
+  # } 
+  
+  #FEStruct <- list(detJ=detJ, metric=metric, transf=transf)
+  FEStruct <- list(detJ=detJ, transf_coord=transf_coord)
   return(FEStruct)
 }
 
@@ -89,14 +90,18 @@ R_mass=function(FEMbasis)
   }
   
   # assemble the mass matrix
-  K0 = matrix(0,nrow=nnod,ncol=nnod)
+  #K0 = matrix(0,nrow=nnod,ncol=nnod)
+  nele_local = ncol(triangles)^2
+  K0_triplet = matrix(0,nrow=nele*nele_local,ncol=3)
   for (el in 1:nele)
   {  
     ind = triangles[el,]
-    K0[ind,ind] = K0[ind,ind] + K0M * detJ[el]
+    #K0[ind,ind] = K0[ind,ind] + K0M * detJ[el]
+    K0_triplet[((el-1)*nele_local+1):(el*nele_local),] = as.matrix(cbind(expand.grid.alt(ind, ind), c(K0M * detJ[el])))
   }
   
-  K0
+  #K0
+  sparseMatrix(i = K0_triplet[,1], j=K0_triplet[,2], x = K0_triplet[,3], dims = c(nnod,nnod))
 }
 
 #' Compute the stiffness matrix
@@ -118,7 +123,7 @@ R_stiff= function(FEMbasis)
   nnod  = dim(nodes)[[1]]
   detJ     = FEMbasis$detJ
   order = FEMbasis$order
-  metric = FEMbasis$metric
+  transf_coord = FEMbasis$transf_coord
   
   
   
@@ -169,16 +174,24 @@ R_stiff= function(FEMbasis)
   }
   
   #  assemble the stiffness matrix
-  K1   = matrix(0,nrow=nnod,ncol=nnod)
+  #K1   = matrix(0,nrow=nnod,ncol=nnod)
+  nele_local = ncol(triangles)^2
+  K1_triplet = matrix(0,nrow=nele*nele_local,ncol=3)
   for (el in 1:nele)
   {
+    #  Compute controvariant transformation matrix OSS: This is (tranf)^(-T)
+    Ael = matrix(c(transf_coord$diff2y[el], -transf_coord$diff1y[el], -transf_coord$diff2x[el],  transf_coord$diff1x[el]),nrow=2,ncol=2,byrow=T)/detJ[el]
+    #  Compute metric matrix
+    metric = t(Ael)%*%Ael
+    
     ind    = triangles[el,]
-    K1M = (metric[el,1,1]*KXX    + metric[el,1,2]*KXY +
-             metric[el,2,1]*t(KXY) + metric[el,2,2]*KYY)
-    K1[ind,ind] = K1[ind,ind] + K1M*detJ[el]
+    K1M = (metric[1,1]*KXX    + metric[1,2]*KXY +
+             metric[2,1]*t(KXY) + metric[2,2]*KYY)
+    #K1[ind,ind] = K1[ind,ind] + K1M*detJ[el]
+    K1_triplet[((el-1)*nele_local+1):(el*nele_local),] = as.matrix(cbind(expand.grid.alt(ind, ind), c(K1M * detJ[el])))
   }
   
-  K1
+  sparseMatrix(i = K1_triplet[,1], j=K1_triplet[,2], x = K1_triplet[,3], dims = c(nnod,nnod))
 }
 
 #' Spatial regression with differential regularization (fully implemented in R code)
@@ -202,10 +215,9 @@ R_stiff= function(FEMbasis)
 #' @usage R_smooth.FEM.basis(locations, observations, FEMbasis, lambda, covariates, GCV)
 #' @seealso \code{\link{smooth.FEM.basis}}, \code{\link{smooth.FEM.PDE.basis}}, \code{\link{smooth.FEM.PDE.sv.basis}}
 #' @references Sangalli, L.M., Ramsay, J.O. & Ramsay, T.O., 2013. Spatial spline regression models. Journal of the Royal Statistical Society. Series B: Statistical Methodology, 75(4), pp.681.703.
-
 R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covariates = NULL, GCV)
 {
-  
+  sparse = FALSE 
   # Stores the number of nodes of the mesh. This corresponds to the number of elements of the FE basis.
   numnodes = nrow(FEMbasis$mesh$nodes)
   if(!is.null(covariates))
@@ -240,7 +252,8 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   #P = diag(penalty,nrow=numnodes)
   
   basismat = NULL
-  Lmat = matrix(0,nrow = numnodes, ncol = numnodes)
+  #Lmat = matrix(0,nrow = numnodes, ncol = numnodes)
+  Lmat = NULL
   H = NULL
   Q = NULL
   
@@ -250,7 +263,7 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   } 
   
   if(!is.null(covariates))
-  {
+  { 
     if(!is.null(locations))
     {
       H = covariates %*% ( solve( t(covariates) %*% covariates ) ) %*% t(covariates)
@@ -264,19 +277,25 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   
   if(!is.null(locations) && is.null(covariates))
   {
+    sparse = TRUE
+    basismat = Matrix(basismat, sparse = TRUE) #sparsification
     Lmat = t(basismat) %*% basismat
   }
   if(!is.null(locations) && !is.null(covariates))
   {
+    sparse = FALSE
     Lmat = t(basismat) %*% Q %*% basismat
   }
   if(is.null(locations) && is.null(covariates))
   {
+    sparse = TRUE
     loc_nodes = (1:length(observations))[!is.na(observations)]
-    Lmat[loc_nodes,loc_nodes]=diag(1,length(observations[loc_nodes]))
+    Lmat = sparseMatrix(i = loc_nodes, j = loc_nodes, x = 1, dims = c(numnodes,numnodes))
+    #Lmat[loc_nodes,loc_nodes]=diag(1,length(observations[loc_nodes]))
   }
   if(is.null(locations) && !is.null(covariates))
   {
+    sparse = FALSE
     loc_nodes = (1:length(observations))[!is.na(observations)]
     Lmat[loc_nodes,loc_nodes] = Q
   }
@@ -313,10 +332,15 @@ R_smooth.FEM.basis = function(locations, observations, FEMbasis, lambda, covaria
   bigsol = list(solutions = matrix(nrow = 2*numnodes, ncol = length(lambda)), edf = vector(mode="numeric",length = length(lambda)))
   for(i in 1: length(lambda))
   {
-    A  = rbind(cbind(Lmat, -lambda[i]*K1), cbind(K1, K0))
+    A = NULL
+    if(sparse){
+      A  = rBind(cBind(Lmat, -lambda[i]*K1), cBind(K1, K0))
+    }else{
+      A  = rbind(cbind(as.matrix(Lmat), -lambda[i]*as.matrix(K1)), cbind(as.matrix(K1), as.matrix(K0)))
+    }
     #print(A)
     # solve system
-    bigsol[[1]][,i] = solve(A,b)
+    bigsol[[1]][,i] = as.matrix(Matrix::solve(A,b))
     if(GCV == TRUE)
     {
       S = solve(Lmat + lambda[i] * K1 %*% solve(K0) %*% K1)
