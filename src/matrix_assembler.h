@@ -505,11 +505,6 @@ class Assembler{
 	   * stores the discretization in SPoper_mat_
 	   */
 
-	  //Obsolet
-	  //template<UInt ORDER, typename Integrator, typename P, typename A>
-	  //void operKernel(EOExpr<P, A> oper,const MeshHandler<ORDER>& mesh,
-	  //                   FiniteElement<Integrator, ORDER>& fe );
-
 	  //Return triplets vector
 	  template<UInt ORDER, typename Integrator, typename A>
 	  static void operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
@@ -517,20 +512,6 @@ class Assembler{
 
 	  template<UInt ORDER, typename Integrator>
 	  static void forcingTerm(const MeshHandler<ORDER>& mesh, FiniteElement<Integrator, ORDER>& fe, const ForcingTerm& u, VectorXr& forcingTerm);
-
-	  //void getOperKernel(UInt i, UInt j){ std::cout<<oper_mat_(i,j)<<std::endl; };
-	  //! A normal member taking two arguments: access to element (i,j)
-	  /*!
-	   *\param i is an unsigned int
-       *\param j is an unsigned int
-       * print the (i,j) element of SPoper_mat_
-	   */
-	  //void getSpOperKernel(UInt i, UInt j){ std::cout<<SPoper_mat_.coeffRef(i,j)<<std::endl; };
-	  //! A normal member returning a reference to the discretized differential operator
-	  /*!
-	   * \return a reference to SP_opermat_
-	   */
-	  //SpMat& getSpOperKernel(){ return (SPoper_mat_); }
 	};
 
 

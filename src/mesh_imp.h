@@ -85,7 +85,7 @@ Triangle<ORDER * 3> MeshHandler<ORDER>::findLocationWalking(const Point& point, 
 	//Real eps = 2.2204e-016,
 	//	 tolerance = 10000 * eps;
 
-//	// Finding the nearest trianglefrom the proposed list
+//	// Finding the nearest triangle from the proposed list
 //	UInt min_index = 0;
 //	Real distance;
 //	Real distance_old = (starting_triangles[0][0][0] - point[0])*(starting_triangles[0][0][0] - point[0]) +
@@ -117,33 +117,6 @@ Triangle<ORDER * 3> MeshHandler<ORDER>::findLocationWalking(const Point& point, 
 	
 	return current_triangle;
 }
-
-
-/*std::ostream & operator<<(std::ostream & out, MeshHandler const& m){
-	out<< " ***** MESH  INFORMATION ******"<<std::endl;
-	out<<" Num Points="<<m.num_nodes()<<" "<<" Num elements="<<m.num_triangles()<<" "
-			<<"Num. edges="<<m.num_edges();
-			//<<" "<<"Num Boundary Edges="<<m.num_bEdges()<<std::endl;
-	out<< "POINTS:"<<std::endl;
-	int oprec=out.precision(10);
-	std::ios_base::fmtflags oflags=
-			out.setf(std::ios_base::scientific,std::ios_base::floatfield);
-	for (UInt i=0;i<m.num_nodes();++i){
-		Point p=m.point(i);
-		double x=p[0];
-		double y=p[1];
-		out<<i<<" "<<x<<" "<<y<<std::endl;
-	}
-	out<<" TRIANGLE CONNECTIVITY AND AREA:"<<std::endl;
-	for (UInt i=0; i<m.num_elements();++i){
-		Triangle t=m.triangle(i);
-		out<<i<<" "<<t[0].id()<<" "<<t[1].id()<<" "<<t[2].id()<<
-		  " "<<t.measure()<<"  Edge: "<<t.getEdges_id(0)<<" "<<t.getEdges_id(1)<<" "<<t.getEdges_id(2)<<std::endl;
-	}
-	out.precision(oprec);
-	out.flags(oflags);
-	return out;
-}*/
 
 template <UInt ORDER>
 void MeshHandler<ORDER>::printPoints(std::ostream & out)
@@ -195,5 +168,31 @@ void MeshHandler<ORDER>::printNeighbors(std::ostream & out)
 	}
 	
 }
+
+/*std::ostream & operator<<(std::ostream & out, MeshHandler const& m){
+	out<< " ***** MESH  INFORMATION ******"<<std::endl;
+	out<<" Num Points="<<m.num_nodes()<<" "<<" Num elements="<<m.num_triangles()<<" "
+			<<"Num. edges="<<m.num_edges();
+			//<<" "<<"Num Boundary Edges="<<m.num_bEdges()<<std::endl;
+	out<< "POINTS:"<<std::endl;
+	int oprec=out.precision(10);
+	std::ios_base::fmtflags oflags=
+			out.setf(std::ios_base::scientific,std::ios_base::floatfield);
+	for (UInt i=0;i<m.num_nodes();++i){
+		Point p=m.point(i);
+		double x=p[0];
+		double y=p[1];
+		out<<i<<" "<<x<<" "<<y<<std::endl;
+	}
+	out<<" TRIANGLE CONNECTIVITY AND AREA:"<<std::endl;
+	for (UInt i=0; i<m.num_elements();++i){
+		Triangle t=m.triangle(i);
+		out<<i<<" "<<t[0].id()<<" "<<t[1].id()<<" "<<t[2].id()<<
+		  " "<<t.measure()<<"  Edge: "<<t.getEdges_id(0)<<" "<<t.getEdges_id(1)<<" "<<t.getEdges_id(2)<<std::endl;
+	}
+	out.precision(oprec);
+	out.flags(oflags);
+	return out;
+}*/
 
 #endif

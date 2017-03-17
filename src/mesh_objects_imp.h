@@ -4,13 +4,11 @@
 
 
 template <UInt NNODES>
-void Triangle<NNODES>::init(const std::vector<Point> &points)
+void Triangle<NNODES>::computeProperties()
 {
-	points_ = points;
-
 	Triangle<NNODES> &t = *this;
 	Point d1(t[1][0]-t[0][0], t[1][1]-t[0][1]);
-	Point d2(t[2][0]-t[0][0], t[2][1]-t[0][1]);   //Point d2 = t[2] - t[0]; non funziona, reimplementare sottrazione
+	Point d2(t[2][0]-t[0][0], t[2][1]-t[0][1]);   //Point d2 = t[2] - t[0]; reimplementare sottrazione
 
 	M_J_(0,0) = d1[0];			// (x2-x1)
 	M_J_(1,0) = d1[1];			// (y2-y1)
@@ -108,20 +106,5 @@ void Triangle<NNODES>::print(std::ostream & out) const
 		out<<points_[i].getId()<<"  ";
 	out<<std::endl;	
 }
- 
-//template <UInt ORDER>
-//Real evaluate_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients)
-//{
-//	//std::cerr<< "TRYING TO EVALUATE ORDER NOT IMPLEMENTED" << std::endl;
-//	return 0;
-//}
-//
-//template <UInt ORDER>
-//Eigen::Matrix<Real,2,1> evaluate_der_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients)
-//{
-//	//std::cerr<< "TRYING TO EVALUATE ORDER NOT IMPLEMENTED" << std::endl;
-//	Eigen::Matrix<Real,2,1> null;
-//	return(null);
-//}
 
 #endif

@@ -40,7 +40,7 @@ public:
     /*!
       \param t a triangle from which to update the finite element properties
     */
-	void updateElement(Triangle<ORDER*3> t);
+	void updateElement(const Triangle<ORDER*3>& t);
 	
 	Real getAreaReference()
 	{

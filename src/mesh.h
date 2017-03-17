@@ -64,6 +64,13 @@ public:
     */ 
     Edge getEdge(Id id);
     
+    //! A normal member setting a Triangle
+        /*!
+         * \param id an Id argument
+          \return The triangle with order coerent to that of the mesh with the specified id
+        */
+    //void setTriangle(Triangle<ORDER * 3>& tri, Id id) const;
+
     //! A normal member returning a Triangle
     /*!
      * \param id an Id argument 

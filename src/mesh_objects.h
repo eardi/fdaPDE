@@ -4,9 +4,6 @@
 
 #include "fdaPDE.h"
 
-//Accord the NotValid meaning value
-//const UInt NVAL=std::numeric_limits<UInt>::max();
-
 typedef UInt Id;
 typedef UInt BcId;
 
@@ -107,8 +104,8 @@ public:
 	Triangle():Identifier(NVAL){points_.resize(NNODES);}
 	
 	//! This constructor creates a Triangle, given its Id and an std array with the three object Point the will define the Triangle
-    Triangle(Id id, const std::vector<Point> points) : Identifier(id)
-	{ this->init(points); }
+    Triangle(Id id, const std::vector<Point>& points) : Identifier(id), points_(points)
+	{ this->computeProperties(); }
 	
 	//! Overloading of the operator [],  taking the Node number and returning a node as Point object.
     /*!
@@ -125,9 +122,9 @@ public:
     */
 
 	Real getDetJ() const {return detJ_;}
-	Eigen::Matrix<Real,2,2> getM_J() const {return M_J_;}
-	Eigen::Matrix<Real,2,2> getM_invJ() const {return M_invJ_;}
-	Eigen::Matrix<Real,2,2> getMetric() const {return metric_;}
+	const Eigen::Matrix<Real,2,2>& getM_J() const {return M_J_;}
+	const Eigen::Matrix<Real,2,2>& getM_invJ() const {return M_invJ_;}
+	const Eigen::Matrix<Real,2,2>& getMetric() const {return metric_;}
 	//! A member returning the area of the finite element
 	    /*!
 	      \return a Real value representing the area of the triangle from which we updated the element
@@ -165,48 +162,11 @@ private:
 	Eigen::Matrix<Real,2,2> M_invJ_;
 	Eigen::Matrix<Real,2,2> metric_;
 	Real detJ_;
-	void init(const std::vector<Point> &points);
+	void computeProperties();
 };
 
 template <UInt NNODES>
 const int Triangle<NNODES>::myDim;
-
-//! A function for the evaluation of point value in a triangle.
-/*!
-  \param t a Triangle object
-  \param point a point object
-  \param coefficients a Eigen vector specifing the coefficients of the Lagrangian
-		 base (1st or 2nd order) defined on the Triangle.
-  \return The point evaluation of the function defined by the coefficients on
-  the triangle
-    */
-
-//template <UInt ORDER>
-//Eigen::Matrix<Real,2,1> evaluate_der_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients)
-//{
-//	//std::cerr<< "TRYING TO EVALUATE ORDER NOT IMPLEMENTED" << std::endl;
-//	Eigen::Matrix<Real,2,1> null;
-//	return(null);
-//}
-
-//template <UInt ORDER>
-//Real evaluate_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients);
-
-//template <>
-//Real evaluate_point<1>(const Triangle<3>& t, const Point& point, const Eigen::Matrix<Real,3,1>& coefficients);
-//
-//template <>
-//Real evaluate_point<2>(const Triangle<6>& t, const Point& point, const Eigen::Matrix<Real,6,1>& coefficients);
-
-//template <UInt ORDER>
-//Eigen::Matrix<Real,2,1> evaluate_der_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients);
-//
-//template <>
-//Eigen::Matrix<Real,2,1> evaluate_der_point<1>(const Triangle<3>& t, const Point& point, const Eigen::Matrix<Real,3,1>& coefficients);
-
-//template <>
-//Eigen::Matrix<Real,2,1> evaluate_der_point<2>(const Triangle<6>& t, const Point& point, const Eigen::Matrix<Real,6,1>& coefficients);
-
 
 template <UInt ORDER>
 inline Real evaluate_point(const Triangle<3*ORDER>& t, const Point& point, const Eigen::Matrix<Real,3*ORDER,1>& coefficients)

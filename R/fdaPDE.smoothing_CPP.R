@@ -56,11 +56,6 @@ CPP_smooth.FEM.basis<-function(locations, observations, FEMbasis, lambda, covari
                   FEMbasis$order, lambda, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
                   PACKAGE = "fdaPDE")
-  
-  ## Reset them correctly
-  #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
-  #fdobj$basis$params$mesh$edges = fdobj$basis$params$mesh$edges + 1
-  #fdobj$basis$params$mesh$neighbors = fdobj$basis$params$mesh$neighbors + 1
   return(bigsol)
 }
 
@@ -124,11 +119,6 @@ CPP_smooth.FEM.PDE.basis<-function(locations, observations, FEMbasis, lambda, PD
                   FEMbasis$order, lambda, PDE_parameters$K, PDE_parameters$b, PDE_parameters$c, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
                   PACKAGE = "fdaPDE")
-  
-  ## Reset them correctly
-  #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
-  #fdobj$basis$params$mesh$edges = fdobj$basis$params$mesh$edges + 1
-  #fdobj$basis$params$mesh$neighbors = fdobj$basis$params$mesh$neighbors + 1
   return(bigsol)
 }
 
@@ -200,11 +190,6 @@ CPP_smooth.FEM.PDE.sv.basis<-function(locations, observations, FEMbasis, lambda,
                   FEMbasis$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
                   BC$BC_indices, BC$BC_values, GCV,
                   PACKAGE = "fdaPDE")
-  
-  ## Reset them correctly
-  #fdobj$basis$params$mesh$triangles = fdobj$basis$params$mesh$triangles + 1
-  #fdobj$basis$params$mesh$edges = fdobj$basis$params$mesh$edges + 1
-  #fdobj$basis$params$mesh$neighbors = fdobj$basis$params$mesh$neighbors + 1
   return(bigsol)
 }
 
@@ -278,6 +263,30 @@ CPP_get_evaluations_points = function(mesh, order)
   points
 }
 
+CPP_get.FEM.Mass.Matrix<-function(FEMbasis)
+{
+  # Indexes in C++ starts from 0, in R from 1, opportune transformation  
+  ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
+  
+  ## Set propr type for correct C++ reading
+  storage.mode(locations) <- "double"
+  storage.mode(FEMbasis$mesh$nodes) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
+  
+  ## Call C++ function
+  triplets <- .Call("get_FEM_mass_matrix", FEMbasis$mesh, 
+                    FEMbasis$order,
+                    PACKAGE = "fdaPDE")
+  
+  A = sparseMatrix(i = triplets[[1]][,1], j=triplets[[1]][,2], x = triplets[[2]], dims = c(nrow(FEMbasis$mesh$nodes),nrow(FEMbasis$mesh$nodes)))
+  return(A)
+}
 
 CPP_get.FEM.PDE.Matrix<-function(FEMbasis, PDE_parameters)
 {
@@ -320,6 +329,60 @@ CPP_get.FEM.PDE.Matrix<-function(FEMbasis, PDE_parameters)
                   BC$BC_indices, BC$BC_values, GCV,
                   PACKAGE = "fdaPDE")
 
+  A = sparseMatrix(i = triplets[[1]][,1], j=triplets[[1]][,2], x = triplets[[2]], dims = c(nrow(FEMbasis$mesh$nodes),nrow(FEMbasis$mesh$nodes)))
+  return(A)
+}
+
+
+CPP_get.FEM.PDE.sv.Matrix<-function(FEMbasis, PDE_parameters)
+{
+  
+  # Indexes in C++ starts from 0, in R from 1, opportune transformation
+  ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
+  
+  covariates<-matrix(nrow = 0, ncol = 1)
+  locations<-matrix(nrow = 0, ncol = 2)
+  BC$BC_indices<-vector(length=0)
+  BC$BC_values<-vector(length=0)
+  lambda = 0
+  GCV = 0
+  
+  PDE_param_eval = NULL
+  points_eval = matrix(CPP_get_evaluations_points(mesh = FEMbasis$mesh, order = FEMbasis$order),ncol = 2)
+  PDE_param_eval$K = (PDE_parameters$K)(points_eval)
+  PDE_param_eval$b = (PDE_parameters$b)(points_eval)
+  PDE_param_eval$c = (PDE_parameters$c)(points_eval)
+  PDE_param_eval$u = (PDE_parameters$u)(points_eval)
+  
+  ## Set propr type for correct C++ reading
+  locations <- as.matrix(locations)
+  storage.mode(locations) <- "double"
+  storage.mode(FEMbasis$mesh$nodes) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
+  covariates = as.matrix(covariates)
+  storage.mode(covariates) <- "double"
+  storage.mode(lambda)<- "double"
+  storage.mode(BC$BC_indices)<- "integer"
+  storage.mode(BC$BC_values)<-"double"
+  storage.mode(GCV)<-"integer"
+  
+  storage.mode(PDE_param_eval$K)<-"double"
+  storage.mode(PDE_param_eval$b)<-"double"
+  storage.mode(PDE_param_eval$c)<-"double"
+  storage.mode(PDE_param_eval$u)<-"double"
+  
+  ## Call C++ function
+  triplets <- .Call("get_FEM_PDE_space_varying_matrix", locations, observations, FEMbasis$mesh, 
+                  FEMbasis$order, lambda, PDE_param_eval$K, PDE_param_eval$b, PDE_param_eval$c, PDE_param_eval$u, covariates,
+                  BC$BC_indices, BC$BC_values, GCV,
+                  PACKAGE = "fdaPDE")
+  
   A = sparseMatrix(i = triplets[[1]][,1], j=triplets[[1]][,2], x = triplets[[2]], dims = c(nrow(FEMbasis$mesh$nodes),nrow(FEMbasis$mesh$nodes)))
   return(A)
 }
