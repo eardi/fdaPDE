@@ -9,6 +9,8 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 		 tolerance = 10 * eps;
 	std::vector<coeff> triplets;
 	triplets.reserve(mesh.num_triangles()*9*ORDER);
+	//OpMat.resize(mesh.num_nodes(),mesh.num_nodes());         // default is column major
+	//OpMat.reserve(VectorXi::Constant(mesh.num_nodes(),7));
 
 
   	for(auto t=0; t<mesh.num_triangles(); t++)
@@ -34,7 +36,7 @@ void Assembler::operKernel(EOExpr<A> oper,const MeshHandler<ORDER>& mesh,
 					s += oper(fe,i,j,l) * fe.getDet() * fe.getAreaReference()* Integrator::WEIGHTS[l];//(*)
 					//std::cout<<"("<<i<<","<<j<<","<<l<<"): "<<oper(fe,i,j,l)<< " " <<fe.getDet() << " " << fe.getAreaReference()<< " " << Integrator::WEIGHTS[l]<<"\n";
 				}
-			  triplets.push_back(coeff(identifiers[i],identifiers[j],s));
+			    triplets.push_back(coeff(identifiers[i],identifiers[j],s));
 			}
 		}
 

@@ -203,6 +203,18 @@ SEXP get_FEM_mass_matrix(SEXP Rmesh, SEXP Rorder)
 	return(NILSXP);
 }
 
+SEXP get_FEM_stiff_matrix(SEXP Rmesh, SEXP Rorder)
+{
+	int order = INTEGER(Rorder)[0];
+	typedef EOExpr<Stiff> ETMass;   Stiff EStiff;   ETMass stiff(EStiff);
+
+    if(order==1)
+    	return(get_FEM_Matrix_skeleton<IntegratorTriangleP2, 1>(Rmesh, stiff));
+	if(order==2)
+		return(get_FEM_Matrix_skeleton<IntegratorTriangleP4, 2>(Rmesh, stiff));
+	return(NILSXP);
+}
+
 SEXP get_FEM_PDE_matrix(SEXP Rlocations, SEXP Robservations, SEXP Rmesh, SEXP Rorder, SEXP Rlambda, SEXP RK, SEXP Rbeta, SEXP Rc,
 				   SEXP Rcovariates, SEXP RBCIndices, SEXP RBCValues, SEXP DOF)
 {

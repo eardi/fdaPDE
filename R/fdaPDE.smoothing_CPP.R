@@ -288,6 +288,31 @@ CPP_get.FEM.Mass.Matrix<-function(FEMbasis)
   return(A)
 }
 
+CPP_get.FEM.Stiff.Matrix<-function(FEMbasis)
+{
+  # Indexes in C++ starts from 0, in R from 1, opportune transformation  
+  ##TO BE CHANGED SOON: LOW PERFORMANCES, IMPLIES COPY OF PARAMETERS
+  FEMbasis$mesh$triangles = FEMbasis$mesh$triangles - 1
+  FEMbasis$mesh$edges = FEMbasis$mesh$edges - 1
+  FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] = FEMbasis$mesh$neighbors[FEMbasis$mesh$neighbors != -1] - 1
+  
+  ## Set propr type for correct C++ reading
+  storage.mode(locations) <- "double"
+  storage.mode(FEMbasis$mesh$nodes) <- "double"
+  storage.mode(FEMbasis$mesh$triangles) <- "integer"
+  storage.mode(FEMbasis$mesh$edges) <- "integer"
+  storage.mode(FEMbasis$mesh$neighbors) <- "integer"
+  storage.mode(FEMbasis$order) <- "integer"
+  
+  ## Call C++ function
+  triplets <- .Call("get_FEM_stiff_matrix", FEMbasis$mesh, 
+                    FEMbasis$order,
+                    PACKAGE = "fdaPDE")
+  
+  A = sparseMatrix(i = triplets[[1]][,1], j=triplets[[1]][,2], x = triplets[[2]], dims = c(nrow(FEMbasis$mesh$nodes),nrow(FEMbasis$mesh$nodes)))
+  return(A)
+}
+
 CPP_get.FEM.PDE.Matrix<-function(FEMbasis, PDE_parameters)
 {
   # Indexes in C++ starts from 0, in R from 1, opportune transformation  
