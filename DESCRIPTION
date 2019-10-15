@@ -1,6 +1,6 @@
 Package: fdaPDE
-Version: 0.1-5
-Date: 2017-03-16
+Version: 0.1-7
+Date: 2019-10-15
 Title: Functional Data Analysis and Partial Differential Equations; Statistical Analysis of Functional and Spatial Data, Based on Regression with Partial Differential Regularizations
 Authors@R: c(person("Eardi", "Lila", role = c("aut", "cre"),
 		     email = "el425@cam.ac.uk"),

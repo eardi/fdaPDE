@@ -4,7 +4,6 @@ library(ggplot2)
 library(scales)
 library(fdaPDE)
 #load_all("/home/el425/store/git/fdaPDE/")
-#load_all("/run/user/1000/gvfs/sftp:host=ssh.maths.cam.ac.uk,user=el425/store/DPMMS/el425/git/fdaPDE")
 # settings
 order = 1
 lambda = 1
@@ -43,8 +42,9 @@ u_func<-function(points)
 PDE_parameters_sv = list(K = K_func, b = b_func, c = c_func, u = u_func)
 # Simulation
 times = NULL
-for (sqrt_nnodes in seq(from = 10, by = 20, length.out = 7))
+for (sqrt_nnodes_pow in seq(from = 1, by = 0.2, length.out = 10))
 {
+  sqrt_nnodes = 10^sqrt_nnodes_pow
   for(rep in 1:10)
   {
     x <- seq(0, 1, length.out = sqrt_nnodes)
@@ -92,26 +92,9 @@ plot <- plot + scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
 
 plot
 
-
-x <- seq(0, 1, length.out = 2)
-y <- seq(0, 1, length.out = 2)
-nodes <- expand.grid(x = x, y = y)
-mesh<-create.MESH.2D(nodes=nodes, order = 1)
-FEMbasis = create.FEM.basis(mesh)
-observations = f(nodes)
-PDE_param = list(K = matrix(c(1,0,0,1), nrow = 2), b = c(0,0), c = 0)
-stiff_CPP = CPP_get.FEM.PDE.Matrix(FEMbasis, PDE_param)
-stiff_R = R_stiff(FEMbasis)
-
-out = smooth.FEM.basis(observations = observations, 
-                 FEMbasis = FEMbasis, lambda = lambda, 
-                 GCV = FALSE,
-                 CPP_CODE = TRUE)
-plot(out$fit.FEM)
-
- # Rprof ( tf <- "log.log",  memory.profiling = TRUE )
- # output = smooth.FEM.basis(observations = observations,
- #                  FEMbasis = FEMbasis, lambda = lambda,
- #                  GCV = FALSE,
- #                  CPP_CODE = FALSE)
- # Rprof ( NULL ) ; print ( summaryRprof ( tf )  )
+# Rprof ( tf <- "log.log",  memory.profiling = TRUE )
+# output = smooth.FEM.basis(observations = observations,
+#                  FEMbasis = FEMbasis, lambda = lambda,
+#                  GCV = FALSE,
+#                  CPP_CODE = FALSE)
+# Rprof ( NULL ) ; print ( summaryRprof ( tf )  )
